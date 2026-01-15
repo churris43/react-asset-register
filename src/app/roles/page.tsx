@@ -3,11 +3,23 @@ import Link from "next/link";
 function Roles() {
   return (
     <>
-      <h1>Roles</h1>
+      <h1 className="text-xl">Roles</h1>
       <ul>
-        <Link href="roles/1">Role 1</Link>
-        <Link href="roles/2">Role 2</Link>
-        <Link href="roles/3">Role 3</Link>
+        <li>
+          <Link className="underline text-sm" href="roles/1">
+            Role 1
+          </Link>
+        </li>
+        <li>
+          <Link className="underline text-sm" href="roles/2">
+            Role 2
+          </Link>
+        </li>
+        <li>
+          <Link className="underline text-sm" href="roles/3">
+            Role 3
+          </Link>
+        </li>
       </ul>
     </>
   );
