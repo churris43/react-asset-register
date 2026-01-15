@@ -28,6 +28,16 @@ app.get("/health", (_req: Request, res: Response) => {
   res.json({ status: "ok" });
 });
 
+app.get("/roles", async (req: Request, res: Response) => {
+  try {
+    const [rows] = await connection.execute("SELECT * FROM role");
+    res.json(rows);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Failed to fetch applications" });
+  }
+});
+
 /**
  * CRITICAL FIX:
  * Bind to 0.0.0.0 so Nginx can reach the container
