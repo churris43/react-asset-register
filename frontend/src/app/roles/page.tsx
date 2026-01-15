@@ -1,25 +1,31 @@
 import Link from "next/link";
 
-function Roles() {
+interface Role {
+  id: number;
+  role_name: string;
+  staff_name: string;
+}
+
+async function Roles() {
+  // @todo: Need to work out how to proxy this
+  const response = await fetch("http://api:3000/roles");
+  if (!response.ok) throw new Error("Failed to fetch data");
+
+  const roles = await response.json();
+  console.log(roles);
+
   return (
     <>
-      <h1 className="text-xl">Roles</h1>
+      <h1 className="text-xl mb-4">Roles</h1>
       <ul>
-        <li>
-          <Link className="underline text-sm" href="roles/1">
-            Role 1
-          </Link>
-        </li>
-        <li>
-          <Link className="underline text-sm" href="roles/2">
-            Role 2
-          </Link>
-        </li>
-        <li>
-          <Link className="underline text-sm" href="roles/3">
-            Role 3
-          </Link>
-        </li>
+        {roles.map((role: Role) => (
+          <li key={role.id}>
+            <span>{role.id} </span>
+            <Link className="underline text-sm ml-4" href={`roles/${role.id}`}>
+              {role.role_name}
+            </Link>
+          </li>
+        ))}
       </ul>
     </>
   );
