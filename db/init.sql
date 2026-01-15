@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS role(  
+    id int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key',
+    role_name VARCHAR(255) NOT NULL,
+    staff_name TEXT NULL
+) COMMENT '';

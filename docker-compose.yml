@@ -1,0 +1,83 @@
+services:
+  webapp:
+    build:
+      context: ./frontend
+    container_name: express_webapp
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - API_URL=http://api:3000
+    depends_on:
+      - api
+    expose:
+      - "5173"
+  
+  api:
+    build:
+      context: ./backend
+    container_name: express_api
+    volumes:
+      - ./backend:/app
+      - /app/node_modules # Restricts the host from overwritting the node modules
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+    command: npm run dev # Active local development, Live reloading, hot module replacement, detailed logging, file watching.
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: express_nginx_proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+      - webapp
+
+
+  mysql:
+    image: mysql:8.0
+    container_name: express_mysql_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    image: mysql:8.0
+    container_name: express_migrate
+    volumes:
+      - ./db/init.sql:/init.sql
+    environment:
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: >
+      sh -c "
+        mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /init.sql &&
+        echo 'Migration completed successfully'
+      "
+    restart: "no"
+
+volumes:
+  mysql_data:
