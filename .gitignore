@@ -1,3 +1,6 @@
+# This line needs to be removes once the project has made some progress
+readme.md
+
 # Environment variables
 .env
 .env.local
