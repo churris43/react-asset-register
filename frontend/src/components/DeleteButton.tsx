@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 
 interface DeleteProps {
   record: string;
@@ -7,7 +8,8 @@ interface DeleteProps {
 }
 
 function DeleteButton({ record, id }: DeleteProps) {
-  // todo: How to update the state so the row gets removed when the record is deleted
+  const router = useRouter();
+
   const DeleteButton = async () => {
     const res = await fetch("/api/" + record + "/" + id.toString(), {
       method: "DELETE",
@@ -16,6 +18,7 @@ function DeleteButton({ record, id }: DeleteProps) {
       },
     });
     if (!res.ok) throw new Error("Failed to fetch data");
+    router.refresh();
   };
 
   return (
