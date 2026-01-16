@@ -38,6 +38,18 @@ app.get("/roles", async (req: Request, res: Response) => {
   }
 });
 
+app.delete("/roles/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const [result] = await connection.execute("DELETE from role WHERE id = ?", [
+      id,
+    ]);
+    res.status(201).json({ message: "Role DELETED", result });
+  } catch (error) {
+    res.status(500).json({ message: "Unable to delete role" });
+  }
+});
+
 /**
  * CRITICAL FIX:
  * Bind to 0.0.0.0 so Nginx can reach the container
