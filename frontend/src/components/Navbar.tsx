@@ -8,16 +8,13 @@ function Navbar() {
           <div className="text-lg font-semibold text-white">Asset Register</div>
 
           <div className="flex space-x-8 text-sm font-medium">
-            <Link
-              href="/"
-              className="text-gray-300 hover:text-white transition"
-            >
+            <Link href="/" className="navbar-item">
               Home
             </Link>
-            <Link
-              href="roles"
-              className="text-gray-300 hover:text-white transition"
-            >
+            <Link href="assets" className="navbar-item">
+              Asset Register
+            </Link>
+            <Link href="roles" className="navbar-item">
               Roles
             </Link>
           </div>
