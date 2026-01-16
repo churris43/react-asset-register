@@ -22,7 +22,7 @@ async function Roles() {
           <div className="px-3 py-4">ID</div>
           <div className="px-3 py-4">Role</div>
           <div className="px-3 py-4">Staff Name</div>
-          <div className="px-3 py-4">Action</div>
+          <div className="px-3 py-4 justify-self-end">Action</div>
         </div>
         {roles.map((role: Role) => (
           <div

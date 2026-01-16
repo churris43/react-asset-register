@@ -1,10 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation";
-
+import { MdDelete } from "react-icons/md";
 interface DeleteProps {
   record: string;
   id: number;
-  whenClicked: () => void;
 }
 
 function DeleteButton({ record, id }: DeleteProps) {
@@ -22,9 +21,11 @@ function DeleteButton({ record, id }: DeleteProps) {
   };
 
   return (
-    <button className="px-3 py-4 underline text-red-200" onClick={DeleteButton}>
-      Delete
-    </button>
+    <>
+      <button onClick={DeleteButton} className="justify-self-end">
+        <MdDelete className="h-4 w-4" />
+      </button>
+    </>
   );
 }
 
