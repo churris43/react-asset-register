@@ -1,5 +1,6 @@
 import Link from "next/link";
 import DeleteButton from "@/src/components/DeleteButton";
+import AddRoleButton from "@/src/components/AddRoleButton";
 
 interface Role {
   id: number;
@@ -17,6 +18,7 @@ async function Roles() {
   return (
     <>
       <h1 className="text-xl mb-4">Roles</h1>
+      <AddRoleButton />
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
         <div className="grid grid-cols-4 bg-slate-800 text-white font-semibold  h-10 grid-cols-[80px_1fr_1fr_1fr]">
           <div className="px-3 py-4">ID</div>
