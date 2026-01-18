@@ -1,12 +1,52 @@
 "use client";
 
+import { ChangeEvent, FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+
 interface AddModalProps {
   isModalOpen: boolean;
   onClose: () => void;
 }
 
 function AddRoleModal({ isModalOpen, onClose }: AddModalProps) {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    role_name: "",
+    staff_name: "",
+  });
+
   if (!isModalOpen) return null;
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); //TO DO: investigate what this does
+    // TODO: implement the loading
+    //TODO: implement error handling
+
+    try {
+      const response = await fetch("/api/roles", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(formData),
+        // Error handlng here
+      });
+      // todo: clean form
+    } catch (error) {
+      console.log(error);
+    } finally {
+      onClose();
+      router.refresh();
+    }
+  };
 
   return (
     <>
@@ -19,7 +59,7 @@ function AddRoleModal({ isModalOpen, onClose }: AddModalProps) {
           onClick={(e: React.MouseEvent) => e.stopPropagation()} //Prevents clicks inside the modal from bubbling up to the backdrop
         >
           <h2 className="mb-2 text-xl border-b-2">Add a new role</h2>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label
                 htmlFor="role_name"
@@ -30,6 +70,8 @@ function AddRoleModal({ isModalOpen, onClose }: AddModalProps) {
               <input
                 id="role_name"
                 type="text"
+                value={formData.role_name}
+                onChange={handleChange}
                 name="role_name"
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="General Manager"
@@ -46,6 +88,8 @@ function AddRoleModal({ isModalOpen, onClose }: AddModalProps) {
               <input
                 id="staff_name"
                 type="text"
+                value={formData.staff_name}
+                onChange={handleChange}
                 name="staff_name"
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Tom Waits"
