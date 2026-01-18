@@ -34,7 +34,22 @@ app.get("/roles", async (req: Request, res: Response) => {
     res.json(rows);
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ error: "Failed to fetch applications" });
+    res.status(500).json({ error: "Failed to fetch roles" });
+  }
+});
+
+app.post("/roles", async (req: Request, res: Response) => {
+  try {
+    console.log(req.body);
+    const formData = req.body;
+    console.log("Role:" + formData.role_name);
+    const [result] = await connection.execute(
+      "INSERT INTO role (role_name, staff_name) VALUES (? , ?)",
+      [formData.role_name, formData.staff_name]
+    );
+    res.status(200).json({ status: "ok" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create role" });
   }
 });
 
@@ -44,7 +59,7 @@ app.delete("/roles/:id", async (req: Request, res: Response) => {
     const [result] = await connection.execute("DELETE from role WHERE id = ?", [
       id,
     ]);
-    res.status(201).json({ message: "Role DELETED", result });
+    res.status(201).json({ message: "Role Deleted", result });
   } catch (error) {
     res.status(500).json({ message: "Unable to delete role" });
   }
