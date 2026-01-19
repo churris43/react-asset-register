@@ -84,6 +84,25 @@ app.get("/roles/:id", async (req: Request, res: Response) => {
   }
 });
 
+app.put("/roles/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const role_name = req.body.role_name;
+    const staff_name = req.body.staff_name;
+
+    console.log(role_name);
+    console.log(role_name);
+    const [result] = await connection.execute(
+      "UPDATE role SET role_name = ?, staff_name = ? WHERE id = ?",
+      [role_name, staff_name, id]
+    );
+    res.status(200).json({ message: "Role Updated", result });
+  } catch (error) {
+    res.status(500).json({ message: "Unable to edit role", error });
+  }
+});
+
 /**
  * CRITICAL FIX:
  * Bind to 0.0.0.0 so Nginx can reach the container
