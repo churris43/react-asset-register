@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 import type { Connection } from "mysql2/promise";
+import Role from "./types/Role";
 
 dotenv.config();
 
@@ -59,9 +60,26 @@ app.delete("/roles/:id", async (req: Request, res: Response) => {
     const [result] = await connection.execute("DELETE from role WHERE id = ?", [
       id,
     ]);
-    res.status(201).json({ message: "Role Deleted", result });
+    res.status(200).json({ message: "Role Deleted", result });
   } catch (error) {
     res.status(500).json({ message: "Unable to delete role" });
+  }
+});
+
+app.get("/roles/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const [result] = await connection.execute<Role[]>(
+      "SELECT * FROM role WHERE id = ?",
+      [id]
+    );
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Role not found" });
+    } else {
+      return res.status(200).json({ messages: "Role found and returned" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Unable to fetch role" });
   }
 });
 
