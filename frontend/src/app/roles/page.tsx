@@ -3,12 +3,7 @@ import DeleteButton from "@/src/components/DeleteButton";
 import AddRoleButton from "@/src/components/AddRoleButton";
 import EditRoleButton from "@/src/components/EditRoleButton";
 import { getRoles } from "@/src/external/api/roles/roles";
-
-interface Role {
-  id: number;
-  role_name: string;
-  staff_name: string;
-}
+import RoleInterface from "@/src/interfaces/role";
 
 async function Roles() {
   const roles = await getRoles();
@@ -24,7 +19,7 @@ async function Roles() {
           <div className="px-3 py-4">Staff Name</div>
           <div className="px-3 py-4 justify-self-end">Action</div>
         </div>
-        {roles.map((role: Role) => (
+        {roles.map((role: RoleInterface) => (
           <div
             key={role.id}
             className="grid grid-cols-4 border-b last:border-b-0 hover:bg-blue-500 transition-colors bg-blue-400  h-10 grid-cols-[80px_1fr_1fr_1fr]"
