@@ -4,38 +4,30 @@ import AddRoleButton from "@/src/components/AddRoleButton";
 import EditRoleButton from "@/src/components/EditRoleButton";
 import { getRoles } from "@/src/external/api/roles/roles";
 import RoleInterface from "@/src/interfaces/role";
+import TableHeading from "@/src/components/TableHeading";
+import RowActionButtons from "@/src/components/RowActionButtons";
 
 async function Roles() {
   const roles = await getRoles();
 
+  const headings = ["ID", "Role", "Staff Name"];
+
   return (
     <>
-      <h1 className="text-xl mb-4">Roles</h1>
-      <AddRoleButton />
+      <h1 className="text-xl mb-4">
+        Roles <AddRoleButton record="Role" />
+      </h1>
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
-        <div className="grid grid-cols-4 bg-slate-800 text-white font-semibold  h-10 grid-cols-[80px_1fr_1fr_1fr]">
-          <div className="px-3 py-4">ID</div>
-          <div className="px-3 py-4">Role</div>
-          <div className="px-3 py-4">Staff Name</div>
-          <div className="px-3 py-4 justify-self-end">Action</div>
-        </div>
+        <TableHeading headings={headings} />
         {roles.map((role: RoleInterface) => (
           <div
             key={role.id}
             className="grid grid-cols-4 border-b last:border-b-0 hover:bg-blue-500 transition-colors bg-blue-400  h-10 grid-cols-[80px_1fr_1fr_1fr]"
           >
             <div className="px-3 py-4">{role.id} </div>
-            <Link
-              className="underline text-sm ml-4 px-3 py-4"
-              href={`roles/${role.id}`}
-            >
-              {role.role_name}
-            </Link>
+            <span className="text-sm ml-4 px-3 py-4">{role.role_name}</span>
             <div className="px-3 py-4">{role.staff_name} </div>
-            <div className="justify-self-end px-2 py-4">
-              <EditRoleButton id={role.id} />
-              <DeleteButton record="roles" id={role.id} />
-            </div>
+            <RowActionButtons record="roles" id={role.id} />
           </div>
         ))}
       </div>
