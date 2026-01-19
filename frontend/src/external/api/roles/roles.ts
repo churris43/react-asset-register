@@ -1,7 +1,8 @@
 import RoleInterface from "@/src/interfaces/role";
+import headers from "@/src/utils/constants";
 
 export const getRoles = async () => {
-  // @todo: Need to work out how to proxy this
+  // @todo: Need to work out how to proxy this, this request comes fro the server
   const response = await fetch("http://api:3000/roles");
   if (!response.ok) {
     throw new Error("Failed to get roles");
@@ -10,9 +11,9 @@ export const getRoles = async () => {
   return data;
 };
 
-export const getRole = async (roleId: number) => {
+export const getRole = async (id: number) => {
   try {
-    const response = await fetch("/api/roles/" + roleId);
+    const response = await fetch("/api/roles/" + id);
     if (!response.ok) {
       throw new Error("Failed to get role");
     }
@@ -26,9 +27,7 @@ export const getRole = async (roleId: number) => {
 export const createRole = async (data: RoleInterface) => {
   const response = await fetch("/api/roles", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: headers,
     body: JSON.stringify(data),
   });
 
@@ -39,12 +38,10 @@ export const createRole = async (data: RoleInterface) => {
   return response.json();
 };
 
-export const editRole = async (roleId: number, data: RoleInterface) => {
-  const response = await fetch("/api/roles/" + roleId, {
+export const editRole = async (id: number, data: RoleInterface) => {
+  const response = await fetch("/api/roles/" + id, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: headers,
     body: JSON.stringify(data),
   });
 
@@ -58,9 +55,7 @@ export const editRole = async (roleId: number, data: RoleInterface) => {
 export const deleteRole = async (id: number) => {
   const res = await fetch("/api/roles/" + id, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: headers,
   });
   if (!res.ok) throw new Error("Failed to fetch data");
 };
