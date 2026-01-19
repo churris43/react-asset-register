@@ -3,7 +3,10 @@
 import { useState } from "react";
 import RoleModal from "./RoleModal";
 
-function AddRoleButton() {
+interface AddButtonProps {
+  record: string;
+}
+function AddButton({ record }: AddButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
@@ -12,15 +15,15 @@ function AddRoleButton() {
         className="border-2 rounded bg-blue-300 hover:bg-blue-300 text-white border-blue-500 py-1 px-2"
         onClick={() => setIsModalOpen(true)}
       >
-        Add Role
+        + Add {record}
       </button>
       <RoleModal
         isModalOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        roleId={0}
+        mode="add"
       />
     </>
   );
 }
 
-export default AddRoleButton;
+export default AddButton;

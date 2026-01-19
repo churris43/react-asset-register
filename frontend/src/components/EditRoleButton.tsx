@@ -12,17 +12,6 @@ interface EditProps {
 
 function EditRoleButton({ id }: EditProps) {
   const router = useRouter();
-
-  const EditButton = async () => {
-    try {
-      const res = await EditRole(id);
-    } catch (error) {
-      //todo: Error Handling
-    } finally {
-      router.refresh();
-    }
-  };
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -33,7 +22,8 @@ function EditRoleButton({ id }: EditProps) {
       <RoleModal
         isModalOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        roleId={id}
+        id={id}
+        mode="edit"
       />
     </>
   );

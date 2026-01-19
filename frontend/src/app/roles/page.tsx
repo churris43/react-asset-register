@@ -1,7 +1,4 @@
-import Link from "next/link";
-import DeleteButton from "@/src/components/DeleteButton";
-import AddRoleButton from "@/src/components/AddRoleButton";
-import EditRoleButton from "@/src/components/EditRoleButton";
+import AddButton from "@/src/components/AddButton";
 import { getRoles } from "@/src/external/api/roles/roles";
 import RoleInterface from "@/src/interfaces/role";
 import TableHeading from "@/src/components/TableHeading";
@@ -15,7 +12,7 @@ async function Roles() {
   return (
     <>
       <h1 className="text-xl mb-4">
-        Roles <AddRoleButton record="Role" />
+        Roles <AddButton record="Role" />
       </h1>
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
         <TableHeading headings={headings} />

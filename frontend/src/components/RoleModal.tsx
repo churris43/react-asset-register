@@ -7,10 +7,11 @@ import { createRole, editRole, getRole } from "../external/api/roles/roles";
 interface AddModalProps {
   isModalOpen: boolean;
   onClose: () => void;
-  roleId: number;
+  id?: number;
+  mode: string;
 }
 
-function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
+function RoleModal({ isModalOpen, onClose, id, mode }: AddModalProps) {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -22,10 +23,10 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
     if (!isModalOpen) return; // Skip fetching if modal is closed
 
     // This can be changed and get this passed from the parent object as opposed to fetching it from the Db
-    if (roleId > 0) {
+    if (mode != "add") {
       const fetchRecord = async () => {
         try {
-          const data = await getRole(roleId);
+          const data = await getRole(id);
           setFormData({
             role_name: data.role_name,
             staff_name: data.staff_name,
@@ -36,7 +37,7 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
       };
       fetchRecord();
     }
-  }, [roleId, isModalOpen]);
+  }, [id, isModalOpen]);
 
   if (!isModalOpen) return; // Skip fetching if modal is closed
 
@@ -48,7 +49,7 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
     }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleAdd = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: implement the loading
     try {
@@ -67,7 +68,7 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
     e.preventDefault(); //TO DO: investigate what this does
 
     try {
-      const response = await editRole(roleId, formData);
+      const response = await editRole(id, formData);
       // todo: clean form
     } catch (error) {
       console.log(error);
@@ -88,7 +89,7 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
           onClick={(e: React.MouseEvent) => e.stopPropagation()} //Prevents clicks inside the modal from bubbling up to the backdrop
         >
           <h2 className="mb-2 text-xl border-b-2">Add a new role</h2>
-          <form onSubmit={roleId > 0 ? handleEdit : handleSubmit}>
+          <form onSubmit={mode == "add" ? handleAdd : handleEdit}>
             <div className="mb-4">
               <label
                 htmlFor="role_name"
@@ -132,7 +133,7 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
                 Close
               </button>
               <button className="border-2 rounded bg-blue-300 hover:bg-blue-300 text-white border-blue-500 py-1 px-2">
-                {roleId > 0 ? "Save" : "Add"}
+                {id > 0 ? "Save" : "Add"}
               </button>
             </div>
           </form>
