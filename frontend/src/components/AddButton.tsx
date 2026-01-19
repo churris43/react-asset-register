@@ -21,6 +21,7 @@ function AddButton({ record }: AddButtonProps) {
         isModalOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         mode="add"
+        id={0}
       />
     </>
   );

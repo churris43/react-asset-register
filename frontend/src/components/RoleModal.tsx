@@ -7,7 +7,7 @@ import { createRole, editRole, getRole } from "../external/api/roles/roles";
 interface AddModalProps {
   isModalOpen: boolean;
   onClose: () => void;
-  id?: number;
+  id: number;
   mode: string;
 }
 
@@ -15,6 +15,7 @@ function RoleModal({ isModalOpen, onClose, id, mode }: AddModalProps) {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
+    id: 0,
     role_name: "",
     staff_name: "",
   });
@@ -28,6 +29,7 @@ function RoleModal({ isModalOpen, onClose, id, mode }: AddModalProps) {
         try {
           const data = await getRole(id);
           setFormData({
+            id: data.id,
             role_name: data.role_name,
             staff_name: data.staff_name,
           });
@@ -133,7 +135,7 @@ function RoleModal({ isModalOpen, onClose, id, mode }: AddModalProps) {
                 Close
               </button>
               <button className="border-2 rounded bg-blue-300 hover:bg-blue-300 text-white border-blue-500 py-1 px-2">
-                {id > 0 ? "Save" : "Add"}
+                {mode == "edit" ? "Save" : "Add"}
               </button>
             </div>
           </form>
