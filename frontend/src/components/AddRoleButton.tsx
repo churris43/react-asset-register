@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import AddRoleModal from "./AddRoleModal";
+import RoleModal from "./RoleModal";
 
 function AddRoleButton() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -14,9 +14,10 @@ function AddRoleButton() {
       >
         Add Role
       </button>
-      <AddRoleModal
+      <RoleModal
         isModalOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        roleId={0}
       />
     </>
   );

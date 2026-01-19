@@ -74,6 +74,29 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
     }
   };
 
+  const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); //TO DO: investigate what this does
+    // TODO: implement the loading
+    //TODO: implement error handling
+
+    try {
+      const response = await fetch("/api/roles/" + roleId, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(formData),
+        // Error handlng here
+      });
+      // todo: clean form
+    } catch (error) {
+      console.log(error);
+    } finally {
+      onClose();
+      router.refresh();
+    }
+  };
+
   return (
     <>
       <div
@@ -85,7 +108,7 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
           onClick={(e: React.MouseEvent) => e.stopPropagation()} //Prevents clicks inside the modal from bubbling up to the backdrop
         >
           <h2 className="mb-2 text-xl border-b-2">Add a new role</h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={roleId > 0 ? handleEdit : handleSubmit}>
             <div className="mb-4">
               <label
                 htmlFor="role_name"
