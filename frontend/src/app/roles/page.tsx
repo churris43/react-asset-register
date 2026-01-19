@@ -1,6 +1,7 @@
 import Link from "next/link";
 import DeleteButton from "@/src/components/DeleteButton";
 import AddRoleButton from "@/src/components/AddRoleButton";
+import EditRoleButton from "@/src/components/EditRoleButton";
 
 interface Role {
   id: number;
@@ -39,7 +40,10 @@ async function Roles() {
               {role.role_name}
             </Link>
             <div className="px-3 py-4">{role.staff_name} </div>
-            <DeleteButton record="roles" id={role.id} />
+            <div className="justify-self-end px-2 py-4">
+              <EditRoleButton id={role.id} />
+              <DeleteButton record="roles" id={role.id} />
+            </div>
           </div>
         ))}
       </div>

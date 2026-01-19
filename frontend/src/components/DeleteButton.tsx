@@ -22,7 +22,7 @@ function DeleteButton({ record, id }: DeleteProps) {
 
   return (
     <>
-      <button onClick={DeleteButton} className="justify-self-end">
+      <button onClick={DeleteButton}>
         <MdDelete className="h-4 w-4" />
       </button>
     </>
