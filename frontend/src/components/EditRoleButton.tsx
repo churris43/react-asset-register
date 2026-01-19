@@ -4,6 +4,7 @@ import { MdEdit } from "react-icons/md";
 import RoleModal from "./RoleModal";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import EditRole from "../external/api/roles/roles";
 
 interface EditProps {
   id: number;
@@ -13,14 +14,13 @@ function EditRoleButton({ id }: EditProps) {
   const router = useRouter();
 
   const EditButton = async () => {
-    const res = await fetch("/api/roles/" + id.toString(), {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!res.ok) throw new Error("Failed to update data");
-    router.refresh();
+    try {
+      const res = await EditRole(id);
+    } catch (error) {
+      //todo: Error Handling
+    } finally {
+      router.refresh();
+    }
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);

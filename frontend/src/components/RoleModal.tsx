@@ -2,6 +2,7 @@
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createRole, editRole, getRole } from "../external/api/roles/roles";
 
 interface AddModalProps {
   isModalOpen: boolean;
@@ -24,10 +25,7 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
     if (roleId > 0) {
       const fetchRecord = async () => {
         try {
-          const response = await fetch("/api/roles/" + roleId);
-          if (!response.ok) throw new Error("Failed to fetch data");
-
-          const data = await response.json();
+          const data = await getRole(roleId);
           setFormData({
             role_name: data.role_name,
             staff_name: data.staff_name,
@@ -36,7 +34,6 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
           console.log(error);
         }
       };
-
       fetchRecord();
     }
   }, [roleId, isModalOpen]);
@@ -52,21 +49,13 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); //TO DO: investigate what this does
+    e.preventDefault();
     // TODO: implement the loading
-    //TODO: implement error handling
-
     try {
-      const response = await fetch("/api/roles", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(formData),
-        // Error handlng here
-      });
+      const response = await createRole(formData);
       // todo: clean form
     } catch (error) {
+      //TODO: implement error handling
       console.log(error);
     } finally {
       onClose();
@@ -76,18 +65,9 @@ function RoleModal({ isModalOpen, onClose, roleId }: AddModalProps) {
 
   const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); //TO DO: investigate what this does
-    // TODO: implement the loading
-    //TODO: implement error handling
 
     try {
-      const response = await fetch("/api/roles/" + roleId, {
-        method: "PUT",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(formData),
-        // Error handlng here
-      });
+      const response = await editRole(roleId, formData);
       // todo: clean form
     } catch (error) {
       console.log(error);

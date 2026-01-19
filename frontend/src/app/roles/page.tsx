@@ -2,6 +2,7 @@ import Link from "next/link";
 import DeleteButton from "@/src/components/DeleteButton";
 import AddRoleButton from "@/src/components/AddRoleButton";
 import EditRoleButton from "@/src/components/EditRoleButton";
+import { getRoles } from "@/src/external/api/roles/roles";
 
 interface Role {
   id: number;
@@ -10,11 +11,7 @@ interface Role {
 }
 
 async function Roles() {
-  // @todo: Need to work out how to proxy this
-  const response = await fetch("http://api:3000/roles");
-  if (!response.ok) throw new Error("Failed to fetch data");
-
-  const roles = await response.json();
+  const roles = await getRoles();
 
   return (
     <>
