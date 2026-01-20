@@ -3,15 +3,14 @@
 import { MdEdit } from "react-icons/md";
 import RoleModal from "./RoleModal";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import EditRole from "../external/api/roles/roles";
+import Field from "../interfaces/field";
 
 interface EditProps {
   id: number;
+  fields: Field[];
 }
 
-function EditRoleButton({ id }: EditProps) {
-  const router = useRouter();
+function EditRoleButton({ id, fields }: EditProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -24,6 +23,7 @@ function EditRoleButton({ id }: EditProps) {
         onClose={() => setIsModalOpen(false)}
         id={id}
         mode="edit"
+        fields={fields}
       />
     </>
   );

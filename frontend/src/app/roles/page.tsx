@@ -4,11 +4,17 @@ import RoleInterface from "@/src/interfaces/role";
 import TableHeading from "@/src/components/TableHeading";
 import RowActionButtons from "@/src/components/RowActionButtons";
 import deleteRole from "../actions/roleActions";
+import Field from "../../interfaces/field";
 
 async function Roles() {
   const roles = await getRoles();
 
   const headings = ["ID", "Role", "Staff Name"];
+
+  const fields: Array<Field> = [
+    { name: "role_name", label: "Role", required: true, type: "text" },
+    { name: "staff_name", label: "Staff Name", required: true, type: "text" },
+  ];
 
   return (
     <>
@@ -29,6 +35,7 @@ async function Roles() {
               record="roles"
               id={role.id}
               deleteAction={deleteRole.bind(null, role.id)}
+              fields={fields}
             />
           </div>
         ))}

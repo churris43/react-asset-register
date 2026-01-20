@@ -3,15 +3,17 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createRole, editRole, getRole } from "../external/api/roles/roles";
+import Field from "../interfaces/field";
 
 interface AddModalProps {
   isModalOpen: boolean;
   onClose: () => void;
   id: number;
   mode: string;
+  fields: Field[];
 }
 
-function RoleModal({ isModalOpen, onClose, id, mode }: AddModalProps) {
+function RoleModal({ isModalOpen, onClose, id, mode, fields }: AddModalProps) {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -92,41 +94,26 @@ function RoleModal({ isModalOpen, onClose, id, mode }: AddModalProps) {
         >
           <h2 className="mb-2 text-xl border-b-2">Add a new role</h2>
           <form onSubmit={mode == "add" ? handleAdd : handleEdit}>
-            <div className="mb-4">
-              <label
-                htmlFor="role_name"
-                className="block text-sm font-medium mb-2"
-              >
-                Role *
-              </label>
-              <input
-                id="role_name"
-                type="text"
-                value={formData.role_name}
-                onChange={handleChange}
-                name="role_name"
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="General Manager"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="staff_name"
-                className="block text-sm font-medium mb-2"
-              >
-                Staff Name
-              </label>
-              <input
-                id="staff_name"
-                type="text"
-                value={formData.staff_name}
-                onChange={handleChange}
-                name="staff_name"
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Tom Waits"
-              />
-            </div>
+            {fields.map((field) => (
+              <div className="mb-4" key={field.label}>
+                <label
+                  htmlFor={field.name}
+                  className="block text-sm font-medium mb-2"
+                >
+                  {field.label}
+                </label>
+                <input
+                  id={field.name}
+                  type={field.type}
+                  value={formData[field.name] || ""}
+                  onChange={handleChange}
+                  name={field.name}
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder={field.placeholder}
+                  required={field.required}
+                />
+              </div>
+            ))}
             <div className="flex justify-end space-x-3">
               <button
                 onClick={onClose}
