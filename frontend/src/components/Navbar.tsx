@@ -14,6 +14,9 @@ function Navbar() {
             <Link href="assets" className="navbar-item">
               Asset Register
             </Link>
+            <Link href="assetTypes" className="navbar-item">
+              Asset Types
+            </Link>
             <Link href="roles" className="navbar-item">
               Roles
             </Link>
