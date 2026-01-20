@@ -1,28 +1,28 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { MdDelete } from "react-icons/md";
-import { deleteRole } from "../external/api/roles/roles";
+import { useTransition } from "react";
+
 interface DeleteProps {
   record: string;
   id: number;
+  deleteAction: () => Promise<{ success: boolean; error?: string }>;
 }
 
-function DeleteButton({ record, id }: DeleteProps) {
-  const router = useRouter();
+function DeleteButton({ record, id, deleteAction }: DeleteProps) {
+  const [isPending, startTransition] = useTransition();
 
-  const DeleteButton = async () => {
-    try {
-      const res = await deleteRole(id);
-    } catch {
-      //todo: Error Handling
-    } finally {
-      router.refresh();
+  const handleDelete = () => {
+    if (!confirm(`Are you sure you want to delete this ${record}?`)) {
+      return;
     }
+    startTransition(async () => {
+      const result = await deleteAction();
+    });
   };
 
   return (
     <>
-      <button onClick={DeleteButton}>
+      <button onClick={handleDelete}>
         <MdDelete className="h-4 w-4" />
       </button>
     </>

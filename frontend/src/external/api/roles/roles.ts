@@ -38,6 +38,7 @@ export const createRole = async (data: RoleInterface) => {
   return response.json();
 };
 
+//todo: delete me
 export const editRole = async (id: number, data: RoleInterface) => {
   const response = await fetch("/api/roles/" + id, {
     method: "PUT",
@@ -52,12 +53,4 @@ export const editRole = async (id: number, data: RoleInterface) => {
   return response.json();
 };
 
-export const deleteRole = async (id: number) => {
-  const res = await fetch("/api/roles/" + id, {
-    method: "DELETE",
-    headers: headers,
-  });
-  if (!res.ok) throw new Error("Failed to fetch data");
-};
-
-export default deleteRole;
+export default editRole;

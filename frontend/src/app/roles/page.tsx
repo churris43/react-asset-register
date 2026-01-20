@@ -3,6 +3,7 @@ import { getRoles } from "@/src/external/api/roles/roles";
 import RoleInterface from "@/src/interfaces/role";
 import TableHeading from "@/src/components/TableHeading";
 import RowActionButtons from "@/src/components/RowActionButtons";
+import deleteRole from "../actions/roleActions";
 
 async function Roles() {
   const roles = await getRoles();
@@ -24,7 +25,11 @@ async function Roles() {
             <div className="px-3 py-4">{role.id} </div>
             <span className="text-sm ml-4 px-3 py-4">{role.role_name}</span>
             <div className="px-3 py-4">{role.staff_name} </div>
-            <RowActionButtons record="roles" id={role.id} />
+            <RowActionButtons
+              record="roles"
+              id={role.id}
+              deleteAction={deleteRole.bind(null, role.id)}
+            />
           </div>
         ))}
       </div>
