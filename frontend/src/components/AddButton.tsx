@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import RoleModal from "./RoleModal";
+import GenericModal from "./GenericModal";
 import Field from "../interfaces/field";
 
 interface AddButtonProps {
@@ -20,7 +20,7 @@ function AddButton({ record, fields, createAction }: AddButtonProps) {
       >
         + Add {record}
       </button>
-      <RoleModal
+      <GenericModal
         isModalOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         mode="add"

@@ -1,7 +1,7 @@
 "use client";
 
 import { MdEdit } from "react-icons/md";
-import RoleModal from "./RoleModal";
+import GenericModal from "./GenericModal";
 import { useState } from "react";
 import Field from "../interfaces/field";
 
@@ -20,7 +20,7 @@ function EditRoleButton({ id, fields, getAction, editAction }: EditProps) {
       <button className="" onClick={() => setIsModalOpen(true)}>
         <MdEdit className="h-4 w-4" />
       </button>
-      <RoleModal
+      <GenericModal
         isModalOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         id={id}

@@ -17,7 +17,7 @@ interface AddModalProps {
   createAction?: (data: any) => Promise<{ success: boolean; error?: string }>;
 }
 
-function RoleModal({
+function GenericModal({
   isModalOpen,
   onClose,
   id,
@@ -99,7 +99,9 @@ function RoleModal({
           className="bg-black rounded-lg p-6 max-w-md w-full mx-4 border-2 border-white"
           onClick={(e: React.MouseEvent) => e.stopPropagation()} //Prevents clicks inside the modal from bubbling up to the backdrop
         >
-          <h2 className="mb-2 text-xl border-b-2">Add a new role</h2>
+          <h2 className="mb-2 text-xl border-b-2">
+            {mode == "add" ? " Add new record" : "Edit Record"}
+          </h2>
           <form onSubmit={mode == "add" ? handleAdd : handleEdit}>
             {fields.map((field) => (
               <div className="mb-4" key={field.label}>
@@ -139,4 +141,4 @@ function RoleModal({
   );
 }
 
-export default RoleModal;
+export default GenericModal;
