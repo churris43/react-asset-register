@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import RoleModal from "./RoleModal";
+import Field from "../interfaces/field";
 
 interface AddButtonProps {
   record: string;
+  fields: Field[];
 }
-function AddButton({ record }: AddButtonProps) {
+function AddButton({ record, fields }: AddButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
@@ -22,6 +24,7 @@ function AddButton({ record }: AddButtonProps) {
         onClose={() => setIsModalOpen(false)}
         mode="add"
         id={0}
+        fields={fields}
       />
     </>
   );

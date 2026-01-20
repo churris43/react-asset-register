@@ -5,6 +5,7 @@ interface Field {
   required?: boolean;
   placeholder?: string;
   class?: string;
+  defaultValue?: string | number;
 }
 
 export default Field;

@@ -12,14 +12,23 @@ async function Roles() {
   const headings = ["ID", "Role", "Staff Name"];
 
   const fields: Array<Field> = [
-    { name: "role_name", label: "Role", required: true, type: "text" },
-    { name: "staff_name", label: "Staff Name", required: true, type: "text" },
+    {
+      name: "role_name",
+      label: "Role",
+      required: true,
+      type: "text",
+    },
+    {
+      name: "staff_name",
+      label: "Staff Name",
+      type: "text",
+    },
   ];
 
   return (
     <>
       <h1 className="text-xl mb-4">
-        Roles <AddButton record="Role" />
+        Roles <AddButton record="Role" fields={fields} />
       </h1>
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
         <TableHeading headings={headings} />

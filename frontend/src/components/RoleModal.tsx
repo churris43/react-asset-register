@@ -16,11 +16,13 @@ interface AddModalProps {
 function RoleModal({ isModalOpen, onClose, id, mode, fields }: AddModalProps) {
   const router = useRouter();
 
-  const [formData, setFormData] = useState({
-    id: 0,
-    role_name: "",
-    staff_name: "",
-  });
+  const defaultValues = (fields: Field[]): Record<string, string | number> => {
+    return Object.fromEntries(
+      fields.map(({ name, defaultValue }) => [name, defaultValue || ""]),
+    );
+  };
+
+  const [formData, setFormData] = useState(defaultValues(fields));
 
   useEffect(() => {
     if (!isModalOpen) return; // Skip fetching if modal is closed
@@ -30,11 +32,7 @@ function RoleModal({ isModalOpen, onClose, id, mode, fields }: AddModalProps) {
       const fetchRecord = async () => {
         try {
           const data = await getRole(id);
-          setFormData({
-            id: data.id,
-            role_name: data.role_name,
-            staff_name: data.staff_name,
-          });
+          setFormData(data);
         } catch (error) {
           console.log(error);
         }
