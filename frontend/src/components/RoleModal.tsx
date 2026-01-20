@@ -1,8 +1,6 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { createRole, editRole } from "../external/api/roles/roles";
 import Field from "../interfaces/field";
 
 interface AddModalProps {
@@ -16,6 +14,7 @@ interface AddModalProps {
     id: number,
     data: any,
   ) => Promise<{ success: boolean; error?: string }>;
+  createAction?: (data: any) => Promise<{ success: boolean; error?: string }>;
 }
 
 function RoleModal({
@@ -26,9 +25,8 @@ function RoleModal({
   fields,
   getAction,
   editAction,
+  createAction,
 }: AddModalProps) {
-  const router = useRouter();
-
   const defaultValues = (fields: Field[]): Record<string, string | number> => {
     return Object.fromEntries(
       fields.map(({ name, defaultValue }) => [name, defaultValue || ""]),
@@ -68,14 +66,13 @@ function RoleModal({
     e.preventDefault();
     // TODO: implement the loading
     try {
-      const response = await createRole(formData);
+      const response = await createAction(formData);
       // todo: clean form
     } catch (error) {
       //TODO: implement error handling
       console.log(error);
     } finally {
       onClose();
-      router.refresh();
     }
   };
 
@@ -89,7 +86,6 @@ function RoleModal({
       console.log(error);
     } finally {
       onClose();
-      router.refresh();
     }
   };
 

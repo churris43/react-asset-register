@@ -1,10 +1,13 @@
 import AddButton from "@/src/components/AddButton";
-import { getRoles } from "@/src/external/api/roles/roles";
 import RoleInterface from "@/src/interfaces/role";
 import TableHeading from "@/src/components/TableHeading";
 import RowActionButtons from "@/src/components/RowActionButtons";
-import deleteRole, { editRole } from "../actions/roleActions";
-import { getRole } from "../actions/roleActions";
+import deleteRole, {
+  createRole,
+  editRole,
+  getRole,
+  getRoles,
+} from "../actions/roleActions";
 import Field from "../../interfaces/field";
 
 async function Roles() {
@@ -29,7 +32,8 @@ async function Roles() {
   return (
     <>
       <h1 className="text-xl mb-4">
-        Roles <AddButton record="Role" fields={fields} />
+        Roles{" "}
+        <AddButton record="Role" fields={fields} createAction={createRole} />
       </h1>
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
         <TableHeading headings={headings} />

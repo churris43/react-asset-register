@@ -7,8 +7,9 @@ import Field from "../interfaces/field";
 interface AddButtonProps {
   record: string;
   fields: Field[];
+  createAction: () => Promise<{ success: boolean; error?: string }>;
 }
-function AddButton({ record, fields }: AddButtonProps) {
+function AddButton({ record, fields, createAction }: AddButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
@@ -25,6 +26,7 @@ function AddButton({ record, fields }: AddButtonProps) {
         mode="add"
         id={0}
         fields={fields}
+        createAction={createAction}
       />
     </>
   );
