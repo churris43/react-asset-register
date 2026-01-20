@@ -7,7 +7,7 @@ import Field from "../interfaces/field";
 interface AddButtonProps {
   record: string;
   fields: Field[];
-  createAction: () => Promise<{ success: boolean; error?: string }>;
+  createAction: (data: any) => Promise<{ success: boolean; error?: string }>;
 }
 function AddButton({ record, fields, createAction }: AddButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

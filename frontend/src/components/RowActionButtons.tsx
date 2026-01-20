@@ -8,7 +8,11 @@ interface RowActionButtonsProps {
   deleteAction: () => Promise<{ success: boolean; error?: string }>;
   fields: Field[];
   getAction: () => Promise<{ success: boolean; error?: string }>;
-  editAction: () => Promise<{ success: boolean; error?: string }>;
+  //editAction: () => Promise<{ success: boolean; error?: string }>;
+  editAction?: (
+    id: number,
+    data: any,
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 function RowActionButtons({

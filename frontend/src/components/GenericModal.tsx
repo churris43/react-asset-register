@@ -9,7 +9,7 @@ interface AddModalProps {
   id: number;
   mode: string;
   fields: Field[];
-  getAction?: () => Promise<{ success: boolean; error?: string }>;
+  getAction?: () => Promise<any>;
   editAction?: (
     id: number,
     data: any,
@@ -42,7 +42,7 @@ function GenericModal({
     if (mode != "add") {
       const fetchRecord = async () => {
         try {
-          const data = await getAction();
+          const data = getAction ? await getAction() : null;
           setFormData(data);
         } catch (error) {
           console.log(error);
@@ -66,7 +66,7 @@ function GenericModal({
     e.preventDefault();
     // TODO: implement the loading
     try {
-      const response = await createAction(formData);
+      const response = createAction ? await createAction(formData) : null;
       // todo: clean form
     } catch (error) {
       //TODO: implement error handling
@@ -80,7 +80,7 @@ function GenericModal({
     e.preventDefault();
 
     try {
-      const response = await editAction(id, formData);
+      const response = editAction ? await editAction(id, formData) : null;
       // todo: clean form
     } catch (error) {
       console.log(error);

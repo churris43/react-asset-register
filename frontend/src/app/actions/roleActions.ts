@@ -4,15 +4,20 @@ import { revalidatePath } from "next/cache";
 import RoleInterface from "@/src/interfaces/role";
 
 export async function deleteRole(id: number) {
-  const res = await fetch("http://api:3000/roles/" + id, {
-    method: "DELETE",
-    headers: {
-      // todo: use the utils constant
-      "Content-Type": "application/json",
-    },
-  });
-  if (!res.ok) throw new Error("Failed to fetch data");
-  revalidatePath("/roles");
+  try {
+    const res = await fetch("http://api:3000/roles/" + id, {
+      method: "DELETE",
+      headers: {
+        // todo: use the utils constant
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) throw new Error("Failed to fetch data");
+    revalidatePath("/roles");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: "Failed to create role" };
+  }
 }
 
 export async function getRoles() {
@@ -43,29 +48,40 @@ export async function getRole(id: number) {
 }
 
 export async function editRole(id: number, data: RoleInterface) {
-  const res = await fetch("http://api:3000/roles/" + id, {
-    method: "PUT",
-    // todo: refactor to get the headers in utils
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+  try {
+    const res = await fetch("http://api:3000/roles/" + id, {
+      method: "PUT",
+      // todo: refactor to get the headers in utils
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-  if (!res.ok) throw new Error("Failed to edit the role");
-  revalidatePath("/roles");
+    if (!res.ok) throw new Error("Failed to edit the role");
+    revalidatePath("/roles");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: "Failed to create role" };
+  }
 }
 
 export async function createRole(data: RoleInterface) {
-  const res = await fetch("http://api:3000/roles/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+  try {
+    const res = await fetch("http://api:3000/roles/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-  if (!res.ok) throw new Error("Failed to create role");
-  revalidatePath("/roles");
+    if (!res.ok) throw new Error("Failed to create role");
+
+    revalidatePath("/roles");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: "Failed to create role" };
+  }
 }
 export default deleteRole;

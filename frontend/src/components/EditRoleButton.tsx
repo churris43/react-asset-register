@@ -9,7 +9,11 @@ interface EditProps {
   id: number;
   fields: Field[];
   getAction: () => Promise<{ success: boolean; error?: string }>;
-  editAction: () => Promise<{ success: boolean; error?: string }>;
+  //editAction: () => Promise<{ success: boolean; error?: string }>;
+  editAction?: (
+    id: number,
+    data: any,
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 function EditRoleButton({ id, fields, getAction, editAction }: EditProps) {
