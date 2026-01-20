@@ -72,6 +72,7 @@ function GenericModal({
       //TODO: implement error handling
       console.log(error);
     } finally {
+      setFormData(defaultValues(fields)); // Reset modal values to default
       onClose();
     }
   };
