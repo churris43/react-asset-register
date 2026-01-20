@@ -2,7 +2,7 @@
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createRole, editRole, getRole } from "../external/api/roles/roles";
+import { createRole, editRole } from "../external/api/roles/roles";
 import Field from "../interfaces/field";
 
 interface AddModalProps {
@@ -11,9 +11,17 @@ interface AddModalProps {
   id: number;
   mode: string;
   fields: Field[];
+  getAction: () => Promise<{ success: boolean; error?: string }>;
 }
 
-function RoleModal({ isModalOpen, onClose, id, mode, fields }: AddModalProps) {
+function RoleModal({
+  isModalOpen,
+  onClose,
+  id,
+  mode,
+  fields,
+  getAction,
+}: AddModalProps) {
   const router = useRouter();
 
   const defaultValues = (fields: Field[]): Record<string, string | number> => {
@@ -31,7 +39,7 @@ function RoleModal({ isModalOpen, onClose, id, mode, fields }: AddModalProps) {
     if (mode != "add") {
       const fetchRecord = async () => {
         try {
-          const data = await getRole(id);
+          const data = await getAction();
           setFormData(data);
         } catch (error) {
           console.log(error);

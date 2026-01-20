@@ -4,6 +4,7 @@ import RoleInterface from "@/src/interfaces/role";
 import TableHeading from "@/src/components/TableHeading";
 import RowActionButtons from "@/src/components/RowActionButtons";
 import deleteRole from "../actions/roleActions";
+import { getRole } from "../actions/roleActions";
 import Field from "../../interfaces/field";
 
 async function Roles() {
@@ -44,6 +45,7 @@ async function Roles() {
               record="roles"
               id={role.id}
               deleteAction={deleteRole.bind(null, role.id)}
+              getAction={getRole.bind(null, role.id)}
               fields={fields}
             />
           </div>

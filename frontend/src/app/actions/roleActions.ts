@@ -14,4 +14,17 @@ export async function deleteRole(id: number) {
   revalidatePath("/roles"); // Adjust path to match your route
 }
 
+export async function getRole(id: number) {
+  try {
+    const response = await fetch("http://api:3000/roles/" + id);
+    if (!response.ok) {
+      throw new Error("Failed to get role");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export default deleteRole;

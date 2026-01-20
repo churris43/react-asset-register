@@ -7,6 +7,7 @@ interface RowActionButtonsProps {
   record: string;
   deleteAction: () => Promise<{ success: boolean; error?: string }>; // No ID needed
   fields: Field[];
+  getAction: () => Promise<{ success: boolean; error?: string }>; // No ID needed
 }
 
 function RowActionButtons({
@@ -14,10 +15,11 @@ function RowActionButtons({
   record,
   deleteAction,
   fields,
+  getAction,
 }: RowActionButtonsProps) {
   return (
     <div className="justify-self-end px-2 py-4">
-      <EditRoleButton id={id} fields={fields} />
+      <EditRoleButton id={id} fields={fields} getAction={getAction} />
       <DeleteButton record={record} id={id} deleteAction={deleteAction} />
     </div>
   );

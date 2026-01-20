@@ -8,9 +8,10 @@ import Field from "../interfaces/field";
 interface EditProps {
   id: number;
   fields: Field[];
+  getAction: () => Promise<{ success: boolean; error?: string }>; // No ID needed
 }
 
-function EditRoleButton({ id, fields }: EditProps) {
+function EditRoleButton({ id, fields, getAction }: EditProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -24,6 +25,7 @@ function EditRoleButton({ id, fields }: EditProps) {
         id={id}
         mode="edit"
         fields={fields}
+        getAction={getAction}
       />
     </>
   );

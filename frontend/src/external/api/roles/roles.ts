@@ -11,19 +11,6 @@ export const getRoles = async () => {
   return data;
 };
 
-export const getRole = async (id: number) => {
-  try {
-    const response = await fetch("/api/roles/" + id);
-    if (!response.ok) {
-      throw new Error("Failed to get role");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 export const createRole = async (data: RoleInterface) => {
   const response = await fetch("/api/roles", {
     method: "POST",
