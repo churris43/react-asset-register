@@ -46,7 +46,7 @@ app.post("/roles", async (req: Request, res: Response) => {
     console.log("Role:" + formData.role_name);
     const [result] = await connection.execute(
       "INSERT INTO role (role_name, staff_name) VALUES (? , ?)",
-      [formData.role_name, formData.staff_name]
+      [formData.role_name, formData.staff_name],
     );
     res.status(200).json({ status: "ok" });
   } catch (error) {
@@ -71,7 +71,7 @@ app.get("/roles/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     const [rows] = await connection.execute<Role[]>(
       "SELECT * FROM role WHERE id = ?",
-      [id]
+      [id],
     );
     if (rows.length === 0) {
       return res.status(404).json({ message: "Role not found" });
@@ -95,11 +95,82 @@ app.put("/roles/:id", async (req: Request, res: Response) => {
     console.log(role_name);
     const [result] = await connection.execute(
       "UPDATE role SET role_name = ?, staff_name = ? WHERE id = ?",
-      [role_name, staff_name, id]
+      [role_name, staff_name, id],
     );
     res.status(200).json({ message: "Role Updated", result });
   } catch (error) {
     res.status(500).json({ message: "Unable to edit role", error });
+  }
+});
+
+app.get("/assettypes", async (req: Request, res: Response) => {
+  try {
+    const [rows] = await connection.execute("SELECT * FROM asset_type");
+    res.json(rows);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Failed to fetch asset types" });
+  }
+});
+
+app.get("/assettypes/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const [rows] = await connection.execute<Role[]>(
+      "SELECT * FROM asset_type WHERE id = ?",
+      [id],
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Asset type not found" });
+    } else {
+      const result = (rows as Role[])[0];
+      res.status(200).json(result);
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Unable to fetch asset type" });
+  }
+});
+
+app.post("/assettypes", async (req: Request, res: Response) => {
+  try {
+    console.log(req.body);
+    const formData = req.body;
+    const [result] = await connection.execute(
+      "INSERT INTO asset_type (asset_type_name) VALUES (? )",
+      [formData.asset_type_name],
+    );
+    res.status(200).json({ status: "ok" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create asset type" });
+  }
+});
+
+app.delete("/assettypes/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const [result] = await connection.execute(
+      "DELETE from asset_type WHERE id = ?",
+      [id],
+    );
+    res.status(200).json({ message: "Asset Type Deleted", result });
+  } catch (error) {
+    res.status(500).json({ message: "Unable to delete asset type" });
+  }
+});
+
+app.put("/assettypes/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const asset_type_name = req.body.asset_type_name;
+
+    const [result] = await connection.execute(
+      "UPDATE asset_type SET asset_type_name = ? WHERE id = ?",
+      [asset_type_name, id],
+    );
+    res.status(200).json({ message: "Asset type Updated", result });
+  } catch (error) {
+    res.status(500).json({ message: "Unable to edit asset type", error });
   }
 });
 
