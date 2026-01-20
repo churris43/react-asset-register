@@ -3,7 +3,7 @@ import { getRoles } from "@/src/external/api/roles/roles";
 import RoleInterface from "@/src/interfaces/role";
 import TableHeading from "@/src/components/TableHeading";
 import RowActionButtons from "@/src/components/RowActionButtons";
-import deleteRole from "../actions/roleActions";
+import deleteRole, { editRole } from "../actions/roleActions";
 import { getRole } from "../actions/roleActions";
 import Field from "../../interfaces/field";
 
@@ -46,6 +46,7 @@ async function Roles() {
               id={role.id}
               deleteAction={deleteRole.bind(null, role.id)}
               getAction={getRole.bind(null, role.id)}
+              editAction={editRole}
               fields={fields}
             />
           </div>

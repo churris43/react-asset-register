@@ -11,7 +11,11 @@ interface AddModalProps {
   id: number;
   mode: string;
   fields: Field[];
-  getAction: () => Promise<{ success: boolean; error?: string }>;
+  getAction?: () => Promise<{ success: boolean; error?: string }>;
+  editAction?: (
+    id: number,
+    data: any,
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 function RoleModal({
@@ -21,6 +25,7 @@ function RoleModal({
   mode,
   fields,
   getAction,
+  editAction,
 }: AddModalProps) {
   const router = useRouter();
 
@@ -75,10 +80,10 @@ function RoleModal({
   };
 
   const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); //TO DO: investigate what this does
+    e.preventDefault();
 
     try {
-      const response = await editRole(id, formData);
+      const response = await editAction(id, formData);
       // todo: clean form
     } catch (error) {
       console.log(error);

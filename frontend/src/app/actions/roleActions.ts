@@ -27,4 +27,18 @@ export async function getRole(id: number) {
   }
 }
 
+export async function editRole(id: number, data: RoleInterface) {
+  const res = await fetch("http://api:3000/roles/" + id, {
+    method: "PUT",
+    // todo: refactor to get the headers in utils
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) throw new Error("Failed to create role");
+  revalidatePath("/roles"); // Adjust path to match your route
+}
+
 export default deleteRole;
