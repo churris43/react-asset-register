@@ -31,7 +31,6 @@ export const createRole = async (role: Role): Promise<null> => {
 };
 
 export const updateRole = async (id: number, role: Role): Promise<null> => {
-  console.log("SSSSEEERRRVICE");
   const [result] = await connection.execute(
     "UPDATE role SET role_name = ?, staff_name = ? WHERE id = ?",
     [role.role_name, role.staff_name, id],
