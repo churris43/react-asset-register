@@ -2,6 +2,7 @@ import Field from "@/src/interfaces/field";
 import { useState, useEffect } from "react";
 import { ChangeEvent, FormEvent } from "react";
 import CloseButton from "../ui/CloseButton";
+import loadForm from "@/src/hooks/loadForm";
 
 interface ModalFormProps {
   fields: Field[];
@@ -27,31 +28,12 @@ function ModalForm({
   createAction,
   onClose,
 }: ModalFormProps) {
-  const defaultValues = (fields: Field[]): Record<string, string | number> => {
-    return Object.fromEntries(
-      fields.map(({ name, defaultValue }) => [name, defaultValue || ""]),
-    );
-  };
-
-  const [formData, setFormData] = useState(defaultValues(fields));
-
-  useEffect(() => {
-    if (!isModalOpen) return; // Skip fetching if modal is closed
-
-    // This can be changed and get this passed from the parent object as opposed to fetching it from the Db
-    if (mode != "add") {
-      const fetchRecord = async () => {
-        try {
-          const data = getAction ? await getAction() : null;
-          setFormData(data);
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      fetchRecord();
-    }
-  }, [id, isModalOpen]);
-
+  const { formData, setFormData, resetForm } = loadForm({
+    getAction,
+    isModalOpen,
+    mode,
+    fields,
+  });
   if (!isModalOpen) return; // Skip fetching if modal is closed
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +54,7 @@ function ModalForm({
       //TODO: implement error handling
       console.log(error);
     } finally {
-      setFormData(defaultValues(fields)); // Reset modal values to default
+      resetForm();
       onClose();
     }
   };
