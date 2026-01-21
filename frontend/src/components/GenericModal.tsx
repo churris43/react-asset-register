@@ -2,6 +2,7 @@
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Field from "../interfaces/field";
+import CloseButton from "./ui/CloseButton";
 
 interface AddModalProps {
   isModalOpen: boolean;
@@ -125,12 +126,7 @@ function GenericModal({
               </div>
             ))}
             <div className="flex justify-end space-x-3">
-              <button
-                onClick={onClose}
-                className="border-2 rounded bg-blue-300 hover:bg-blue-300 text-white border-blue-500 py-1 px-2"
-              >
-                Close
-              </button>
+              <CloseButton onClose={onClose} />
               <button className="border-2 rounded bg-blue-300 hover:bg-blue-300 text-white border-blue-500 py-1 px-2">
                 {mode == "edit" ? "Save" : "Add"}
               </button>
