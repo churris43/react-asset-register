@@ -1,7 +1,7 @@
 "use client";
 
 import { MdEdit } from "react-icons/md";
-import GenericModal from "./GenericModal";
+import GenericModal from "./ui/GenericModal";
 import { useState } from "react";
 import Field from "../interfaces/field";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import GenericModal from "./GenericModal";
+import GenericModal from "./ui/GenericModal";
 import Field from "../interfaces/field";
 
 interface AddButtonProps {

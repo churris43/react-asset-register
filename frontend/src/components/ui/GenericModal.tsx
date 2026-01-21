@@ -1,0 +1,63 @@
+"use client";
+
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import Field from "../../interfaces/field";
+import CloseButton from "./CloseButton";
+import ModalForm from "../features/ModalForm";
+
+interface AddModalProps {
+  isModalOpen: boolean;
+  onClose: () => void;
+  id: number;
+  mode: string;
+  fields: Field[];
+  getAction?: () => Promise<any>;
+  editAction?: (
+    id: number,
+    data: any,
+  ) => Promise<{ success: boolean; error?: string }>;
+  createAction?: (data: any) => Promise<{ success: boolean; error?: string }>;
+}
+
+function GenericModal({
+  isModalOpen,
+  onClose,
+  id,
+  mode,
+  fields,
+  getAction,
+  editAction,
+  createAction,
+}: AddModalProps) {
+  if (!isModalOpen) return; // Skip fetching if modal is closed
+
+  return (
+    <>
+      <div
+        className="fixed inset-0 flex items-center justify-center z-50 "
+        onClick={onClose}
+      >
+        <div
+          className="bg-black rounded-lg p-6 max-w-md w-full mx-4 border-2 border-white"
+          onClick={(e: React.MouseEvent) => e.stopPropagation()} //Prevents clicks inside the modal from bubbling up to the backdrop
+        >
+          <h2 className="mb-2 text-xl border-b-2">
+            {mode == "add" ? " Add new record" : "Edit Record"}
+          </h2>
+          <ModalForm
+            isModalOpen={isModalOpen}
+            onClose={onClose}
+            id={id}
+            mode={mode}
+            fields={fields}
+            getAction={getAction}
+            editAction={editAction}
+            createAction={createAction}
+          />
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default GenericModal;

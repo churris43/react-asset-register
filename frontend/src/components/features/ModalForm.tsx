@@ -1,33 +1,32 @@
-"use client";
+import Field from "@/src/interfaces/field";
+import { useState, useEffect } from "react";
+import { ChangeEvent, FormEvent } from "react";
+import CloseButton from "../ui/CloseButton";
 
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import Field from "../interfaces/field";
-import CloseButton from "./ui/CloseButton";
-
-interface AddModalProps {
-  isModalOpen: boolean;
-  onClose: () => void;
-  id: number;
-  mode: string;
+interface ModalFormProps {
   fields: Field[];
+  isModalOpen: boolean;
+  mode: string;
+  id: number;
   getAction?: () => Promise<any>;
   editAction?: (
     id: number,
     data: any,
   ) => Promise<{ success: boolean; error?: string }>;
   createAction?: (data: any) => Promise<{ success: boolean; error?: string }>;
+  onClose: () => void;
 }
 
-function GenericModal({
-  isModalOpen,
-  onClose,
-  id,
-  mode,
+function ModalForm({
   fields,
+  isModalOpen,
+  mode,
+  id,
   getAction,
   editAction,
   createAction,
-}: AddModalProps) {
+  onClose,
+}: ModalFormProps) {
   const defaultValues = (fields: Field[]): Record<string, string | number> => {
     return Object.fromEntries(
       fields.map(({ name, defaultValue }) => [name, defaultValue || ""]),
@@ -90,52 +89,38 @@ function GenericModal({
       onClose();
     }
   };
-
   return (
     <>
-      <div
-        className="fixed inset-0 flex items-center justify-center z-50 "
-        onClick={onClose}
-      >
-        <div
-          className="bg-black rounded-lg p-6 max-w-md w-full mx-4 border-2 border-white"
-          onClick={(e: React.MouseEvent) => e.stopPropagation()} //Prevents clicks inside the modal from bubbling up to the backdrop
-        >
-          <h2 className="mb-2 text-xl border-b-2">
-            {mode == "add" ? " Add new record" : "Edit Record"}
-          </h2>
-          <form onSubmit={mode == "add" ? handleAdd : handleEdit}>
-            {fields.map((field) => (
-              <div className="mb-4" key={field.label}>
-                <label
-                  htmlFor={field.name}
-                  className="block text-sm font-medium mb-2"
-                >
-                  {field.label}
-                </label>
-                <input
-                  id={field.name}
-                  type={field.type}
-                  value={formData[field.name] || ""}
-                  onChange={handleChange}
-                  name={field.name}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={field.placeholder}
-                  required={field.required}
-                />
-              </div>
-            ))}
-            <div className="flex justify-end space-x-3">
-              <CloseButton onClose={onClose} />
-              <button className="border-2 rounded bg-blue-300 hover:bg-blue-300 text-white border-blue-500 py-1 px-2">
-                {mode == "edit" ? "Save" : "Add"}
-              </button>
-            </div>
-          </form>
+      <form onSubmit={mode == "add" ? handleAdd : handleEdit}>
+        {fields.map((field) => (
+          <div className="mb-4" key={field.label}>
+            <label
+              htmlFor={field.name}
+              className="block text-sm font-medium mb-2"
+            >
+              {field.label}
+            </label>
+            <input
+              id={field.name}
+              type={field.type}
+              value={formData[field.name] || ""}
+              onChange={handleChange}
+              name={field.name}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={field.placeholder}
+              required={field.required}
+            />
+          </div>
+        ))}
+        <div className="flex justify-end space-x-3">
+          <CloseButton onClose={onClose} />
+          <button className="border-2 rounded bg-blue-300 hover:bg-blue-300 text-white border-blue-500 py-1 px-2">
+            {mode == "edit" ? "Save" : "Add"}
+          </button>
         </div>
-      </div>
+      </form>
     </>
   );
 }
 
-export default GenericModal;
+export default ModalForm;
