@@ -1,6 +1,6 @@
 import EditRoleButton from "./EditRoleButton";
-import DeleteButton from "./DeleteButton";
 import Field from "../interfaces/field";
+import { DeleteRecordButton } from "./features/DeleteRecordButton";
 
 interface RowActionButtonsProps {
   id: number;
@@ -8,7 +8,6 @@ interface RowActionButtonsProps {
   deleteAction: () => Promise<{ success: boolean; error?: string }>;
   fields: Field[];
   getAction: () => Promise<{ success: boolean; error?: string }>;
-  //editAction: () => Promise<{ success: boolean; error?: string }>;
   editAction?: (
     id: number,
     data: any,
@@ -31,7 +30,7 @@ function RowActionButtons({
         getAction={getAction}
         editAction={editAction}
       />
-      <DeleteButton record={record} id={id} deleteAction={deleteAction} />
+      <DeleteRecordButton record={record} id={id} deleteAction={deleteAction} />
     </div>
   );
 }
