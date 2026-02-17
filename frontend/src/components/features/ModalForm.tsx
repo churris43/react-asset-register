@@ -1,8 +1,6 @@
 import Field from "@/src/interfaces/field";
-import { useState, useEffect } from "react";
-import { ChangeEvent, FormEvent } from "react";
 import CloseButton from "../ui/CloseButton";
-import loadForm from "@/src/hooks/loadForm";
+import useModalForm from "@/src/hooks/useModalForm";
 
 interface ModalFormProps {
   fields: Field[];
@@ -28,49 +26,18 @@ function ModalForm({
   createAction,
   onClose,
 }: ModalFormProps) {
-  const { formData, setFormData, resetForm } = loadForm({
+  const { formData, handleChange, handleEdit, handleAdd } = useModalForm({
+    id,
     getAction,
     isModalOpen,
     mode,
     fields,
+    editAction,
+    createAction,
+    onClose,
   });
   if (!isModalOpen) return; // Skip fetching if modal is closed
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleAdd = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // TODO: implement the loading
-    try {
-      const response = createAction ? await createAction(formData) : null;
-      // todo: clean form
-    } catch (error) {
-      //TODO: implement error handling
-      console.log(error);
-    } finally {
-      resetForm();
-      onClose();
-    }
-  };
-
-  const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    try {
-      const response = editAction ? await editAction(id, formData) : null;
-      // todo: clean form
-    } catch (error) {
-      console.log(error);
-    } finally {
-      onClose();
-    }
-  };
   return (
     <>
       <form onSubmit={mode == "add" ? handleAdd : handleEdit}>

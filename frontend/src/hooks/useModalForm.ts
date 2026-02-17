@@ -1,0 +1,110 @@
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import Field from "../interfaces/field";
+
+interface UseEditProps {
+  id: number;
+  getAction?: () => Promise<any>;
+  isModalOpen: boolean;
+  mode: string;
+  fields: Field[];
+  editAction?: (
+    id: number,
+    data: any,
+  ) => Promise<{ success: boolean; error?: string }>;
+  createAction?: (data: any) => Promise<{ success: boolean; error?: string }>;
+  onClose: () => void;
+}
+
+function useModalForm({
+  id,
+  getAction,
+  isModalOpen,
+  mode,
+  fields,
+  editAction,
+  createAction,
+  onClose,
+}: UseEditProps) {
+  const defaultValues = (fields: Field[]): Record<string, string | number> => {
+    return Object.fromEntries(
+      fields.map(({ name, defaultValue }) => [name, defaultValue || ""]),
+    );
+  };
+
+  const [formData, setFormData] = useState(defaultValues(fields));
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const response = editAction ? await editAction(id, formData) : null;
+      // todo: clean form
+    } catch (error) {
+      console.log(error);
+    } finally {
+      onClose();
+    }
+  };
+
+  const handleAdd = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // TODO: implement the loading
+    try {
+      const response = createAction ? await createAction(formData) : null;
+      // todo: clean form
+    } catch (error) {
+      //TODO: implement error handling
+      console.log(error);
+    } finally {
+      resetForm();
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    if (!isModalOpen || mode === "add") return; // Skip fetching if modal is closed
+
+    const fetchRecord = async () => {
+      try {
+        const data = getAction ? await getAction() : null;
+        if (data) {
+          // Extract only the fields defined in the fields array
+          const initialData: Record<string, string | number> = {};
+          fields.forEach((field) => {
+            initialData[field.name] =
+              data[field.name] ?? defaultValues(fields)[field.name];
+          });
+          setFormData(initialData);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchRecord();
+  }, [isModalOpen, mode]);
+
+  // todo: This is not right, this shoule be elsewhere, maybe a hook on its own
+  const resetForm = () => {
+    setFormData(defaultValues(fields));
+    // setError(null);
+  };
+
+  return {
+    formData,
+    setFormData,
+    resetForm,
+    handleChange,
+    handleEdit,
+    handleAdd,
+  };
+}
+
+export default useModalForm;
