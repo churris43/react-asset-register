@@ -1,6 +1,7 @@
 import Field from "@/src/interfaces/field";
 import CloseButton from "../ui/CloseButton";
 import useModalForm from "@/src/hooks/useModalForm";
+import SaveOrAddButton from "../ui/SaveOrAddButton";
 
 interface ModalFormProps {
   fields: Field[];
@@ -36,7 +37,6 @@ function ModalForm({
     createAction,
     onClose,
   });
-  if (!isModalOpen) return; // Skip fetching if modal is closed
 
   return (
     <>
@@ -63,9 +63,7 @@ function ModalForm({
         ))}
         <div className="flex justify-end space-x-3">
           <CloseButton onClose={onClose} />
-          <button className="border-2 rounded bg-blue-300 hover:bg-blue-300 text-white border-blue-500 py-1 px-2">
-            {mode == "edit" ? "Save" : "Add"}
-          </button>
+          <SaveOrAddButton mode={mode} />
         </div>
       </form>
     </>
