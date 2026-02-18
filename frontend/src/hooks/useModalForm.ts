@@ -64,10 +64,13 @@ function useModalForm({
     // TODO: implement the loading
     try {
       const response = createAction ? await createAction(formData) : null;
-      // todo: clean form
+      if (response?.success) {
+        toast.success("Record created successfully");
+      } else {
+        toast.error("Failed to create the record");
+      }
     } catch (error) {
-      //TODO: implement error handling
-      console.log(error);
+      toast.error("An unexpected error occurred");
     } finally {
       resetForm();
       onClose();

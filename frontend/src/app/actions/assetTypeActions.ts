@@ -78,12 +78,14 @@ export async function createAssetType(data: assetTypeInterface) {
       body: JSON.stringify(data),
     });
 
-    if (!res.ok) throw new Error("Failed to create asset type");
-
-    revalidatePath(path);
+    if (!res.ok) {
+      throw new Error("Failed to create asset type");
+    }
     return { success: true };
   } catch (error) {
-    return { success: false, error: "Failed to create asset type" };
+    return { success: false, error: error };
+  } finally {
+    revalidatePath(path);
   }
 }
 export default deleteAssetType;

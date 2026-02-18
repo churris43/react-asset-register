@@ -76,12 +76,14 @@ export async function createRole(data: RoleInterface) {
       body: JSON.stringify(data),
     });
 
-    if (!res.ok) throw new Error("Failed to create role");
-
-    revalidatePath("/roles");
+    if (!res.ok) {
+      throw new Error("Failed to create role");
+    }
     return { success: true };
   } catch (error) {
-    return { success: false, error: "Failed to create role" };
+    return { success: false, error: error };
+  } finally {
+    revalidatePath("/roles");
   }
 }
 export default deleteRole;
