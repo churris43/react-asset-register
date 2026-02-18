@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import Field from "../interfaces/field";
 
 interface UseEditProps {
@@ -46,9 +47,13 @@ function useModalForm({
 
     try {
       const response = editAction ? await editAction(id, formData) : null;
-      // todo: clean form
+      if (response?.success) {
+        toast.success("Record updated successfully");
+      } else {
+        toast.error("Failed to update record");
+      }
     } catch (error) {
-      console.log(error);
+      toast.error("An unexpected error occurred");
     } finally {
       onClose();
     }

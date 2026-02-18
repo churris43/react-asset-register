@@ -50,7 +50,6 @@ export async function getAsset(id: number) {
 }
 
 export async function editAsset(id: number, data: AssetInterface) {
-  console.log("-------------------");
   try {
     const res = await fetch("http://api:3000/assets/" + id, {
       method: "PUT",
@@ -60,12 +59,14 @@ export async function editAsset(id: number, data: AssetInterface) {
       },
       body: JSON.stringify(data),
     });
-
-    if (!res.ok) throw new Error("Failed to edit the asset");
-    revalidatePath(path);
+    if (!res.ok) {
+      throw new Error("Failed to edit the asset");
+    }
     return { success: true };
   } catch (error) {
-    return { success: false, error: "Failed to create asset type" };
+    return { success: false, error: error };
+  } finally {
+    revalidatePath(path);
   }
 }
 
