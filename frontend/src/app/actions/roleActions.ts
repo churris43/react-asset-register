@@ -58,11 +58,14 @@ export async function editRole(id: number, data: RoleInterface) {
       body: JSON.stringify(data),
     });
 
-    if (!res.ok) throw new Error("Failed to edit the role");
-    revalidatePath("/roles");
+    if (!res.ok) {
+      throw new Error("Failed to edit the role");
+    }
     return { success: true };
   } catch (error) {
-    return { success: false, error: "Failed to create role" };
+    return { success: false, error: error };
+  } finally {
+    revalidatePath("/roles");
   }
 }
 
