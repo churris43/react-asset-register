@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS role(
     staff_name TEXT NULL
 ) COMMENT '';
 
-CREATE TABLE IF NOT EXISTS `asset_register` (
+CREATE TABLE IF NOT EXISTS `asset` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `asset_name` VARCHAR(255) NOT NULL,
     `role_id` INT NULL,
