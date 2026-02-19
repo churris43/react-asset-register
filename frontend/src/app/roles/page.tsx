@@ -21,11 +21,13 @@ async function Roles() {
       label: "Role",
       required: true,
       type: "text",
+      htmlElementType: "input",
     },
     {
       name: "staff_name",
       label: "Staff Name",
       type: "text",
+      htmlElementType: "input",
     },
   ];
 

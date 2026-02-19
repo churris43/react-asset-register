@@ -6,6 +6,7 @@ interface Field {
   placeholder?: string;
   class?: string;
   defaultValue?: string | number;
+  htmlElementType: string;
 }
 
 export default Field;

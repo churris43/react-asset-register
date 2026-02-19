@@ -2,6 +2,7 @@ import Field from "@/src/interfaces/field";
 import CloseButton from "../ui/CloseButton";
 import useModalForm from "@/src/hooks/useModalForm";
 import SaveOrAddButton from "../ui/SaveOrAddButton";
+import InputHTML from "../ui/InputHTML";
 
 interface ModalFormProps {
   fields: Field[];
@@ -49,16 +50,13 @@ function ModalForm({
             >
               {field.label}
             </label>
-            <input
-              id={field.name}
-              type={field.type}
-              value={formData[field.name] || ""}
-              onChange={handleChange}
-              name={field.name}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={field.placeholder}
-              required={field.required}
-            />
+            {field.htmlElementType == "input" && (
+              <InputHTML
+                field={field}
+                handleChange={handleChange}
+                formData={formData}
+              />
+            )}
           </div>
         ))}
         <div className="flex justify-end space-x-3">

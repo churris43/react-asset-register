@@ -22,6 +22,7 @@ async function Roles() {
       label: "Asset Type",
       required: true,
       type: "text",
+      htmlElementType: "input",
     },
   ];
 

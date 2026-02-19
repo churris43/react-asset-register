@@ -23,6 +23,7 @@ async function Assets() {
       label: "Asset Name",
       required: true,
       type: "text",
+      htmlElementType: "input",
     },
   ];
 
