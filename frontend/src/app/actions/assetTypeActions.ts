@@ -63,11 +63,13 @@ export async function editAssetType(id: number, data: assetTypeInterface) {
     if (!res.ok) {
       throw new Error("Failed to edit the asset type");
     }
+    revalidatePath(path);
     return { success: true };
   } catch (error) {
-    return { success: false, error: error };
-  } finally {
-    revalidatePath(path);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 }
 
@@ -84,11 +86,13 @@ export async function createAssetType(data: assetTypeInterface) {
     if (!res.ok) {
       throw new Error("Failed to create asset type");
     }
+    revalidatePath(path);
     return { success: true };
   } catch (error) {
-    return { success: false, error: error };
-  } finally {
-    revalidatePath(path);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 }
 export default deleteAssetType;
