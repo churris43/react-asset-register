@@ -7,6 +7,7 @@ interface Field {
   class?: string;
   defaultValue?: string | number;
   htmlElementType: string;
+  options?: { value: string | number; label: string }[];
 }
 
 export default Field;

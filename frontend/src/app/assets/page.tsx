@@ -8,14 +8,21 @@ import deleteAsset, {
   editAsset,
   getAssets,
   getAsset,
-  boo,
 } from "../actions/assetActions";
 import AssetInterface from "@/src/interfaces/asset";
+import { getRoles } from "../actions/roleActions";
+import RoleInterface from "@/src/interfaces/role";
 
 async function Assets() {
   const assets = await getAssets();
+  const roles = await getRoles();
 
-  const headings = ["ID", "Asset Name"];
+  const roleOptions = roles.map((role: RoleInterface) => ({
+    value: role.id,
+    label: role.role_name,
+  }));
+
+  const headings = ["ID", "Asset Name", "Asset Owner"];
 
   const fields: Array<Field> = [
     {
@@ -24,6 +31,14 @@ async function Assets() {
       required: true,
       type: "text",
       htmlElementType: "input",
+      defaultValue: "",
+    },
+    {
+      name: "role_id",
+      label: "Asset Owner",
+      type: "text",
+      htmlElementType: "select_single",
+      options: roleOptions,
     },
   ];
 
@@ -42,6 +57,9 @@ async function Assets() {
           >
             <div className="px-3 py-4">{asset.id} </div>
             <span className="text-sm ml-4 px-3 py-4">{asset.asset_name}</span>
+            <span className="text-sm ml-4 px-3 py-4">
+              {roleOptions.find((role) => role.value === asset.role_id)?.label}
+            </span>
             <RowActionButtons
               record="roles"
               id={asset.id}

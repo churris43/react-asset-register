@@ -57,6 +57,20 @@ function ModalForm({
                 formData={formData}
               />
             )}
+            {field.htmlElementType == "select_single" && (
+              <select
+                value={formData[field.name] || ""}
+                onChange={handleChange}
+                name={field.name}
+              >
+                <option value="">--Please choose an {field.label}</option>
+                {field.options?.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         ))}
         <div className="flex justify-end space-x-3">

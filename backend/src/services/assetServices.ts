@@ -24,16 +24,16 @@ export const deleteAsset = async (id: number): Promise<null> => {
 
 export const createAsset = async (asset: Asset): Promise<null> => {
   const [result] = await connection.execute(
-    "INSERT INTO asset (asset_name) VALUES (?)",
-    [asset.asset_name],
+    "INSERT INTO asset (asset_name, role_id) VALUES (?, ?)",
+    [asset.asset_name, asset.role_id],
   );
   return null;
 };
 
 export const updateAsset = async (id: number, asset: Asset): Promise<null> => {
   const [result] = await connection.execute(
-    "UPDATE asset SET asset_name = ? WHERE id = ?",
-    [asset.asset_name, id],
+    "UPDATE asset SET asset_name = ?, role_id = ? WHERE id = ?",
+    [asset.asset_name, asset.role_id, id],
   );
   return null;
 };

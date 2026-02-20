@@ -89,8 +89,4 @@ export async function createAsset(data: AssetInterface) {
     revalidatePath(path);
   }
 }
-
-export async function boo(id: number, data: AssetInterface) {
-  return { success: false, error: "Failed to create asset type" };
-}
 export default deleteAsset;
