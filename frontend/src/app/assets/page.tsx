@@ -1,7 +1,7 @@
-import AddButton from "@/src/components/AddButton";
+import AddButton from "@/src/components/features/AddButton";
 
 import TableHeading from "@/src/components/ui/TableHeading";
-import RowActionButtons from "@/src/components/RowActionButtons";
+import RowActionButtons from "@/src/components/ui/RowActionButtons";
 import Field from "../../interfaces/field";
 import deleteAsset, {
   createAsset,

@@ -1,6 +1,6 @@
-import EditRoleButton from "./EditRoleButton";
-import Field from "../interfaces/field";
-import { DeleteRecordButton } from "./features/DeleteRecordButton";
+import EditRoleButton from "../features/EditButton";
+import Field from "../../interfaces/field";
+import { DeleteRecordButton } from "../features/DeleteRecordButton";
 
 interface RowActionButtonsProps {
   id: number;
