@@ -1,5 +1,6 @@
 import { connection } from "../index";
 import Asset from "../types/Asset";
+import convertEmptyStringToNull from "../helpers/strings";
 
 export const getAssets = async (): Promise<Asset[] | null> => {
   const [rows] = await connection.execute<Asset[]>("SELECT * FROM asset");
@@ -25,7 +26,7 @@ export const deleteAsset = async (id: number): Promise<null> => {
 export const createAsset = async (asset: Asset): Promise<null> => {
   const [result] = await connection.execute(
     "INSERT INTO asset (asset_name, role_id) VALUES (?, ?)",
-    [asset.asset_name, asset.role_id],
+    [asset.asset_name, convertEmptyStringToNull(asset.role_id)],
   );
   return null;
 };
@@ -33,7 +34,7 @@ export const createAsset = async (asset: Asset): Promise<null> => {
 export const updateAsset = async (id: number, asset: Asset): Promise<null> => {
   const [result] = await connection.execute(
     "UPDATE asset SET asset_name = ?, role_id = ? WHERE id = ?",
-    [asset.asset_name, asset.role_id, id],
+    [asset.asset_name, convertEmptyStringToNull(asset.role_id), id],
   );
   return null;
 };
