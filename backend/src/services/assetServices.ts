@@ -24,17 +24,34 @@ export const deleteAsset = async (id: number): Promise<null> => {
 };
 
 export const createAsset = async (asset: Asset): Promise<null> => {
+  console.log(
+    "INSERT INTO asset (asset_name, role_id, asset_type_id) VALUES (?, ?)",
+    [
+      asset.asset_name,
+      convertEmptyStringToNull(asset.role_id),
+      convertEmptyStringToNull(asset.asset_type_id),
+    ],
+  );
   const [result] = await connection.execute(
-    "INSERT INTO asset (asset_name, role_id) VALUES (?, ?)",
-    [asset.asset_name, convertEmptyStringToNull(asset.role_id)],
+    "INSERT INTO asset (asset_name, role_id, asset_type_id) VALUES (?, ?, ?)",
+    [
+      asset.asset_name,
+      convertEmptyStringToNull(asset.role_id),
+      convertEmptyStringToNull(asset.asset_type_id),
+    ],
   );
   return null;
 };
 
 export const updateAsset = async (id: number, asset: Asset): Promise<null> => {
   const [result] = await connection.execute(
-    "UPDATE asset SET asset_name = ?, role_id = ? WHERE id = ?",
-    [asset.asset_name, convertEmptyStringToNull(asset.role_id), id],
+    "UPDATE asset SET asset_name = ?, role_id = ?, asset_type_id = ? WHERE id = ?",
+    [
+      asset.asset_name,
+      convertEmptyStringToNull(asset.role_id),
+      convertEmptyStringToNull(asset.asset_type_id),
+      id,
+    ],
   );
   return null;
 };

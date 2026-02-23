@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import assetTypeInterface from "@/src/interfaces/assetType";
+import AssetTypeInterface from "@/src/interfaces/assetType";
 
 const path: string = "/assettypes";
 
@@ -22,17 +23,17 @@ export async function deleteAssetType(id: number) {
   }
 }
 
-export async function getAssetTypes() {
+export async function getAssetTypes(): Promise<AssetTypeInterface[] | []> {
   try {
     // @todo: Need to work out how to proxy this, this request comes fro the server
     const response = await fetch("http://api:3000/assettypes");
     if (!response.ok) {
-      throw new Error("Failed to get asset type");
+      throw new Error("Failed to get asset types");
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    console.log(error);
+    return [];
   }
 }
 

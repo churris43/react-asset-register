@@ -12,17 +12,25 @@ import deleteAsset, {
 import AssetInterface from "@/src/interfaces/asset";
 import { getRoles } from "../actions/roleActions";
 import RoleInterface from "@/src/interfaces/role";
+import { getAssetTypes } from "../actions/assetTypeActions";
+import AssetTypeInterface from "@/src/interfaces/assetType";
 
 async function Assets() {
   const assets = await getAssets();
   const roles = await getRoles();
+  const assetTypes = await getAssetTypes();
 
   const roleOptions = roles.map((role: RoleInterface) => ({
     value: role.id,
     label: role.role_name,
   }));
 
-  const headings = ["ID", "Asset Name", "Asset Owner"];
+  const assetTypeOptions = assetTypes.map((assetType: AssetTypeInterface) => ({
+    value: assetType.id,
+    label: assetType.asset_type_name,
+  }));
+
+  const headings = ["ID", "Asset Name", "Asset Type", "Asset Owner"];
 
   const fields: Array<Field> = [
     {
@@ -34,6 +42,13 @@ async function Assets() {
       defaultValue: "",
     },
     {
+      name: "asset_type_id",
+      label: "Asset Type",
+      type: "text",
+      htmlElementType: "select_single",
+      options: assetTypeOptions,
+    },
+    {
       name: "role_id",
       label: "Asset Owner",
       type: "text",
@@ -41,6 +56,7 @@ async function Assets() {
       options: roleOptions,
     },
   ];
+  const cols = `80px ${headings.map(() => "1fr").join(" ")} auto`;
 
   return (
     <>
@@ -53,13 +69,22 @@ async function Assets() {
         {assets.map((asset: AssetInterface) => (
           <div
             key={asset.id}
-            className="grid grid-cols-4 border-b last:border-b-0 hover:bg-blue-500 transition-colors bg-blue-400  h-10 grid-cols-[80px_1fr_1fr_1fr]"
+            className="grid grid-cols-5 border-b last:border-b-0 hover:bg-blue-500 transition-colors bg-blue-400  h-10"
+            style={{ gridTemplateColumns: cols }}
           >
             <div className="px-3 py-4">{asset.id} </div>
             <span className="text-sm ml-4 px-3 py-4">{asset.asset_name}</span>
             <span className="text-sm ml-4 px-3 py-4">
+              {
+                assetTypeOptions.find(
+                  (assetType) => assetType.value === asset.asset_type_id,
+                )?.label
+              }
+            </span>
+            <span className="text-sm ml-5 px-3 py-4">
               {roleOptions.find((role) => role.value === asset.role_id)?.label}
             </span>
+
             <RowActionButtons
               record="roles"
               id={asset.id}

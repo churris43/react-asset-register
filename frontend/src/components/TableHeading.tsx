@@ -3,8 +3,13 @@ interface tableHeadingProps {
 }
 
 function TableHeading({ headings }: tableHeadingProps) {
+  const cols = `80px ${headings.map(() => "1fr").join(" ")} auto`;
+
   return (
-    <div className="grid grid-cols-4 bg-slate-800 text-white font-semibold  h-10 grid-cols-[80px_1fr_1fr_1fr]">
+    <div
+      className="grid grid-cols-5 bg-slate-800 text-white font-semibold  h-10"
+      style={{ gridTemplateColumns: cols }}
+    >
       {headings.map((heading: string) => (
         <div key={heading} className="px-3 py-4">
           {heading}

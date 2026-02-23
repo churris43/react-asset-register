@@ -26,6 +26,8 @@ async function Roles() {
     },
   ];
 
+  const cols = `80px ${headings.map(() => "1fr").join(" ")} auto`;
+
   return (
     <>
       <h1 className="text-xl mb-4">
@@ -41,7 +43,8 @@ async function Roles() {
         {asset_types.map((asset_type: AssetTypeInterface) => (
           <div
             key={asset_type.id}
-            className="grid grid-cols-4 border-b last:border-b-0 hover:bg-blue-500 transition-colors bg-blue-400  h-10 grid-cols-[80px_1fr_1fr_1fr]"
+            className="grid grid-cols-3 border-b last:border-b-0 hover:bg-blue-500 transition-colors bg-blue-400  h-10"
+            style={{ gridTemplateColumns: cols }}
           >
             <div className="px-3 py-4">{asset_type.id} </div>
             <span className="text-sm ml-4 px-3 py-4">
