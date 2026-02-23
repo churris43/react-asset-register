@@ -1,6 +1,6 @@
 import AddButton from "@/src/components/AddButton";
 import RoleInterface from "@/src/interfaces/role";
-import TableHeading from "@/src/components/TableHeading";
+import TableHeading from "@/src/components/ui/TableHeading";
 import RowActionButtons from "@/src/components/RowActionButtons";
 import deleteRole, {
   createRole,

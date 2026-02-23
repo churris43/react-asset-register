@@ -1,6 +1,6 @@
 import AddButton from "@/src/components/AddButton";
 
-import TableHeading from "@/src/components/TableHeading";
+import TableHeading from "@/src/components/ui/TableHeading";
 import RowActionButtons from "@/src/components/RowActionButtons";
 import Field from "../../interfaces/field";
 import deleteAsset, {
