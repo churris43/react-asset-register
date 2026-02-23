@@ -1,21 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import assetTypeInterface from "@/src/interfaces/assetType";
 import AssetTypeInterface from "@/src/interfaces/assetType";
 
-const path: string = "/assettypes";
+const path: string = "/assetTypes";
 
 export async function deleteAssetType(id: number) {
   try {
-    const res = await fetch("http://api:3000/assettypes/" + id, {
+    const response = await fetch("http://api:3000/assettypes/" + id, {
       method: "DELETE",
       headers: {
         // todo: use the utils constant
         "Content-Type": "application/json",
       },
     });
-    if (!res.ok) throw new Error("Failed to fetch data");
+    if (!response.ok) throw new Error(response.statusText);
     revalidatePath(path);
     return { success: true };
   } catch (error) {
@@ -28,11 +27,12 @@ export async function getAssetTypes(): Promise<AssetTypeInterface[] | []> {
     // @todo: Need to work out how to proxy this, this request comes fro the server
     const response = await fetch("http://api:3000/assettypes");
     if (!response.ok) {
-      throw new Error("Failed to get asset types");
+      throw new Error(response.statusText);
     }
     const data = await response.json();
     return data;
   } catch (error) {
+    console.error("getAssetTypes error:", error);
     return [];
   }
 }
@@ -41,7 +41,7 @@ export async function getAssetType(id: number) {
   try {
     const response = await fetch("http://api:3000/assettypes/" + id);
     if (!response.ok) {
-      throw new Error("Failed to get asset type");
+      throw new Error(response.statusText);
     }
     const data = await response.json();
     return data;
@@ -50,9 +50,9 @@ export async function getAssetType(id: number) {
   }
 }
 
-export async function editAssetType(id: number, data: assetTypeInterface) {
+export async function editAssetType(id: number, data: AssetTypeInterface) {
   try {
-    const res = await fetch("http://api:3000/assettypes/" + id, {
+    const response = await fetch("http://api:3000/assettypes/" + id, {
       method: "PUT",
       // todo: refactor to get the headers in utils
       headers: {
@@ -61,8 +61,8 @@ export async function editAssetType(id: number, data: assetTypeInterface) {
       body: JSON.stringify(data),
     });
 
-    if (!res.ok) {
-      throw new Error("Failed to edit the asset type");
+    if (!response.ok) {
+      throw new Error(response.statusText);
     }
     revalidatePath(path);
     return { success: true };
@@ -74,9 +74,9 @@ export async function editAssetType(id: number, data: assetTypeInterface) {
   }
 }
 
-export async function createAssetType(data: assetTypeInterface) {
+export async function createAssetType(data: AssetTypeInterface) {
   try {
-    const res = await fetch("http://api:3000/assettypes/", {
+    const response = await fetch("http://api:3000/assettypes/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,8 +84,8 @@ export async function createAssetType(data: assetTypeInterface) {
       body: JSON.stringify(data),
     });
 
-    if (!res.ok) {
-      throw new Error("Failed to create asset type");
+    if (!response.ok) {
+      throw new Error(response.statusText);
     }
     revalidatePath(path);
     return { success: true };
