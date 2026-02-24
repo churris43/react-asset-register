@@ -4,22 +4,22 @@ import { useDelete } from "@/src/hooks/useDelete";
 import { DeleteButton } from "../ui/DeleteButton";
 
 interface DeleteRecordButtonPageProps {
-  record: string;
   id: number;
+  recordName: string;
   deleteAction: () => Promise<{ success: boolean; error?: string }>;
   onSuccess?: () => void;
   onError?: (error: string) => void;
 }
 
 export function DeleteRecordButton({
-  record,
   id,
+  recordName,
   deleteAction,
   onSuccess,
   onError,
 }: DeleteRecordButtonPageProps) {
   const { handleDelete, isPending } = useDelete(deleteAction, {
-    record,
+    recordName,
     onSuccess,
     onError,
   });
@@ -28,7 +28,7 @@ export function DeleteRecordButton({
     <DeleteButton
       onDelete={handleDelete}
       isPending={isPending}
-      ariaLabel={"Delete $(record}"}
+      ariaLabel={"Delete $(recordName}"}
     />
   );
 }

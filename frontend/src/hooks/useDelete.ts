@@ -1,7 +1,7 @@
 import { startTransition, useCallback, useTransition } from "react";
 
 interface UseDeleteProps {
-  record: string;
+  recordName: string;
   onConfirm?: (record: string) => boolean;
   onSuccess?: () => void;
   onError?: (error: string) => void;
@@ -12,7 +12,7 @@ export function useDelete(
   props: UseDeleteProps,
 ) {
   const [isPending, setIsPending] = useTransition();
-  const { record, onConfirm, onSuccess, onError } = props;
+  const { recordName, onConfirm, onSuccess, onError } = props;
 
   //useCallback: This memoizes the function so it doesn't change on every render unless dependencies change.
   const handleDelete = useCallback(() => {
@@ -21,8 +21,8 @@ export function useDelete(
     //- In tests: You can inject a mock function that always returns true
     //- For custom UI: You could pass a function that opens a fancy modal
     const confirmed = onConfirm
-      ? onConfirm(record)
-      : confirm(`Are you sure you want to delete this ${record}?`);
+      ? onConfirm(recordName)
+      : confirm(`Are you sure you want to delete this ${recordName}?`);
 
     if (!confirmed) return;
 
@@ -35,7 +35,7 @@ export function useDelete(
         onError?.(result.error);
       }
     });
-  }, [deleteAction, record, onConfirm, onSuccess, onError]);
+  }, [deleteAction, recordName, onConfirm, onSuccess, onError]);
 
   return { handleDelete, isPending };
 }

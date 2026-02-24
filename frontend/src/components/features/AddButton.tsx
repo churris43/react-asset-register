@@ -5,11 +5,11 @@ import GenericModal from "../ui/GenericModal";
 import Field from "../../interfaces/field";
 
 interface AddButtonProps {
-  record: string;
+  recordName: string;
   fields: Field[];
   createAction: (data: any) => Promise<{ success: boolean; error?: string }>;
 }
-function AddButton({ record, fields, createAction }: AddButtonProps) {
+function AddButton({ recordName, fields, createAction }: AddButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
@@ -18,7 +18,7 @@ function AddButton({ record, fields, createAction }: AddButtonProps) {
         className="border-2 rounded bg-blue-300 hover:bg-blue-300 text-white border-blue-500 py-1 px-2"
         onClick={() => setIsModalOpen(true)}
       >
-        + Add {record}
+        + Add {recordName}
       </button>
       <GenericModal
         isModalOpen={isModalOpen}

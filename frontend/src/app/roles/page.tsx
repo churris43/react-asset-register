@@ -9,6 +9,7 @@ import deleteRole, {
   getRoles,
 } from "../actions/roleActions";
 import Field from "../../interfaces/field";
+import TableRow from "@/src/components/ui/TableRow";
 
 async function Roles() {
   const roles = await getRoles();
@@ -35,27 +36,25 @@ async function Roles() {
     <>
       <h1 className="text-xl mb-4">
         Roles{" "}
-        <AddButton record="Role" fields={fields} createAction={createRole} />
+        <AddButton
+          recordName="Role"
+          fields={fields}
+          createAction={createRole}
+        />
       </h1>
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
         <TableHeading headings={headings} />
         {roles.map((role: RoleInterface) => (
-          <div
+          <TableRow
+            recordName="roles"
+            record={role}
+            id={role.id}
             key={role.id}
-            className="grid grid-cols-4 border-b last:border-b-0 hover:bg-blue-500 transition-colors bg-blue-400  h-10 grid-cols-[80px_1fr_1fr_1fr]"
-          >
-            <div className="px-3 py-4">{role.id} </div>
-            <span className="text-sm ml-4 px-3 py-4">{role.role_name}</span>
-            <div className="px-3 py-4">{role.staff_name} </div>
-            <RowActionButtons
-              record="roles"
-              id={role.id}
-              deleteAction={deleteRole.bind(null, role.id)}
-              getAction={getRole.bind(null, role.id)}
-              editAction={editRole}
-              fields={fields}
-            />
-          </div>
+            deleteAction={deleteRole.bind(null, role.id)}
+            getAction={getRole.bind(null, role.id)}
+            editAction={editRole}
+            fields={fields}
+          />
         ))}
       </div>
     </>

@@ -62,7 +62,11 @@ async function Assets() {
     <>
       <h1 className="text-xl mb-4">
         Assets
-        <AddButton record="Assets" fields={fields} createAction={createAsset} />
+        <AddButton
+          recordName="Assets"
+          fields={fields}
+          createAction={createAsset}
+        />
       </h1>
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
         <TableHeading headings={headings} />
@@ -86,7 +90,7 @@ async function Assets() {
             </span>
 
             <RowActionButtons
-              record="roles"
+              recordName="assets"
               id={asset.id}
               deleteAction={deleteAsset.bind(null, asset.id)}
               getAction={getAsset.bind(null, asset.id)}
