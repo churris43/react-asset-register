@@ -32,7 +32,6 @@ export async function getAssetTypes(): Promise<AssetTypeInterface[] | []> {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("getAssetTypes error:", error);
     return [];
   }
 }
