@@ -1,49 +1,45 @@
-import { connection } from "../index";
 import AssetType from "../types/AssetTypes";
+import { asset_typeModel } from "../generated/prisma/models/asset_type";
+import { prisma } from "../lib/prisma";
 
-export const getAssetTypes = async (): Promise<AssetType[] | null> => {
-  const [rows] = await connection.execute<AssetType[]>(
-    "SELECT * FROM asset_type",
-  );
-  return rows ?? null;
+export const getAssetTypes = async (): Promise<asset_typeModel[]> => {
+  return prisma.asset_type.findMany();
 };
 
 export const getAssetTypesById = async (
   id: number,
-): Promise<AssetType | null> => {
-  const [result] = await connection.execute<AssetType[]>(
-    "SELECT * FROM asset_type WHERE id = ?",
-    [id],
-  );
-  const asset_type = result[0];
-  return asset_type ?? null;
+): Promise<asset_typeModel | null> => {
+  return prisma.asset_type.findUnique({
+    where: { id },
+  });
 };
 
-export const deleteAssetType = async (id: number): Promise<null> => {
-  const [result] = await connection.execute(
-    "DELETE FROM asset_type WHERE id = ?",
-    [id],
-  );
-  return null;
+export const deleteAssetType = async (id: number): Promise<asset_typeModel> => {
+  return prisma.asset_type.delete({
+    where: { id },
+  });
 };
 
-export const createAssetType = async (asset_type: AssetType): Promise<null> => {
-  const [result] = await connection.execute(
-    "INSERT INTO asset_type (asset_type_name) VALUES (?)",
-    [asset_type.asset_type_name],
-  );
-  return null;
+export const createAssetType = async (
+  asset_type: AssetType,
+): Promise<asset_typeModel> => {
+  return prisma.asset_type.create({
+    data: {
+      asset_type_name: asset_type.asset_type_name,
+    },
+  });
 };
 
 export const updateAssetType = async (
   id: number,
   asset_type: AssetType,
-): Promise<null> => {
-  const [result] = await connection.execute(
-    "UPDATE asset_type SET asset_type_name = ? WHERE id = ?",
-    [asset_type.asset_type_name, id],
-  );
-  return null;
+): Promise<asset_typeModel> => {
+  return prisma.asset_type.update({
+    where: { id },
+    data: {
+      asset_type_name: asset_type.asset_type_name,
+    },
+  });
 };
 
 export default getAssetTypesById;

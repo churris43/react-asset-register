@@ -1,41 +1,51 @@
 import { connection } from "../index";
 import Role from "../types/Role";
+import { roleModel } from "../generated/prisma/models/role";
 
-export const getRoles = async (): Promise<Role[] | null> => {
-  const [rows] = await connection.execute<Role[]>("SELECT * FROM role");
-  return rows ?? null;
+import { prisma } from "../lib/prisma";
+
+export const getRoles = async (): Promise<roleModel[]> => {
+  return prisma.role.findMany();
 };
 
-export const getRolesById = async (id: number): Promise<Role | null> => {
-  const [result] = await connection.execute<Role[]>(
-    "SELECT * FROM role WHERE id = ?",
-    [id],
-  );
-  const role = result[0];
-  return role ?? null;
+export const getRolesById = async (id: number): Promise<roleModel | null> => {
+  return prisma.role.findUnique({
+    where: {
+      id: id,
+    },
+  });
 };
 
-export const deleteRole = async (id: number): Promise<null> => {
-  const [result] = await connection.execute("DELETE from role WHERE id = ?", [
-    id,
-  ]);
-  return null;
+export const deleteRole = async (id: number): Promise<roleModel> => {
+  return prisma.role.delete({
+    where: {
+      id: id,
+    },
+  });
 };
 
-export const createRole = async (role: Role): Promise<null> => {
-  const [result] = await connection.execute(
-    "INSERT INTO role (role_name, staff_name) VALUES (? , ?)",
-    [role.role_name, role.staff_name],
-  );
-  return null;
+export const createRole = async (role: Role): Promise<roleModel> => {
+  return prisma.role.create({
+    data: {
+      role_name: role.role_name,
+      staff_name: role.staff_name,
+    },
+  });
 };
 
-export const updateRole = async (id: number, role: Role): Promise<null> => {
-  const [result] = await connection.execute(
-    "UPDATE role SET role_name = ?, staff_name = ? WHERE id = ?",
-    [role.role_name, role.staff_name, id],
-  );
-  return null;
+export const updateRole = async (
+  id: number,
+  role: Role,
+): Promise<roleModel | null> => {
+  return prisma.role.update({
+    where: {
+      id: id,
+    },
+    data: {
+      role_name: role.role_name,
+      staff_name: role.staff_name,
+    },
+  });
 };
 
 export default getRolesById;
