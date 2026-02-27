@@ -3,7 +3,12 @@ import { assetModel } from "../generated/prisma/models/asset";
 import { prisma } from "../lib/prisma";
 
 export const getAssets = async (): Promise<assetModel[]> => {
-  return prisma.asset.findMany();
+  return prisma.asset.findMany({
+    include: {
+      role: true,
+      asset_type: true,
+    },
+  });
 };
 
 export const getAssetsById = async (id: number): Promise<assetModel | null> => {

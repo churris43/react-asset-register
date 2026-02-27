@@ -2,6 +2,8 @@ import Field from "@/src/interfaces/field";
 import RowActionButtons from "./RowActionButtons";
 import AssetTypeInterface from "@/src/interfaces/assetType";
 import RoleInterface from "@/src/interfaces/role";
+import AssetInterface from "@/src/interfaces/asset";
+import { getNestedValue } from "@/src/utils/json";
 
 interface TableRowProps {
   id: number;
@@ -13,7 +15,7 @@ interface TableRowProps {
     id: number,
     data: any,
   ) => Promise<{ success: boolean; error?: string }>;
-  record: AssetTypeInterface | RoleInterface;
+  record: AssetTypeInterface | RoleInterface | AssetInterface;
 }
 
 function TableRow({
@@ -37,7 +39,7 @@ function TableRow({
       <span className="px-3 py-4">{record.id} </span>
       {fields.map((field: Field) => (
         <span key={field.name} className="text-sm ml-4 px-3 py-4">
-          {record[field.name as keyof typeof record]}
+          {getNestedValue(record, field.childField ?? field.name)}
         </span>
       ))}
       <RowActionButtons
