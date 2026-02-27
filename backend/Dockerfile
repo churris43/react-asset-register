@@ -7,6 +7,7 @@ RUN npm install
 RUN npm install --save-dev @types/node
 
 COPY . .
+RUN cd src/ && npx prisma generate
 
 EXPOSE 3000
 
