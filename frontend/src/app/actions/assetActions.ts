@@ -33,6 +33,7 @@ export async function getAssets() {
     return data;
   } catch (error) {
     console.log(error);
+    return [];
   }
 }
 
