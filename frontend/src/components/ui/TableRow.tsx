@@ -33,7 +33,7 @@ function TableRow({
   return (
     <div
       key={record.id}
-      className="grid grid-cols-3 border-b last:border-b-0 hover:bg-blue-500 transition-colors bg-blue-400  h-10"
+      className="grid grid-cols-3 border-b border-gray-200 last:border-b-0 hover:bg-blue-50 transition-colors bg-white text-gray-800 h-10"
       style={{ gridTemplateColumns: cols }}
     >
       <span className="px-3 py-4">{record.id} </span>

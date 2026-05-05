@@ -7,7 +7,7 @@ function TableHeading({ headings }: tableHeadingProps) {
 
   return (
     <div
-      className="grid grid-cols-5 bg-slate-800 text-white font-semibold  h-10"
+      className="grid grid-cols-5 bg-gray-100 text-gray-700 font-semibold h-10 border-b border-gray-200"
       style={{ gridTemplateColumns: cols }}
     >
       {headings.map((heading: string) => (

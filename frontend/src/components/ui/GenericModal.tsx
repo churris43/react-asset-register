@@ -34,14 +34,14 @@ function GenericModal({
   return (
     <>
       <div
-        className="fixed inset-0 flex items-center justify-center z-50 "
+        className="fixed inset-0 flex items-center justify-center z-50 bg-black/40"
         onClick={onClose}
       >
         <div
-          className="bg-black rounded-lg p-6 max-w-md w-full mx-4 border-2 border-white"
+          className="bg-white rounded-lg p-6 max-w-md w-full mx-4 border border-gray-200 shadow-lg"
           onClick={(e: React.MouseEvent) => e.stopPropagation()} //Prevents clicks inside the modal from bubbling up to the backdrop
         >
-          <h2 className="mb-2 text-xl border-b-2">
+          <h2 className="mb-2 text-xl border-b border-gray-200 pb-2 text-gray-900">
             {mode == "add" ? " Add new record" : "Edit Record"}
           </h2>
           <ModalForm

@@ -3,9 +3,9 @@ import Link from "next/link";
 function Navbar() {
   return (
     <>
-      <nav className="bg-gray-950 border-b border-gray-800">
+      <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-lg font-semibold text-white">Asset Register</div>
+          <div className="text-lg font-semibold text-gray-900">Asset Register</div>
 
           <div className="flex space-x-8 text-sm font-medium">
             <Link href="/" className="navbar-item">

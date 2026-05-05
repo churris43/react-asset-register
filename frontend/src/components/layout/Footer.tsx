@@ -16,7 +16,7 @@ export function RelativeTime() {
 
 function Footer() {
   return (
-    <footer className="bg-gray-950 border-t border-gray-800">
+    <footer className="bg-white border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-6 py-4 text-center text-sm text-gray-500">
         ©
         <Suspense fallback={<span>...</span>}>
