@@ -38,7 +38,7 @@ function TableRow({
     >
       <span className="px-3 py-4">{record.id} </span>
       {fields.map((field: Field) => (
-        <span key={field.name} className="text-sm ml-4 px-3 py-4">
+        <span key={field.name} className="text-sm px-3 py-4">
           {getNestedValue(record, field.childField ?? field.name)}
         </span>
       ))}
