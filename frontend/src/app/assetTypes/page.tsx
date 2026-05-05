@@ -10,6 +10,7 @@ import deleteAssetType, {
 } from "../actions/assetTypeActions";
 import AssetTypeInterface from "@/src/interfaces/assetType";
 import TableRow from "@/src/components/ui/TableRow";
+import TableFooter from "@/src/components/ui/TableFooter";
 
 async function Roles() {
   const asset_types = await getAssetTypes();
@@ -36,7 +37,7 @@ async function Roles() {
           createAction={createAssetType}
         />
       </h1>
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
+      <div className="w-full bg-white rounded-lg shadow-md overflow-hidden">
         <TableHeading headings={headings} />
         {asset_types.map((asset_type: AssetTypeInterface) => (
           <TableRow
@@ -50,6 +51,7 @@ async function Roles() {
             fields={fields}
           />
         ))}
+        <TableFooter colCount={fields.length} />
       </div>
     </>
   );

@@ -1,7 +1,6 @@
 import AddButton from "@/src/components/features/AddButton";
 import RoleInterface from "@/src/interfaces/role";
 import TableHeading from "@/src/components/ui/TableHeading";
-import RowActionButtons from "@/src/components/ui/RowActionButtons";
 import deleteRole, {
   createRole,
   editRole,
@@ -10,6 +9,7 @@ import deleteRole, {
 } from "../actions/roleActions";
 import Field from "../../interfaces/field";
 import TableRow from "@/src/components/ui/TableRow";
+import TableFooter from "@/src/components/ui/TableFooter";
 
 async function Roles() {
   const roles = await getRoles();
@@ -42,7 +42,7 @@ async function Roles() {
           createAction={createRole}
         />
       </h1>
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
+      <div className="w-full bg-white rounded-lg shadow-md overflow-hidden">
         <TableHeading headings={headings} />
         {roles.map((role: RoleInterface) => (
           <TableRow
@@ -56,6 +56,7 @@ async function Roles() {
             fields={fields}
           />
         ))}
+        <TableFooter colCount={fields.length} />
       </div>
     </>
   );

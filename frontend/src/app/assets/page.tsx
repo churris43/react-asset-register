@@ -1,7 +1,6 @@
 import AddButton from "@/src/components/features/AddButton";
 
 import TableHeading from "@/src/components/ui/TableHeading";
-import RowActionButtons from "@/src/components/ui/RowActionButtons";
 import TableFooter from "@/src/components/ui/TableFooter";
 import Field from "../../interfaces/field";
 import deleteAsset, {
@@ -83,7 +82,7 @@ async function Assets() {
           <span>To add assets you must have roles and asset types</span>
         </div>
       )}
-      <div className="max-w-4xl mx-auto bg-gray rounded-lg shadow-md overflow-hidden ">
+      <div className="w-full bg-gray rounded-lg shadow-md overflow-hidden">
         <TableHeading headings={headings} />
         {assets.length > 0 &&
           assets.map((asset: AssetInterface) => (
