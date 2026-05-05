@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `asset` (
         ON UPDATE CASCADE,
     CONSTRAINT `fk_asset_asset_type` 
         FOREIGN KEY (`asset_type_id`) 
-        REFERENCES `asset_Type` (`id`) 
+        REFERENCES `asset_type` (`id`) 
         ON DELETE SET NULL
         ON UPDATE CASCADE
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
