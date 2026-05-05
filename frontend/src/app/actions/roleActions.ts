@@ -4,10 +4,11 @@ import { revalidatePath } from "next/cache";
 import RoleInterface from "@/src/interfaces/role";
 
 const path: string = "/roles";
+const API_BASE = process.env.API_URL;
 
 export async function deleteRole(id: number) {
   try {
-    const res = await fetch("http://api:3000/roles/" + id, {
+    const res = await fetch(`${API_BASE}/roles/${id}`, {
       method: "DELETE",
       headers: {
         // todo: use the utils constant
@@ -25,7 +26,7 @@ export async function deleteRole(id: number) {
 export async function getRoles(): Promise<RoleInterface[] | []> {
   try {
     // @todo: Need to work out how to proxy this, this request comes fro the server
-    const response = await fetch("http://api:3000/roles");
+    const response = await fetch(`${API_BASE}/roles`);
     if (!response.ok) {
       throw new Error("Failed to get role");
     }
@@ -38,7 +39,7 @@ export async function getRoles(): Promise<RoleInterface[] | []> {
 
 export async function getRole(id: number) {
   try {
-    const response = await fetch("http://api:3000/roles/" + id);
+    const response = await fetch(`${API_BASE}/roles/${id}`);
     if (!response.ok) {
       throw new Error("Failed to get role");
     }
@@ -51,7 +52,7 @@ export async function getRole(id: number) {
 
 export async function editRole(id: number, data: RoleInterface) {
   try {
-    const res = await fetch("http://api:3000/roles/" + id, {
+    const res = await fetch(`${API_BASE}/roles/${id}`, {
       method: "PUT",
       // todo: refactor to get the headers in utils
       headers: {
@@ -75,7 +76,7 @@ export async function editRole(id: number, data: RoleInterface) {
 
 export async function createRole(data: RoleInterface) {
   try {
-    const res = await fetch("http://api:3000/roles/", {
+    const res = await fetch(`${API_BASE}/roles/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

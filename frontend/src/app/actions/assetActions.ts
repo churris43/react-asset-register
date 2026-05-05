@@ -4,10 +4,11 @@ import { revalidatePath } from "next/cache";
 import AssetInterface from "@/src/interfaces/asset";
 
 const path: string = "/assets";
+const API_BASE = process.env.API_URL;
 
 export async function deleteAsset(id: number) {
   try {
-    const res = await fetch("http://api:3000/assets/" + id, {
+    const res = await fetch(`${API_BASE}/assets/${id}`, {
       method: "DELETE",
       headers: {
         // todo: use the utils constant
@@ -25,7 +26,7 @@ export async function deleteAsset(id: number) {
 export async function getAssets() {
   try {
     // @todo: Need to work out how to proxy this, this request comes fro the server
-    const response = await fetch("http://api:3000/assets");
+    const response = await fetch(`${API_BASE}/assets`);
     if (!response.ok) {
       throw new Error("Failed to get asset");
     }
@@ -39,7 +40,7 @@ export async function getAssets() {
 
 export async function getAsset(id: number) {
   try {
-    const response = await fetch("http://api:3000/assets/" + id);
+    const response = await fetch(`${API_BASE}/assets/${id}`);
     if (!response.ok) {
       throw new Error("Failed to get asset");
     }
@@ -52,7 +53,7 @@ export async function getAsset(id: number) {
 
 export async function editAsset(id: number, data: AssetInterface) {
   try {
-    const res = await fetch("http://api:3000/assets/" + id, {
+    const res = await fetch(`${API_BASE}/assets/${id}`, {
       method: "PUT",
       // todo: refactor to get the headers in utils
       headers: {
@@ -75,7 +76,7 @@ export async function editAsset(id: number, data: AssetInterface) {
 
 export async function createAsset(data: AssetInterface) {
   try {
-    const res = await fetch("http://api:3000/assets/", {
+    const res = await fetch(`${API_BASE}/assets/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
