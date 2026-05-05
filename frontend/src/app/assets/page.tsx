@@ -67,7 +67,7 @@ async function Assets() {
 
   return (
     <>
-      <h1 className="text-xl mb-4">
+      <h1 className="text-xl mb-4 flex items-center justify-between">
         Assets
         {canAddAssets() && (
           <AddButton

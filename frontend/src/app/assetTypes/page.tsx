@@ -29,7 +29,7 @@ async function Roles() {
 
   return (
     <>
-      <h1 className="text-xl mb-4">
+      <h1 className="text-xl mb-4 flex items-center justify-between">
         Asset Types
         <AddButton
           recordName="Asset Types"

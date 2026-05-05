@@ -15,10 +15,10 @@ function AddButton({ recordName, fields, createAction }: AddButtonProps) {
   return (
     <>
       <button
-        className="border-2 rounded bg-blue-300 hover:bg-blue-300 text-white border-blue-500 py-1 px-2"
+        className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-0 w-8 h-8 inline-flex items-center justify-center text-lg leading-none"
         onClick={() => setIsModalOpen(true)}
       >
-        + Add {recordName}
+        +
       </button>
       <GenericModal
         isModalOpen={isModalOpen}
