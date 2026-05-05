@@ -1,29 +1,15 @@
-import Link from "next/link";
+import NavLinks from "../ui/NavLinks";
 
 function Navbar() {
   return (
-    <>
-      <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-lg font-semibold text-gray-900">Asset Register</div>
-
-          <div className="flex space-x-8 text-sm font-medium">
-            <Link href="/" className="navbar-item">
-              Home
-            </Link>
-            <Link href="assets" className="navbar-item">
-              Asset Register
-            </Link>
-            <Link href="assetTypes" className="navbar-item">
-              Asset Types
-            </Link>
-            <Link href="roles" className="navbar-item">
-              Roles
-            </Link>
-          </div>
+    <nav className="bg-white border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="text-lg font-semibold text-gray-900">
+          Asset Register
         </div>
-      </nav>
-    </>
+        <NavLinks />
+      </div>
+    </nav>
   );
 }
 
