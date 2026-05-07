@@ -24,6 +24,11 @@ if (!process.env.FRONTEND_URL) {
 
 const app = express();
 
+// Required when running behind Nginx or any reverse proxy (including Render's infrastructure).
+// Without this, req.ip resolves to the proxy's IP (127.0.0.1) instead of the real client IP,
+// causing rate limiting to count all users as the same IP and block everyone after 10 requests.
+app.set("trust proxy", 1);
+
 export let connection: Connection;
 
 // Restricts which origins can call this API — only the frontend URL is allowed.
