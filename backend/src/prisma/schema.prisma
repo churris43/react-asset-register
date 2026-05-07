@@ -31,3 +31,10 @@ model role {
   staff_name String? @db.Text
   asset      asset[]
 }
+
+model user {
+  id              Int       @id @default(autoincrement())
+  email           String    @unique @db.VarChar(255)
+  password_hash   String    @db.VarChar(255)
+  created_at      DateTime  @default(now())
+}

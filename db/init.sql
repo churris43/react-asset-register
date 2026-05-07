@@ -4,6 +4,12 @@ CREATE TABLE IF NOT EXISTS role(
     staff_name TEXT NULL
 ) COMMENT '';
 
+CREATE TABLE IF NOT EXISTS `asset_type` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `asset_type_name` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `asset` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `asset_name` VARCHAR(255) NOT NULL,
@@ -26,5 +32,13 @@ CREATE TABLE IF NOT EXISTS `asset` (
 CREATE TABLE IF NOT EXISTS `asset_type` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `asset_type_name` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `user` (
+    `id`            INT           NOT NULL AUTO_INCREMENT,
+    `email`         VARCHAR(255)  NOT NULL UNIQUE,
+    `password_hash` VARCHAR(255)  NOT NULL,
+    `created_at`    DATETIME(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
