@@ -12,6 +12,11 @@ export const register = async (req: Request, res: Response) => {
       .status(400)
       .json({ message: "Password must be at least 8 characters" });
 
+  if (password.length > 128)
+    return res
+      .status(400)
+      .json({ message: "Password must be 128 characters or fewer" });
+
   try {
     const user = await AuthService.registerUser(email, password);
     return res.status(201).json({ message: "User registered", user });
