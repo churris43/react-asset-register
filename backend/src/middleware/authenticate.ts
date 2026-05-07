@@ -24,7 +24,14 @@ export const authenticate = (
     return res.status(401).json({ message: "Authentication required" });
 
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const payload = jwt.verify(token, process.env.JWT_SECRET!, { algorithms: ["HS256"] }) as JwtPayload;
+
+    // Reject refresh tokens — they are only valid at POST /auth/refresh,
+    // not at protected API endpoints
+    if (payload.type !== "access")
+      return res.status(401).json({ message: "Invalid token type" });
+
+    req.user = payload;
     next(); // token is valid — pass the request to the route handler
   } catch {
     return res.status(401).json({ message: "Invalid or expired token" });

@@ -28,22 +28,29 @@ export const loginUser = async (email: string, password: string) => {
   const valid = await bcrypt.compare(password, user.password_hash);
   if (!valid) throw new Error("INVALID_CREDENTIALS");
 
-  const payload: JwtPayload = { userId: user.id, email: user.email };
+  // type field is included so the middleware can reject a refresh token
+  // presented to a protected endpoint — without it both tokens are identical
+  // in structure and a stolen 7-day refresh token bypasses the 15-minute limit
+  const accessPayload:  JwtPayload = { userId: user.id, email: user.email, type: "access" };
+  const refreshPayload: JwtPayload = { userId: user.id, email: user.email, type: "refresh" };
 
-  // Short-lived access token sent with every API request
-  const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
-  // Long-lived refresh token used only to issue new access tokens
-  const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+  // algorithm is explicit to prevent acceptance of the "none" algorithm
+  const accessToken  = jwt.sign(accessPayload,  JWT_SECRET, { expiresIn: "15m", algorithm: "HS256" });
+  const refreshToken = jwt.sign(refreshPayload, JWT_SECRET, { expiresIn: "7d",  algorithm: "HS256" });
 
   return { accessToken, refreshToken };
 };
 
 export const refreshAccessToken = (refreshToken: string) => {
   // Throws if the token is invalid or expired — caller handles the error
-  const payload = jwt.verify(refreshToken, JWT_SECRET) as JwtPayload;
+  const payload = jwt.verify(refreshToken, JWT_SECRET, { algorithms: ["HS256"] }) as JwtPayload;
+
+  // Reject if someone passes an access token to the refresh endpoint
+  if (payload.type !== "refresh") throw new Error("INVALID_TOKEN_TYPE");
+
   return jwt.sign(
-    { userId: payload.userId, email: payload.email },
+    { userId: payload.userId, email: payload.email, type: "access" },
     JWT_SECRET,
-    { expiresIn: "15m" },
+    { expiresIn: "15m", algorithm: "HS256" },
   );
 };
