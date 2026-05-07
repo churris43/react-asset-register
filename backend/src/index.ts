@@ -7,6 +7,21 @@ import cookieParser from "cookie-parser";
 
 dotenv.config();
 
+// Fail fast — refuse to start if critical environment variables are missing
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  console.error(
+    "FATAL: JWT_SECRET is missing or too short (min 32 characters)",
+  );
+  process.exit(1);
+}
+
+if (!process.env.FRONTEND_URL) {
+  console.error(
+    "FATAL: FRONTEND_URL is not set — CORS would allow all origins",
+  );
+  process.exit(1);
+}
+
 const app = express();
 
 export let connection: Connection;
