@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express";
 import routes from "./routes";
 import dotenv from "dotenv";
-import type { Connection } from "mysql2/promise";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -29,7 +28,7 @@ const app = express();
 // causing rate limiting to count all users as the same IP and block everyone after 10 requests.
 app.set("trust proxy", 1);
 
-export let connection: Connection;
+//export let connection: Connection;
 
 // Restricts which origins can call this API — only the frontend URL is allowed.
 // credentials: true is required to accept requests that include cookies.

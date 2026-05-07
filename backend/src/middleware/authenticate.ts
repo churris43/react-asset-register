@@ -24,7 +24,9 @@ export const authenticate = (
     return res.status(401).json({ message: "Authentication required" });
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!, { algorithms: ["HS256"] }) as JwtPayload;
+    const payload = jwt.verify(token, process.env.JWT_SECRET!, {
+      algorithms: ["HS256"],
+    }) as JwtPayload;
 
     // Reject refresh tokens — they are only valid at POST /auth/refresh,
     // not at protected API endpoints

@@ -1,4 +1,3 @@
-import { connection } from "../index";
 import Role from "../types/Role";
 import { roleModel } from "../generated/prisma/models/role";
 
