@@ -5,12 +5,14 @@ import dotenv from "dotenv";
 import type { Connection, RowDataPacket } from "mysql2/promise";
 import Role from "./types/Role";
 import { prisma } from "./lib/prisma";
+import cors from "cors";
 
 // Routes
 
 dotenv.config();
 
 const app = express();
+app.use(cors({ origin: process.env.FRONTEND_URL }));
 
 export let connection: Connection;
 
