@@ -1,25 +1,33 @@
 import express, { Request, Response } from "express";
 import routes from "./routes";
-import mysql from "mysql2/promise";
 import dotenv from "dotenv";
-import type { Connection, RowDataPacket } from "mysql2/promise";
-import Role from "./types/Role";
-import { prisma } from "./lib/prisma";
+import type { Connection } from "mysql2/promise";
 import cors from "cors";
-
-// Routes
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: process.env.FRONTEND_URL }));
 
 export let connection: Connection;
 
+// Restricts which origins can call this API — only the frontend URL is allowed.
+// credentials: true is required to accept requests that include cookies.
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  }),
+);
+
+// Parses the Cookie header on incoming requests so cookies are accessible
+// via req.cookies — required for reading the access_token and refresh_token.
+app.use(cookieParser());
+
+// Parses incoming JSON request bodies so they are accessible via req.body
 app.use(express.json());
 
 const PORT = Number(process.env.PORT) || 3000;
-const DB_PORT = Number(process.env.MYSQL_PORT) || 3306;
 
 app.use("/", routes);
 
