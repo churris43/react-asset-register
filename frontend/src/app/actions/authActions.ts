@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { setAccessTokenCookie } from "@/src/libs/authCookies";
 
 const API_BASE = process.env.API_URL;
 
@@ -17,15 +18,7 @@ export async function login(email: string, password: string) {
   const { accessToken, refreshToken } = await res.json();
   const cookieStore = await cookies();
 
-  // httpOnly prevents JS from reading the token — mitigates XSS attacks
-  // sameSite: strict blocks the cookie from being sent on cross-site requests — mitigates CSRF
-  // maxAge: 15 minutes matches the JWT expiry
-  cookieStore.set("access_token", accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 15 * 60,
-  });
+  await setAccessTokenCookie(accessToken);
 
   // maxAge: 7 days — longer lived so the access token can be silently refreshed
   cookieStore.set("refresh_token", refreshToken, {

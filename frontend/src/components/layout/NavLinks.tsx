@@ -9,7 +9,6 @@ const links = [
   { href: "/assets", label: "Assets" },
   { href: "/assetTypes", label: "Asset Types" },
   { href: "/roles", label: "Roles" },
-  { href: "/login", label: "Login" },
 ];
 
 function NavLinks() {

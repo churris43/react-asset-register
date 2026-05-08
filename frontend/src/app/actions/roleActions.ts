@@ -2,18 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import RoleInterface from "@/src/interfaces/role";
+import { fetchWithAuth } from "@/src/libs/fetchWithAuth";
 
 const path: string = "/roles";
-const API_BASE = process.env.API_URL;
 
 export async function deleteRole(id: number) {
   try {
-    const res = await fetch(`${API_BASE}/roles/${id}`, {
+    const res = await fetchWithAuth(`/roles/${id}`, {
       method: "DELETE",
-      headers: {
-        // todo: use the utils constant
-        "Content-Type": "application/json",
-      },
     });
     if (!res.ok) throw new Error("Failed to fetch data");
     revalidatePath(path);
@@ -25,8 +21,7 @@ export async function deleteRole(id: number) {
 
 export async function getRoles(): Promise<RoleInterface[] | []> {
   try {
-    // @todo: Need to work out how to proxy this, this request comes fro the server
-    const response = await fetch(`${API_BASE}/roles`);
+    const response = await fetchWithAuth(`/roles`);
     if (!response.ok) {
       throw new Error("Failed to get role");
     }
@@ -39,7 +34,7 @@ export async function getRoles(): Promise<RoleInterface[] | []> {
 
 export async function getRole(id: number) {
   try {
-    const response = await fetch(`${API_BASE}/roles/${id}`);
+    const response = await fetchWithAuth(`/roles/${id}`);
     if (!response.ok) {
       throw new Error("Failed to get role");
     }
@@ -52,12 +47,8 @@ export async function getRole(id: number) {
 
 export async function editRole(id: number, data: RoleInterface) {
   try {
-    const res = await fetch(`${API_BASE}/roles/${id}`, {
+    const res = await fetchWithAuth(`/roles/${id}`, {
       method: "PUT",
-      // todo: refactor to get the headers in utils
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(data),
     });
 
@@ -76,11 +67,8 @@ export async function editRole(id: number, data: RoleInterface) {
 
 export async function createRole(data: RoleInterface) {
   try {
-    const res = await fetch(`${API_BASE}/roles/`, {
+    const res = await fetchWithAuth(`/roles/`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(data),
     });
 

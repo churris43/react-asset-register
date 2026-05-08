@@ -2,18 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import AssetTypeInterface from "@/src/interfaces/assetType";
+import { fetchWithAuth } from "@/src/libs/fetchWithAuth";
 
 const path: string = "/assetTypes";
-const API_BASE = process.env.API_URL;
 
 export async function deleteAssetType(id: number) {
   try {
-    const response = await fetch(`${API_BASE}/assettypes/${id}`, {
+    const response = await fetchWithAuth(`/assettypes/${id}`, {
       method: "DELETE",
-      headers: {
-        // todo: use the utils constant
-        "Content-Type": "application/json",
-      },
     });
     if (!response.ok) throw new Error(response.statusText);
     revalidatePath(path);
@@ -25,8 +21,7 @@ export async function deleteAssetType(id: number) {
 
 export async function getAssetTypes(): Promise<AssetTypeInterface[] | []> {
   try {
-    // @todo: Need to work out how to proxy this, this request comes fro the server
-    const response = await fetch(`${API_BASE}/assettypes`);
+    const response = await fetchWithAuth(`/assettypes`);
     if (!response.ok) {
       throw new Error(response.statusText);
     }
@@ -39,7 +34,7 @@ export async function getAssetTypes(): Promise<AssetTypeInterface[] | []> {
 
 export async function getAssetType(id: number) {
   try {
-    const response = await fetch(`${API_BASE}/assettypes/${id}`);
+    const response = await fetchWithAuth(`/assettypes/${id}`);
     if (!response.ok) {
       throw new Error(response.statusText);
     }
@@ -52,12 +47,8 @@ export async function getAssetType(id: number) {
 
 export async function editAssetType(id: number, data: AssetTypeInterface) {
   try {
-    const response = await fetch(`${API_BASE}/assettypes/${id}`, {
+    const response = await fetchWithAuth(`/assettypes/${id}`, {
       method: "PUT",
-      // todo: refactor to get the headers in utils
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(data),
     });
 
@@ -76,11 +67,8 @@ export async function editAssetType(id: number, data: AssetTypeInterface) {
 
 export async function createAssetType(data: AssetTypeInterface) {
   try {
-    const response = await fetch(`${API_BASE}/assettypes/`, {
+    const response = await fetchWithAuth(`/assettypes/`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(data),
     });
 
