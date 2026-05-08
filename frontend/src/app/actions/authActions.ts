@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const API_BASE = process.env.API_URL;
 
@@ -35,4 +36,11 @@ export async function login(email: string, password: string) {
   });
 
   return { success: true };
+}
+
+export async function logout() {
+  const cookieStore = await cookies();
+  cookieStore.delete("access_token");
+  cookieStore.delete("refresh_token");
+  redirect("/login");
 }

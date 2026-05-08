@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { logout } from "@/src/app/actions/authActions";
 
 const links = [
   { href: "/", label: "Home" },
@@ -13,6 +14,11 @@ const links = [
 
 function NavLinks() {
   const pathname = usePathname();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <div className="flex space-x-8 text-sm font-medium">
       {links.map(({ href, label }) => (
@@ -28,6 +34,12 @@ function NavLinks() {
           {label}
         </Link>
       ))}
+      <button
+        onClick={handleLogout}
+        className="navbar-item cursor-pointer mb-1.5"
+      >
+        Logout
+      </button>
     </div>
   );
 }
