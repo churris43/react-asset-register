@@ -1,6 +1,4 @@
-import { RowDataPacket } from "mysql2";
-
-interface Role extends RowDataPacket {
+interface Role {
   id: number;
   role_name: string;
   staff_name: string | null;

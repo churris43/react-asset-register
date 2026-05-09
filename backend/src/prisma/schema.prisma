@@ -4,37 +4,37 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model asset {
   id            Int         @id @default(autoincrement())
-  asset_name    String      @db.VarChar(255)
+  asset_name    String
   role_id       Int?
   asset_type_id Int?
   asset_type    asset_type? @relation(fields: [asset_type_id], references: [id], map: "fk_asset_asset_type")
   role          role?       @relation(fields: [role_id], references: [id], map: "fk_asset_role")
 
-  @@index([asset_type_id], map: "fk_asset_asset_type")
+  @@index([asset_type_id], map: "idx_asset_type_id")
   @@index([role_id], map: "idx_role_id")
 }
 
 model asset_type {
   id              Int     @id @default(autoincrement())
-  asset_type_name String  @db.VarChar(255)
+  asset_type_name String
   asset           asset[]
 }
 
 model role {
   id         Int     @id @default(autoincrement())
-  role_name  String  @db.VarChar(255)
-  staff_name String? @db.Text
+  role_name  String
+  staff_name String?
   asset      asset[]
 }
 
 model user {
-  id              Int       @id @default(autoincrement())
-  email           String    @unique @db.VarChar(255)
-  password_hash   String    @db.VarChar(255)
-  created_at      DateTime  @default(now())
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
 }

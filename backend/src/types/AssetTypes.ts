@@ -1,6 +1,4 @@
-import { RowDataPacket } from "mysql2";
-
-interface AssetType extends RowDataPacket {
+interface AssetType {
   id: number;
   asset_type_name: string;
 }
