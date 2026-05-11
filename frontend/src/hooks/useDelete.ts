@@ -1,4 +1,4 @@
-import { startTransition, useCallback, useTransition } from "react";
+import { useCallback, useTransition } from "react";
 
 interface UseDeleteProps {
   recordName: string;
@@ -11,7 +11,7 @@ export function useDelete(
   deleteAction: () => Promise<{ success: boolean; error?: string }>,
   props: UseDeleteProps,
 ) {
-  const [isPending, setIsPending] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const { recordName, onConfirm, onSuccess, onError } = props;
 
   //useCallback: This memoizes the function so it doesn't change on every render unless dependencies change.
