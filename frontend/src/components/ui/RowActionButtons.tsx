@@ -32,7 +32,6 @@ function RowActionButtons({
       />
       <DeleteRecordButton
         recordName={recordName}
-        id={id}
         deleteAction={deleteAction}
       />
     </div>
