@@ -28,7 +28,7 @@ function GenericModal({
   editAction,
   createAction,
 }: AddModalProps) {
-  if (!isModalOpen) return; // Skip fetching if modal is closed
+  if (!isModalOpen) return null; // Skip fetching if modal is closed
 
   return (
     <>
