@@ -7,7 +7,7 @@ interface RowActionButtonsProps {
   recordName: string;
   deleteAction: () => Promise<{ success: boolean; error?: string }>;
   fields: Field[];
-  getAction: () => Promise<{ success: boolean; error?: string }>;
+  initialData: Record<string, any>;
   editAction?: (
     id: number,
     data: any,
@@ -19,7 +19,7 @@ function RowActionButtons({
   recordName,
   deleteAction,
   fields,
-  getAction,
+  initialData,
   editAction,
 }: RowActionButtonsProps) {
   return (
@@ -27,7 +27,7 @@ function RowActionButtons({
       <EditRoleButton
         id={id}
         fields={fields}
-        getAction={getAction}
+        initialData={initialData}
         editAction={editAction}
       />
       <DeleteRecordButton

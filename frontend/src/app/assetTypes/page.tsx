@@ -5,12 +5,11 @@ import Field from "../../interfaces/field";
 import deleteAssetType, {
   createAssetType,
   editAssetType,
-  getAssetTypes,
-  getAssetType,
 } from "../actions/assetTypeActions";
 import AssetTypeInterface from "@/src/interfaces/assetType";
 import TableRow from "@/src/components/ui/TableRow";
 import TableFooter from "@/src/components/ui/TableFooter";
+import { getAssetTypes } from "../actions/assetTypeQueries";
 
 async function Roles() {
   const asset_types = await getAssetTypes();
@@ -46,7 +45,6 @@ async function Roles() {
             id={asset_type.id}
             key={asset_type.id}
             deleteAction={deleteAssetType.bind(null, asset_type.id)}
-            getAction={getAssetType.bind(null, asset_type.id)}
             editAction={editAssetType}
             fields={fields}
           />

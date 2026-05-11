@@ -1,15 +1,11 @@
 import AddButton from "@/src/components/features/AddButton";
 import RoleInterface from "@/src/interfaces/role";
 import TableHeading from "@/src/components/ui/TableHeading";
-import deleteRole, {
-  createRole,
-  editRole,
-  getRole,
-  getRoles,
-} from "../actions/roleActions";
+import deleteRole, { createRole, editRole } from "../actions/roleActions";
 import Field from "../../interfaces/field";
 import TableRow from "@/src/components/ui/TableRow";
 import TableFooter from "@/src/components/ui/TableFooter";
+import { getRoles } from "../actions/roleQueries";
 
 async function Roles() {
   const roles = await getRoles();
@@ -51,7 +47,6 @@ async function Roles() {
             id={role.id}
             key={role.id}
             deleteAction={deleteRole.bind(null, role.id)}
-            getAction={getRole.bind(null, role.id)}
             editAction={editRole}
             fields={fields}
           />

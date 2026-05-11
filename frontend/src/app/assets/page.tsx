@@ -3,16 +3,12 @@ import AddButton from "@/src/components/features/AddButton";
 import TableHeading from "@/src/components/ui/TableHeading";
 import TableFooter from "@/src/components/ui/TableFooter";
 import Field from "../../interfaces/field";
-import deleteAsset, {
-  createAsset,
-  editAsset,
-  getAssets,
-  getAsset,
-} from "../actions/assetActions";
+import deleteAsset, { createAsset, editAsset } from "../actions/assetActions";
+import { getAssetTypes } from "../actions/assetTypeQueries";
+import { getAssets } from "../actions/assetQueries";
 import AssetInterface from "@/src/interfaces/asset";
-import { getRoles } from "../actions/roleActions";
+import { getRoles } from "../actions/roleQueries";
 import RoleInterface from "@/src/interfaces/role";
-import { getAssetTypes } from "../actions/assetTypeActions";
 import AssetTypeInterface from "@/src/interfaces/assetType";
 import TableRow from "@/src/components/ui/TableRow";
 
@@ -92,7 +88,6 @@ async function Assets() {
               id={asset.id}
               key={asset.id}
               deleteAction={deleteAsset.bind(null, asset.id)}
-              getAction={getAsset.bind(null, asset.id)}
               editAction={editAsset}
               fields={fields}
             />

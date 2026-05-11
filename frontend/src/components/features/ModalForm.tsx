@@ -9,7 +9,7 @@ interface ModalFormProps {
   isModalOpen: boolean;
   mode: string;
   id: number;
-  getAction?: () => Promise<any>;
+  initialData?: Record<string, any>;
   editAction?: (
     id: number,
     data: any,
@@ -23,14 +23,14 @@ function ModalForm({
   isModalOpen,
   mode,
   id,
-  getAction,
+  initialData,
   editAction,
   createAction,
   onClose,
 }: ModalFormProps) {
   const { formData, handleChange, handleEdit, handleAdd } = useModalForm({
     id,
-    getAction,
+    initialData,
     isModalOpen,
     mode,
     fields,

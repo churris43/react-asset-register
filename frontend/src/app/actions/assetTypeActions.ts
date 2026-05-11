@@ -19,32 +19,6 @@ export async function deleteAssetType(id: number) {
   }
 }
 
-export async function getAssetTypes(): Promise<AssetTypeInterface[] | []> {
-  try {
-    const response = await fetchWithAuth(`/assettypes`);
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    return [];
-  }
-}
-
-export async function getAssetType(id: number) {
-  try {
-    const response = await fetchWithAuth(`/assettypes/${id}`);
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 export async function editAssetType(id: number, data: AssetTypeInterface) {
   try {
     const response = await fetchWithAuth(`/assettypes/${id}`, {

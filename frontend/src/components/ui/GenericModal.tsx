@@ -1,6 +1,5 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Field from "../../interfaces/field";
 import CloseButton from "./CloseButton";
 import ModalForm from "../features/ModalForm";
@@ -11,7 +10,7 @@ interface AddModalProps {
   id: number;
   mode: string;
   fields: Field[];
-  getAction?: () => Promise<any>;
+  initialData?: Record<string, any>;
   editAction?: (
     id: number,
     data: any,
@@ -25,7 +24,7 @@ function GenericModal({
   id,
   mode,
   fields,
-  getAction,
+  initialData,
   editAction,
   createAction,
 }: AddModalProps) {
@@ -50,7 +49,7 @@ function GenericModal({
             id={id}
             mode={mode}
             fields={fields}
-            getAction={getAction}
+            initialData={initialData}
             editAction={editAction}
             createAction={createAction}
           />

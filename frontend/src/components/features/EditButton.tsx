@@ -8,14 +8,14 @@ import Field from "../../interfaces/field";
 interface EditProps {
   id: number;
   fields: Field[];
-  getAction: () => Promise<{ success: boolean; error?: string }>;
+  initialData: Record<string, any>;
   editAction?: (
     id: number,
     data: any,
   ) => Promise<{ success: boolean; error?: string }>;
 }
 
-function EditRoleButton({ id, fields, getAction, editAction }: EditProps) {
+function EditRoleButton({ id, fields, initialData, editAction }: EditProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -29,7 +29,7 @@ function EditRoleButton({ id, fields, getAction, editAction }: EditProps) {
         id={id}
         mode="edit"
         fields={fields}
-        getAction={getAction}
+        initialData={initialData}
         editAction={editAction}
       />
     </>

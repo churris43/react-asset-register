@@ -19,32 +19,6 @@ export async function deleteRole(id: number) {
   }
 }
 
-export async function getRoles(): Promise<RoleInterface[] | []> {
-  try {
-    const response = await fetchWithAuth(`/roles`);
-    if (!response.ok) {
-      throw new Error("Failed to get role");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    return [];
-  }
-}
-
-export async function getRole(id: number) {
-  try {
-    const response = await fetchWithAuth(`/roles/${id}`);
-    if (!response.ok) {
-      throw new Error("Failed to get role");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 export async function editRole(id: number, data: RoleInterface) {
   try {
     const res = await fetchWithAuth(`/roles/${id}`, {

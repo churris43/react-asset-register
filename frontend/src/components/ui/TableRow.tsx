@@ -10,7 +10,6 @@ interface TableRowProps {
   recordName: string;
   deleteAction: () => Promise<{ success: boolean; error?: string }>;
   fields: Field[];
-  getAction: () => Promise<{ success: boolean; error?: string }>;
   editAction?: (
     id: number,
     data: any,
@@ -23,7 +22,6 @@ function TableRow({
   recordName,
   deleteAction,
   fields,
-  getAction,
   editAction,
   record,
 }: TableRowProps) {
@@ -46,7 +44,7 @@ function TableRow({
         recordName={recordName}
         id={id}
         deleteAction={deleteAction}
-        getAction={getAction}
+        initialData={record}
         editAction={editAction}
         fields={fields}
       />

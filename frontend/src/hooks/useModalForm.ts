@@ -4,7 +4,7 @@ import Field from "../interfaces/field";
 
 interface UseEditProps {
   id: number;
-  getAction?: () => Promise<any>;
+  initialData?: Record<string, any>;
   isModalOpen: boolean;
   mode: string;
   fields: Field[];
@@ -18,7 +18,7 @@ interface UseEditProps {
 
 function useModalForm({
   id,
-  getAction,
+  initialData,
   isModalOpen,
   mode,
   fields,
@@ -80,25 +80,14 @@ function useModalForm({
   };
 
   useEffect(() => {
-    if (!isModalOpen || mode === "add") return; // Skip fetching if modal is closed
+    if (!isModalOpen || mode === "add" || !initialData) return;
 
-    const fetchRecord = async () => {
-      try {
-        const data = getAction ? await getAction() : null;
-        if (data) {
-          // Extract only the fields defined in the fields array
-          const initialData: Record<string, string | number> = {};
-          fields.forEach((field) => {
-            initialData[field.name] =
-              data[field.name] ?? defaultValues(fields)[field.name];
-          });
-          setFormData(initialData);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchRecord();
+    const extracted: Record<string, string | number> = {};
+    fields.forEach((field) => {
+      extracted[field.name] =
+        initialData[field.name] ?? defaultValues(fields)[field.name];
+    });
+    setFormData(extracted);
   }, [isModalOpen, mode]);
 
   // todo: This is not right, this shoule be elsewhere, maybe a hook on its own
