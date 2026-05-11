@@ -51,7 +51,10 @@ async function Roles() {
             fields={fields}
           />
         ))}
-        <TableFooter colCount={fields.length} />
+        <TableFooter
+          colCount={fields.length}
+          summary={roles.length === 0 ? "No roles found" : ""}
+        />
       </div>
     </>
   );

@@ -49,7 +49,10 @@ async function Roles() {
             fields={fields}
           />
         ))}
-        <TableFooter colCount={fields.length} />
+        <TableFooter
+          colCount={fields.length}
+          summary={asset_types.length === 0 ? "No asset types found" : ""}
+        />
       </div>
     </>
   );
