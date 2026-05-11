@@ -30,16 +30,17 @@ function ModalForm({
   createAction,
   onClose,
 }: ModalFormProps) {
-  const { formData, handleChange, handleEdit, handleAdd } = useModalForm({
-    id,
-    initialData,
-    isModalOpen,
-    mode,
-    fields,
-    editAction,
-    createAction,
-    onClose,
-  });
+  const { formData, handleChange, handleEdit, handleAdd, isPending } =
+    useModalForm({
+      id,
+      initialData,
+      isModalOpen,
+      mode,
+      fields,
+      editAction,
+      createAction,
+      onClose,
+    });
 
   return (
     <>
@@ -78,7 +79,7 @@ function ModalForm({
         ))}
         <div className="flex justify-end space-x-3">
           <CloseButton onClose={onClose} />
-          <SaveOrAddButton mode={mode} />
+          <SaveOrAddButton mode={mode} isPending={isPending} />
         </div>
       </form>
     </>

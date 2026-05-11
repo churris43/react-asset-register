@@ -1,4 +1,10 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
 import { toast } from "react-toastify";
 import Field from "../interfaces/field";
 
@@ -32,6 +38,7 @@ function useModalForm({
     );
   };
 
+  const [isPending, startTransition] = useTransition();
   const [formData, setFormData] = useState(defaultValues(fields));
 
   const handleChange = (
@@ -44,40 +51,41 @@ function useModalForm({
     }));
   };
 
-  const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleEdit = async (e: FormEvent<HTMLFormElement>) =>
+    startTransition(async () => {
+      e.preventDefault();
 
-    try {
-      const response = editAction ? await editAction(id, formData) : null;
-      if (response?.success) {
-        toast.success("Record updated successfully");
-      } else {
-        toast.error("Failed to update record");
+      try {
+        const response = editAction ? await editAction(id, formData) : null;
+        if (response?.success) {
+          toast.success("Record updated successfully");
+        } else {
+          toast.error("Failed to update record");
+        }
+      } catch (error) {
+        toast.error("An unexpected error occurred");
+      } finally {
+        onClose();
       }
-    } catch (error) {
-      toast.error("An unexpected error occurred");
-    } finally {
-      onClose();
-    }
-  };
+    });
 
-  const handleAdd = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // TODO: implement the loading
-    try {
-      const response = createAction ? await createAction(formData) : null;
-      if (response?.success) {
-        toast.success("Record created successfully");
-      } else {
-        toast.error("Failed to create the record");
+  const handleAdd = async (e: FormEvent<HTMLFormElement>) =>
+    startTransition(async () => {
+      e.preventDefault();
+      try {
+        const response = createAction ? await createAction(formData) : null;
+        if (response?.success) {
+          toast.success("Record created successfully");
+        } else {
+          toast.error("Failed to create the record");
+        }
+      } catch (error) {
+        toast.error("An unexpected error occurred");
+      } finally {
+        resetForm();
+        onClose();
       }
-    } catch (error) {
-      toast.error("An unexpected error occurred");
-    } finally {
-      resetForm();
-      onClose();
-    }
-  };
+    });
 
   useEffect(() => {
     if (!isModalOpen || mode === "add" || !initialData) return;
@@ -103,6 +111,7 @@ function useModalForm({
     handleChange,
     handleEdit,
     handleAdd,
+    isPending,
   };
 }
 
