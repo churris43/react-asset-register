@@ -15,7 +15,7 @@ interface EditProps {
   ) => Promise<{ success: boolean; error?: string }>;
 }
 
-function EditRoleButton({ id, fields, initialData, editAction }: EditProps) {
+function EditButton({ id, fields, initialData, editAction }: EditProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -36,4 +36,4 @@ function EditRoleButton({ id, fields, initialData, editAction }: EditProps) {
   );
 }
 
-export default EditRoleButton;
+export default EditButton;

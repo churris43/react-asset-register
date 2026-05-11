@@ -1,4 +1,4 @@
-import EditRoleButton from "../features/EditButton";
+import EditButton from "../features/EditButton";
 import Field from "../../interfaces/field";
 import { DeleteRecordButton } from "../features/DeleteButton";
 
@@ -24,7 +24,7 @@ function RowActionButtons({
 }: RowActionButtonsProps) {
   return (
     <div className="justify-self-end px-2 py-4">
-      <EditRoleButton
+      <EditButton
         id={id}
         fields={fields}
         initialData={initialData}
