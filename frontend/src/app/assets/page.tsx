@@ -55,8 +55,6 @@ async function Assets() {
       options: roleOptions,
     },
   ];
-  const cols = `80px ${headings.map(() => "1fr").join(" ")} auto`;
-
   const canAddAssets = () => {
     return assetTypes.length > 0 && roles.length > 0;
   };
