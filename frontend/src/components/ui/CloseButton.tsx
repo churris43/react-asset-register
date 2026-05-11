@@ -1,3 +1,5 @@
+"use client";
+
 interface CloseButtonProps {
   onClose: () => void;
 }

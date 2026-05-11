@@ -1,3 +1,5 @@
+"use client";
+
 import { ChangeEvent } from "react";
 import Field from "@/src/interfaces/field";
 

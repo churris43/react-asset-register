@@ -1,3 +1,5 @@
+"use client";
+
 import Field from "@/src/interfaces/field";
 import CloseButton from "../ui/CloseButton";
 import useModalForm from "@/src/hooks/useModalForm";
