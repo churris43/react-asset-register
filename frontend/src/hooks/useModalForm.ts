@@ -96,7 +96,7 @@ function useModalForm({
         initialData[field.name] ?? defaultValues(fields)[field.name];
     });
     setFormData(extracted);
-  }, [isModalOpen, mode]);
+  }, [isModalOpen, mode, initialData, fields]);
 
   // todo: This is not right, this shoule be elsewhere, maybe a hook on its own
   const resetForm = () => {
