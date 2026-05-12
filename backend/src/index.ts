@@ -54,10 +54,6 @@ app.get("/health", (_req: Request, res: Response) => {
   res.json({ status: "ok" });
 });
 
-/**
- * CRITICAL FIX:
- * Bind to 0.0.0.0 so Nginx can reach the container
- */
 app.listen(PORT, () => {
   console.log(`API running on port ${PORT}`);
 });
