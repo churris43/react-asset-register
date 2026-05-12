@@ -4,7 +4,11 @@ import { roleModel } from "../generated/prisma/models/role";
 import { prisma } from "../lib/prisma";
 
 export const getRoles = async (): Promise<roleModel[]> => {
-  return prisma.role.findMany();
+  return prisma.role.findMany({
+    orderBy: {
+      role_name: "asc",
+    },
+  });
 };
 
 export const getRolesById = async (id: number): Promise<roleModel | null> => {

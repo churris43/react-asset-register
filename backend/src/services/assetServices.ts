@@ -8,6 +8,9 @@ export const getAssets = async (): Promise<assetModel[]> => {
       role: true,
       asset_type: true,
     },
+    orderBy: {
+      asset_name: "asc",
+    },
   });
 };
 
