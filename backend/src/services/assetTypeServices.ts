@@ -3,7 +3,11 @@ import { asset_typeModel } from "../generated/prisma/models/asset_type";
 import { prisma } from "../lib/prisma";
 
 export const getAssetTypes = async (): Promise<asset_typeModel[]> => {
-  return prisma.asset_type.findMany();
+  return prisma.asset_type.findMany({
+    orderBy: {
+      asset_type_name: "asc",
+    },
+  });
 };
 
 export const getAssetTypesById = async (
