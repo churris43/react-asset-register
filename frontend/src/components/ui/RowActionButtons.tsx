@@ -1,4 +1,4 @@
-import EditRoleButton from "../features/EditButton";
+import EditButton from "../features/EditButton";
 import Field from "../../interfaces/field";
 import { DeleteRecordButton } from "../features/DeleteButton";
 
@@ -7,7 +7,7 @@ interface RowActionButtonsProps {
   recordName: string;
   deleteAction: () => Promise<{ success: boolean; error?: string }>;
   fields: Field[];
-  getAction: () => Promise<{ success: boolean; error?: string }>;
+  initialData: Record<string, any>;
   editAction?: (
     id: number,
     data: any,
@@ -19,20 +19,19 @@ function RowActionButtons({
   recordName,
   deleteAction,
   fields,
-  getAction,
+  initialData,
   editAction,
 }: RowActionButtonsProps) {
   return (
     <div className="justify-self-end px-2 py-4">
-      <EditRoleButton
+      <EditButton
         id={id}
         fields={fields}
-        getAction={getAction}
+        initialData={initialData}
         editAction={editAction}
       />
       <DeleteRecordButton
         recordName={recordName}
-        id={id}
         deleteAction={deleteAction}
       />
     </div>

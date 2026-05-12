@@ -1,59 +1,50 @@
-import { connection } from "../index";
 import Asset from "../types/Asset";
-import convertEmptyStringToNull from "../helpers/strings";
+import { assetModel } from "../generated/prisma/models/asset";
+import { prisma } from "../lib/prisma";
 
-export const getAssets = async (): Promise<Asset[] | null> => {
-  const [rows] = await connection.execute<Asset[]>("SELECT * FROM asset");
-  return rows ?? null;
+export const getAssets = async (): Promise<assetModel[]> => {
+  return prisma.asset.findMany({
+    include: {
+      role: true,
+      asset_type: true,
+    },
+  });
 };
 
-export const getAssetsById = async (id: number): Promise<Asset | null> => {
-  const [result] = await connection.execute<Asset[]>(
-    "SELECT * FROM asset WHERE id = ?",
-    [id],
-  );
-  const asset_type = result[0];
-  return asset_type ?? null;
+export const getAssetsById = async (id: number): Promise<assetModel | null> => {
+  return prisma.asset.findUnique({
+    where: { id },
+  });
 };
 
-export const deleteAsset = async (id: number): Promise<null> => {
-  const [result] = await connection.execute("DELETE FROM asset WHERE id = ?", [
-    id,
-  ]);
-  return null;
+export const deleteAsset = async (id: number): Promise<assetModel> => {
+  return prisma.asset.delete({
+    where: { id },
+  });
 };
 
-export const createAsset = async (asset: Asset): Promise<null> => {
-  console.log(
-    "INSERT INTO asset (asset_name, role_id, asset_type_id) VALUES (?, ?)",
-    [
-      asset.asset_name,
-      convertEmptyStringToNull(asset.role_id),
-      convertEmptyStringToNull(asset.asset_type_id),
-    ],
-  );
-  const [result] = await connection.execute(
-    "INSERT INTO asset (asset_name, role_id, asset_type_id) VALUES (?, ?, ?)",
-    [
-      asset.asset_name,
-      convertEmptyStringToNull(asset.role_id),
-      convertEmptyStringToNull(asset.asset_type_id),
-    ],
-  );
-  return null;
+export const createAsset = async (asset: Asset): Promise<assetModel> => {
+  return prisma.asset.create({
+    data: {
+      asset_name: asset.asset_name,
+      role_id: asset.role_id ? Number(asset.role_id) : null,
+      asset_type_id: asset.asset_type_id ? Number(asset.asset_type_id) : null,
+    },
+  });
 };
 
-export const updateAsset = async (id: number, asset: Asset): Promise<null> => {
-  const [result] = await connection.execute(
-    "UPDATE asset SET asset_name = ?, role_id = ?, asset_type_id = ? WHERE id = ?",
-    [
-      asset.asset_name,
-      convertEmptyStringToNull(asset.role_id),
-      convertEmptyStringToNull(asset.asset_type_id),
-      id,
-    ],
-  );
-  return null;
+export const updateAsset = async (
+  id: number,
+  asset: Asset,
+): Promise<assetModel> => {
+  return prisma.asset.update({
+    where: { id },
+    data: {
+      asset_name: asset.asset_name,
+      role_id: asset.role_id ? Number(asset.role_id) : null,
+      asset_type_id: asset.asset_type_id ? Number(asset.asset_type_id) : null,
+    },
+  });
 };
 
 export default getAssetsById;

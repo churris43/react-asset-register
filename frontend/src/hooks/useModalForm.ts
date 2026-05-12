@@ -1,10 +1,16 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
 import { toast } from "react-toastify";
 import Field from "../interfaces/field";
 
 interface UseEditProps {
   id: number;
-  getAction?: () => Promise<any>;
+  initialData?: Record<string, any>;
   isModalOpen: boolean;
   mode: string;
   fields: Field[];
@@ -18,7 +24,7 @@ interface UseEditProps {
 
 function useModalForm({
   id,
-  getAction,
+  initialData,
   isModalOpen,
   mode,
   fields,
@@ -32,6 +38,7 @@ function useModalForm({
     );
   };
 
+  const [isPending, startTransition] = useTransition();
   const [formData, setFormData] = useState(defaultValues(fields));
 
   const handleChange = (
@@ -44,62 +51,52 @@ function useModalForm({
     }));
   };
 
-  const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleEdit = async (e: FormEvent<HTMLFormElement>) =>
+    startTransition(async () => {
+      e.preventDefault();
 
-    try {
-      const response = editAction ? await editAction(id, formData) : null;
-      if (response?.success) {
-        toast.success("Record updated successfully");
-      } else {
-        toast.error("Failed to update record");
-      }
-    } catch (error) {
-      toast.error("An unexpected error occurred");
-    } finally {
-      onClose();
-    }
-  };
-
-  const handleAdd = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // TODO: implement the loading
-    try {
-      const response = createAction ? await createAction(formData) : null;
-      if (response?.success) {
-        toast.success("Record created successfully");
-      } else {
-        toast.error("Failed to create the record");
-      }
-    } catch (error) {
-      toast.error("An unexpected error occurred");
-    } finally {
-      resetForm();
-      onClose();
-    }
-  };
-
-  useEffect(() => {
-    if (!isModalOpen || mode === "add") return; // Skip fetching if modal is closed
-
-    const fetchRecord = async () => {
       try {
-        const data = getAction ? await getAction() : null;
-        if (data) {
-          // Extract only the fields defined in the fields array
-          const initialData: Record<string, string | number> = {};
-          fields.forEach((field) => {
-            initialData[field.name] =
-              data[field.name] ?? defaultValues(fields)[field.name];
-          });
-          setFormData(initialData);
+        const response = editAction ? await editAction(id, formData) : null;
+        if (response?.success) {
+          toast.success("Record updated successfully");
+        } else {
+          toast.error("Failed to update record");
         }
       } catch (error) {
-        console.log(error);
+        toast.error("An unexpected error occurred");
+      } finally {
+        onClose();
       }
-    };
-    fetchRecord();
-  }, [isModalOpen, mode]);
+    });
+
+  const handleAdd = async (e: FormEvent<HTMLFormElement>) =>
+    startTransition(async () => {
+      e.preventDefault();
+      try {
+        const response = createAction ? await createAction(formData) : null;
+        if (response?.success) {
+          toast.success("Record created successfully");
+        } else {
+          toast.error("Failed to create the record");
+        }
+      } catch (error) {
+        toast.error("An unexpected error occurred");
+      } finally {
+        resetForm();
+        onClose();
+      }
+    });
+
+  useEffect(() => {
+    if (!isModalOpen || mode === "add" || !initialData) return;
+
+    const extracted: Record<string, string | number> = {};
+    fields.forEach((field) => {
+      extracted[field.name] =
+        initialData[field.name] ?? defaultValues(fields)[field.name];
+    });
+    setFormData(extracted);
+  }, [isModalOpen, mode, initialData, fields]);
 
   // todo: This is not right, this shoule be elsewhere, maybe a hook on its own
   const resetForm = () => {
@@ -114,6 +111,7 @@ function useModalForm({
     handleChange,
     handleEdit,
     handleAdd,
+    isPending,
   };
 }
 

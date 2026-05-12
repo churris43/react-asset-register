@@ -2,17 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import RoleInterface from "@/src/interfaces/role";
+import { fetchWithAuth } from "@/src/libs/fetchWithAuth";
 
 const path: string = "/roles";
 
 export async function deleteRole(id: number) {
   try {
-    const res = await fetch("http://api:3000/roles/" + id, {
+    const res = await fetchWithAuth(`/roles/${id}`, {
       method: "DELETE",
-      headers: {
-        // todo: use the utils constant
-        "Content-Type": "application/json",
-      },
     });
     if (!res.ok) throw new Error("Failed to fetch data");
     revalidatePath(path);
@@ -22,41 +19,10 @@ export async function deleteRole(id: number) {
   }
 }
 
-export async function getRoles(): Promise<RoleInterface[] | []> {
-  try {
-    // @todo: Need to work out how to proxy this, this request comes fro the server
-    const response = await fetch("http://api:3000/roles");
-    if (!response.ok) {
-      throw new Error("Failed to get role");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    return [];
-  }
-}
-
-export async function getRole(id: number) {
-  try {
-    const response = await fetch("http://api:3000/roles/" + id);
-    if (!response.ok) {
-      throw new Error("Failed to get role");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 export async function editRole(id: number, data: RoleInterface) {
   try {
-    const res = await fetch("http://api:3000/roles/" + id, {
+    const res = await fetchWithAuth(`/roles/${id}`, {
       method: "PUT",
-      // todo: refactor to get the headers in utils
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(data),
     });
 
@@ -75,11 +41,8 @@ export async function editRole(id: number, data: RoleInterface) {
 
 export async function createRole(data: RoleInterface) {
   try {
-    const res = await fetch("http://api:3000/roles/", {
+    const res = await fetchWithAuth(`/roles/`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(data),
     });
 

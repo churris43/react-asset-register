@@ -2,12 +2,14 @@ import { Router } from "express";
 import roleRoutes from "./roleRoutes";
 import assetTypeRoutes from "./assetTypeRoutes";
 import assetRoutes from "./assetRoutes";
+import authRoutes from "./authRoutes";
+import { authenticate } from "../middleware/authenticate";
 
 const router = Router();
 
-console.log("indexRouter here");
-router.use("/roles", roleRoutes);
-router.use("/assettypes", assetTypeRoutes);
-router.use("/assets", assetRoutes);
+router.use("/auth", authRoutes);
+router.use("/roles", authenticate, roleRoutes);
+router.use("/assettypes", authenticate, assetTypeRoutes);
+router.use("/assets", authenticate, assetRoutes);
 
 export default router;

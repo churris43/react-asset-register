@@ -59,8 +59,12 @@ coverage
 .temp
 *.tsbuildinfo
 
+# Local planning docs
+auth_plan.md
+
 # Docker
 *.log
+docker-compose.override.yml
 
 # MySQL data (if running locally)
 mysql_data/

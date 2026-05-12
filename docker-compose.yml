@@ -10,9 +10,10 @@ services:
       - API_URL=http://api:3000
     depends_on:
       - api
+    command: npm run dev
     expose:
       - "5173"
-  
+
   api:
     build:
       context: ./backend
@@ -23,7 +24,8 @@ services:
     env_file:
       - .env
     depends_on:
-      - mysql
+      migrate:
+        condition: service_completed_successfully
     command: npm run dev # Active local development, Live reloading, hot module replacement, detailed logging, file watching.
     expose:
       - "3000"
@@ -39,45 +41,35 @@ services:
       - api
       - webapp
 
-
-  mysql:
-    image: mysql:8.0
-    container_name: express_mysql_db
+  postgres:
+    image: postgres:16-alpine
+    container_name: express_postgres_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - mysql_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
   migrate:
-    image: mysql:8.0
+    build:
+      context: ./backend
     container_name: express_migrate
-    volumes:
-      - ./db/init.sql:/init.sql
-    environment:
-      MYSQL_HOST: ${MYSQL_HOST}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    env_file:
+      - .env
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
-    command: >
-      sh -c "
-        mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /init.sql &&
-        echo 'Migration completed successfully'
-      "
+    command: npx prisma migrate deploy
     restart: "no"
 
 volumes:
-  mysql_data:
+  postgres_data:

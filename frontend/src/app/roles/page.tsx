@@ -1,15 +1,11 @@
 import AddButton from "@/src/components/features/AddButton";
 import RoleInterface from "@/src/interfaces/role";
 import TableHeading from "@/src/components/ui/TableHeading";
-import RowActionButtons from "@/src/components/ui/RowActionButtons";
-import deleteRole, {
-  createRole,
-  editRole,
-  getRole,
-  getRoles,
-} from "../actions/roleActions";
+import deleteRole, { createRole, editRole } from "../actions/roleActions";
 import Field from "../../interfaces/field";
 import TableRow from "@/src/components/ui/TableRow";
+import TableFooter from "@/src/components/ui/TableFooter";
+import { getRoles } from "../actions/roleQueries";
 
 async function Roles() {
   const roles = await getRoles();
@@ -34,7 +30,7 @@ async function Roles() {
 
   return (
     <>
-      <h1 className="text-xl mb-4">
+      <h1 className="text-xl mb-4 flex items-center justify-between">
         Roles{" "}
         <AddButton
           recordName="Role"
@@ -42,7 +38,7 @@ async function Roles() {
           createAction={createRole}
         />
       </h1>
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
+      <div className="w-full bg-white rounded-lg shadow-md overflow-hidden">
         <TableHeading headings={headings} />
         {roles.map((role: RoleInterface) => (
           <TableRow
@@ -51,11 +47,14 @@ async function Roles() {
             id={role.id}
             key={role.id}
             deleteAction={deleteRole.bind(null, role.id)}
-            getAction={getRole.bind(null, role.id)}
             editAction={editRole}
             fields={fields}
           />
         ))}
+        <TableFooter
+          colCount={fields.length}
+          summary={roles.length === 0 ? "No roles found" : ""}
+        />
       </div>
     </>
   );

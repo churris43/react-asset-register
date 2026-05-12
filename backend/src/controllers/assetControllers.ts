@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as AssetServices from "../services/AssetServices";
+import * as AssetServices from "../services/assetServices";
 import Asset from "../types/Asset";
 
 export const getAssetsById = async (

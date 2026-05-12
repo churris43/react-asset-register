@@ -1,3 +1,5 @@
+"use client";
+
 import Field from "@/src/interfaces/field";
 import CloseButton from "../ui/CloseButton";
 import useModalForm from "@/src/hooks/useModalForm";
@@ -9,7 +11,7 @@ interface ModalFormProps {
   isModalOpen: boolean;
   mode: string;
   id: number;
-  getAction?: () => Promise<any>;
+  initialData?: Record<string, any>;
   editAction?: (
     id: number,
     data: any,
@@ -23,27 +25,28 @@ function ModalForm({
   isModalOpen,
   mode,
   id,
-  getAction,
+  initialData,
   editAction,
   createAction,
   onClose,
 }: ModalFormProps) {
-  const { formData, handleChange, handleEdit, handleAdd } = useModalForm({
-    id,
-    getAction,
-    isModalOpen,
-    mode,
-    fields,
-    editAction,
-    createAction,
-    onClose,
-  });
+  const { formData, handleChange, handleEdit, handleAdd, isPending } =
+    useModalForm({
+      id,
+      initialData,
+      isModalOpen,
+      mode,
+      fields,
+      editAction,
+      createAction,
+      onClose,
+    });
 
   return (
     <>
       <form onSubmit={mode == "add" ? handleAdd : handleEdit}>
         {fields.map((field) => (
-          <div className="mb-4" key={field.label}>
+          <div className="mb-4" key={field.name}>
             <label
               htmlFor={field.name}
               className="block text-sm font-medium mb-2"
@@ -62,6 +65,7 @@ function ModalForm({
                 value={formData[field.name] || ""}
                 onChange={handleChange}
                 name={field.name}
+                className="w-full border border-gray-300 rounded px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">--Please choose an {field.label}</option>
                 {field.options?.map((option) => (
@@ -75,7 +79,7 @@ function ModalForm({
         ))}
         <div className="flex justify-end space-x-3">
           <CloseButton onClose={onClose} />
-          <SaveOrAddButton mode={mode} />
+          <SaveOrAddButton mode={mode} isPending={isPending} />
         </div>
       </form>
     </>

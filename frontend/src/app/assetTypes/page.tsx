@@ -5,11 +5,11 @@ import Field from "../../interfaces/field";
 import deleteAssetType, {
   createAssetType,
   editAssetType,
-  getAssetTypes,
-  getAssetType,
 } from "../actions/assetTypeActions";
 import AssetTypeInterface from "@/src/interfaces/assetType";
 import TableRow from "@/src/components/ui/TableRow";
+import TableFooter from "@/src/components/ui/TableFooter";
+import { getAssetTypes } from "../actions/assetTypeQueries";
 
 async function Roles() {
   const asset_types = await getAssetTypes();
@@ -28,7 +28,7 @@ async function Roles() {
 
   return (
     <>
-      <h1 className="text-xl mb-4">
+      <h1 className="text-xl mb-4 flex items-center justify-between">
         Asset Types
         <AddButton
           recordName="Asset Types"
@@ -36,7 +36,7 @@ async function Roles() {
           createAction={createAssetType}
         />
       </h1>
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden ">
+      <div className="w-full bg-white rounded-lg shadow-md overflow-hidden">
         <TableHeading headings={headings} />
         {asset_types.map((asset_type: AssetTypeInterface) => (
           <TableRow
@@ -45,11 +45,14 @@ async function Roles() {
             id={asset_type.id}
             key={asset_type.id}
             deleteAction={deleteAssetType.bind(null, asset_type.id)}
-            getAction={getAssetType.bind(null, asset_type.id)}
             editAction={editAssetType}
             fields={fields}
           />
         ))}
+        <TableFooter
+          colCount={fields.length}
+          summary={asset_types.length === 0 ? "No asset types found" : ""}
+        />
       </div>
     </>
   );
