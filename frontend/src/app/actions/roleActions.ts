@@ -12,7 +12,8 @@ export async function deleteRole(id: number) {
       method: "DELETE",
     });
     if (!res.ok) throw new Error("Failed to fetch data");
-    revalidatePath(path);
+    // 'page' invalidates all cached variants of this route (e.g. ?page=2&sortField=role_name)
+    revalidatePath(path, "page");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to create role" };
@@ -29,7 +30,7 @@ export async function editRole(id: number, data: RoleInterface) {
     if (!res.ok) {
       throw new Error("Failed to edit the role");
     }
-    revalidatePath(path);
+    revalidatePath(path, "page");
     return { success: true };
   } catch (error) {
     return {
@@ -49,7 +50,7 @@ export async function createRole(data: RoleInterface) {
     if (!res.ok) {
       throw new Error("Failed to create role");
     }
-    revalidatePath(path);
+    revalidatePath(path, "page");
     return { success: true };
   } catch (error) {
     return {

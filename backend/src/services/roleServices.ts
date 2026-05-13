@@ -11,6 +11,24 @@ export const getRoles = async (): Promise<roleModel[]> => {
   });
 };
 
+export const getPaginatedRoles = async (
+  page: number,
+  limit: number,
+  sortField: string,
+  sortOrder: "asc" | "desc",
+): Promise<{ data: roleModel[]; total: number }> => {
+  const [data, total] = await Promise.all([
+    prisma.role.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { [sortField]: sortOrder },
+    }),
+    prisma.role.count(),
+  ]);
+
+  return { data, total };
+};
+
 export const getRolesById = async (id: number): Promise<roleModel | null> => {
   return prisma.role.findUnique({
     where: {

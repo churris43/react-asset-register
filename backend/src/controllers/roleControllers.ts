@@ -29,11 +29,32 @@ export const deleteRole = async (
   }
 };
 
+const ALLOWED_SORT_FIELDS = ["role_name", "staff_name"] as const;
+
 export const getRoles = async (req: Request, res: Response) => {
   try {
-    const roles = await roleServices.getRoles();
+    if (typeof req.query.page === "string") {
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.max(
+        1,
+        Math.min(100, parseInt(req.query.limit as string) || 20),
+      );
+      const sortField = ALLOWED_SORT_FIELDS.includes(req.query.sortField as any)
+        ? (req.query.sortField as string)
+        : "role_name";
+      const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
 
-    res.status(200).json(roles);
+      const roles = await roleServices.getPaginatedRoles(
+        page,
+        limit,
+        sortField,
+        sortOrder,
+      );
+      return res.status(200).json(roles);
+    } else {
+      const roles = await roleServices.getRoles();
+      return res.status(200).json(roles);
+    }
   } catch (error) {
     return res.status(500).json({ message: "Unable to fetch roles" });
   }

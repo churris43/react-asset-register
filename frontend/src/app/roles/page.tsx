@@ -5,10 +5,30 @@ import deleteRole, { createRole, editRole } from "../actions/roleActions";
 import Field from "../../interfaces/field";
 import TableRow from "@/src/components/ui/TableRow";
 import TableFooter from "@/src/components/ui/TableFooter";
-import { getRoles } from "../actions/roleQueries";
+import { getPaginatedRoles } from "../actions/roleQueries";
+import PaginationNav from "@/src/components/ui/PaginationNav";
+import { PaginationSearchParams } from "@/src/interfaces/paginationSearchParams";
 
-async function Roles() {
-  const roles = await getRoles();
+async function Roles({
+  searchParams,
+}: {
+  searchParams: Promise<PaginationSearchParams>;
+}) {
+  const LIMIT = 20;
+
+  const params = await searchParams;
+
+  const page = Math.max(1, parseInt(params.page ?? "1") || 1);
+  const sortField = params.sortField ?? "role_name";
+  const sortOrder = params.sortOrder === "desc" ? "desc" : "asc";
+
+  const { data: roles, total } = await getPaginatedRoles({
+    page,
+    limit: LIMIT,
+    sortField,
+    sortOrder,
+  });
+  const totalPages = Math.ceil(total / LIMIT);
 
   const headings = ["ID", "Role", "Staff Name"];
 
@@ -56,6 +76,11 @@ async function Roles() {
           summary={roles.length === 0 ? "No roles found" : ""}
         />
       </div>
+      <PaginationNav
+        currentPage={page}
+        totalPages={totalPages}
+        searchParams={params as Record<string, string | undefined>}
+      />
     </>
   );
 }
