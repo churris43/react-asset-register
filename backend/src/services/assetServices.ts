@@ -14,6 +14,28 @@ export const getAssets = async (): Promise<assetModel[]> => {
   });
 };
 
+export const getPaginatedAssets = async (
+  page: number,
+  limit: number,
+  sortField: string,
+  sortOrder: "asc" | "desc",
+): Promise<{ data: assetModel[]; total: number }> => {
+  const [data, total] = await Promise.all([
+    prisma.asset.findMany({
+      include: {
+        role: true,
+        asset_type: true,
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { [sortField]: sortOrder },
+    }),
+    prisma.asset.count(),
+  ]);
+
+  return { data, total };
+};
+
 export const getAssetsById = async (id: number): Promise<assetModel | null> => {
   return prisma.asset.findUnique({
     where: { id },

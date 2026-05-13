@@ -12,7 +12,7 @@ export async function deleteAsset(id: number) {
       method: "DELETE",
     });
     if (!res.ok) throw new Error("Failed to fetch data");
-    revalidatePath(path);
+    revalidatePath(path, "page");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete asset" };
@@ -28,7 +28,7 @@ export async function editAsset(id: number, data: AssetInterface) {
     if (!res.ok) {
       throw new Error("Failed to edit the asset");
     }
-    revalidatePath(path);
+    revalidatePath(path, "page");
     return { success: true };
   } catch (error) {
     return {
@@ -47,7 +47,7 @@ export async function createAsset(data: AssetInterface) {
     if (!res.ok) {
       throw new Error("Failed to create the asset");
     }
-    revalidatePath(path);
+    revalidatePath(path, "page");
     return { success: true };
   } catch (error) {
     return {

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as AssetServices from "../services/assetServices";
 import Asset from "../types/Asset";
+import { parsePaginationParams } from "../utils/parsePaginationParams";
 
 export const getAssetsById = async (
   req: Request<{ id: string }>,
@@ -29,10 +30,27 @@ export const deleteAsset = async (
   }
 };
 
+const ALLOWED_SORT_FIELDS = ["asset_name"] as const;
+
 export const getAssets = async (req: Request, res: Response) => {
   try {
-    const Asset = await AssetServices.getAssets();
-    res.status(200).json(Asset);
+    if (typeof req.query.page === "string") {
+      const { page, limit, sortField, sortOrder } = parsePaginationParams(
+        req.query,
+        ALLOWED_SORT_FIELDS,
+        "asset_name",
+      );
+      const assets = await AssetServices.getPaginatedAssets(
+        page,
+        limit,
+        sortField,
+        sortOrder,
+      );
+      return res.status(200).json(assets);
+    } else {
+      const assets = await AssetServices.getAssets();
+      return res.status(200).json(assets);
+    }
   } catch (error) {
     return res.status(500).json({ message: "Unable to fetch asset" });
   }
