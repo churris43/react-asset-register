@@ -21,6 +21,8 @@ function HeadingSortButton({
 
   return (
     <Link
+      // PaginationSearchParams has known keys, but buildHref expects an index signature.
+      // TypeScript won't widen a specific interface to { [key: string]: ... } without a cast.
       href={buildHref(searchParams as Record<string, string | undefined>, {
         sortField,
         sortOrder: linkOrder,

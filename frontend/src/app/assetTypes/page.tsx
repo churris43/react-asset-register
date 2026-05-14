@@ -68,7 +68,7 @@ async function AssetTypes({
         />
         {asset_types.map((asset_type: AssetTypeInterface) => (
           <TableRow
-            recordName="roles"
+            recordName="assetTypes"
             record={asset_type}
             id={asset_type.id}
             key={asset_type.id}
