@@ -1,21 +1,37 @@
 import AddButton from "@/src/components/features/AddButton";
-
 import TableHeading from "@/src/components/ui/TableHeading";
 import TableFooter from "@/src/components/ui/TableFooter";
 import Field from "../../interfaces/field";
 import deleteAsset, { createAsset, editAsset } from "../actions/assetActions";
 import { getAssetTypes } from "../actions/assetTypeQueries";
-import { getAssets } from "../actions/assetQueries";
+import { getPaginatedAssets } from "../actions/assetQueries";
 import AssetInterface from "@/src/interfaces/asset";
 import { getRoles } from "../actions/roleQueries";
 import RoleInterface from "@/src/interfaces/role";
 import AssetTypeInterface from "@/src/interfaces/assetType";
 import TableRow from "@/src/components/ui/TableRow";
+import PaginationNav from "@/src/components/ui/PaginationNav";
+import { PaginationSearchParams } from "@/src/interfaces/paginationSearchParams";
 
-async function Assets() {
-  const assets = await getAssets();
-  const roles = await getRoles();
-  const assetTypes = await getAssetTypes();
+async function Assets({
+  searchParams,
+}: {
+  searchParams: Promise<PaginationSearchParams>;
+}) {
+  const LIMIT = 20;
+
+  const params = await searchParams;
+
+  const page = Math.max(1, parseInt(params.page ?? "1") || 1);
+  const sortField = params.sortField ?? "asset_name";
+  const sortOrder = params.sortOrder === "desc" ? "desc" : "asc";
+
+  const [{ data: assets, total }, roles, assetTypes] = await Promise.all([
+    getPaginatedAssets({ page, limit: LIMIT, sortField, sortOrder }),
+    getRoles(),
+    getAssetTypes(),
+  ]);
+  const totalPages = Math.ceil(total / LIMIT);
 
   const roleOptions = roles.map((role: RoleInterface) => ({
     value: role.id,
@@ -27,7 +43,12 @@ async function Assets() {
     label: assetType.asset_type_name,
   }));
 
-  const headings = ["ID", "Asset Name", "Asset Type", "Asset Owner"];
+  const headings = [
+    { label: "ID" },
+    { label: "Asset Name", sortField: "asset_name" },
+    { label: "Asset Type", sortField: "asset_type_name" },
+    { label: "Asset Owner", sortField: "role_name" },
+  ];
 
   const fields: Array<Field> = [
     {
@@ -55,6 +76,7 @@ async function Assets() {
       options: roleOptions,
     },
   ];
+
   const canAddAssets = () => {
     return assetTypes.length > 0 && roles.length > 0;
   };
@@ -77,7 +99,12 @@ async function Assets() {
         </div>
       )}
       <div className="w-full bg-gray rounded-lg shadow-md overflow-hidden">
-        <TableHeading headings={headings} />
+        <TableHeading
+          headings={headings}
+          currentSortField={sortField}
+          currentSortOrder={sortOrder}
+          searchParams={params}
+        />
         {assets.length > 0 &&
           assets.map((asset: AssetInterface) => (
             <TableRow
@@ -95,6 +122,11 @@ async function Assets() {
           summary={assets.length === 0 ? "No assets found" : ""}
         />
       </div>
+      <PaginationNav
+        currentPage={page}
+        totalPages={totalPages}
+        searchParams={params as Record<string, string | undefined>}
+      />
     </>
   );
 }

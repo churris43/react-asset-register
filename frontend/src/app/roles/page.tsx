@@ -5,12 +5,37 @@ import deleteRole, { createRole, editRole } from "../actions/roleActions";
 import Field from "../../interfaces/field";
 import TableRow from "@/src/components/ui/TableRow";
 import TableFooter from "@/src/components/ui/TableFooter";
-import { getRoles } from "../actions/roleQueries";
+import { getPaginatedRoles } from "../actions/roleQueries";
+import PaginationNav from "@/src/components/ui/PaginationNav";
+import { PaginationSearchParams } from "@/src/interfaces/paginationSearchParams";
+import Heading from "@/src/interfaces/heading";
 
-async function Roles() {
-  const roles = await getRoles();
+async function Roles({
+  searchParams,
+}: {
+  searchParams: Promise<PaginationSearchParams>;
+}) {
+  const LIMIT = 20;
 
-  const headings = ["ID", "Role", "Staff Name"];
+  const params = await searchParams;
+
+  const page = Math.max(1, parseInt(params.page ?? "1") || 1);
+  const sortField = params.sortField ?? "role_name";
+  const sortOrder = params.sortOrder === "desc" ? "desc" : "asc";
+
+  const { data: roles, total } = await getPaginatedRoles({
+    page,
+    limit: LIMIT,
+    sortField,
+    sortOrder,
+  });
+  const totalPages = Math.ceil(total / LIMIT);
+
+  const headings: Heading[] = [
+    { label: "ID" },
+    { label: "Role", sortField: "role_name" },
+    { label: "Staff Name", sortField: "staff_name" },
+  ];
 
   const fields: Array<Field> = [
     {
@@ -39,7 +64,12 @@ async function Roles() {
         />
       </h1>
       <div className="w-full bg-white rounded-lg shadow-md overflow-hidden">
-        <TableHeading headings={headings} />
+        <TableHeading
+          headings={headings}
+          currentSortField={sortField}
+          currentSortOrder={sortOrder}
+          searchParams={params}
+        />
         {roles.map((role: RoleInterface) => (
           <TableRow
             recordName="roles"
@@ -56,6 +86,11 @@ async function Roles() {
           summary={roles.length === 0 ? "No roles found" : ""}
         />
       </div>
+      <PaginationNav
+        currentPage={page}
+        totalPages={totalPages}
+        searchParams={params as Record<string, string | undefined>}
+      />
     </>
   );
 }

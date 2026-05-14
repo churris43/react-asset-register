@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as roleServices from "../services/roleServices";
 import Role from "../types/Role";
+import { parsePaginationParams } from "../utils/parsePaginationParams";
 
 export const getRolesById = async (
   req: Request<{ id: string }>,
@@ -29,11 +30,28 @@ export const deleteRole = async (
   }
 };
 
+const ALLOWED_SORT_FIELDS = ["role_name", "staff_name"] as const;
+
 export const getRoles = async (req: Request, res: Response) => {
   try {
-    const roles = await roleServices.getRoles();
+    if (typeof req.query.page === "string") {
+      const { page, limit, sortField, sortOrder } = parsePaginationParams(
+        req.query,
+        ALLOWED_SORT_FIELDS,
+        "role_name",
+      );
 
-    res.status(200).json(roles);
+      const roles = await roleServices.getPaginatedRoles(
+        page,
+        limit,
+        sortField,
+        sortOrder,
+      );
+      return res.status(200).json(roles);
+    } else {
+      const roles = await roleServices.getRoles();
+      return res.status(200).json(roles);
+    }
   } catch (error) {
     return res.status(500).json({ message: "Unable to fetch roles" });
   }
