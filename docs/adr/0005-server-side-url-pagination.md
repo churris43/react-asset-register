@@ -44,6 +44,8 @@ const [data, total] = await Promise.all([
 return { data, total };
 ```
 
+The flat `{ [sortField]: sortOrder }` shorthand works for direct columns only. If the resource needs to sort by a field on a related model (e.g. sorting assets by `asset_type_name`), use the `buildOrderBy` utility instead — see ADR 0006.
+
 ### Controller layer
 
 A single `GET /` route handles both use cases. The controller branches on the presence of the `page` query parameter:
@@ -179,7 +181,7 @@ A request without `page` (e.g. `GET /roles`) returns all records as a flat array
 
 ## Applying pagination to a new resource
 
-1. **Service** — add `getPaginatedX(page, limit, sortField, sortOrder)` alongside the existing `getAll()`.
+1. **Service** — add `getPaginatedX(page, limit, sortField, sortOrder)` alongside the existing `getAll()`. Use `orderBy: { [sortField]: sortOrder }` for direct columns. If sorting by a relation field is needed, use `buildOrderBy` — see ADR 0006.
 2. **Controller** — add `ALLOWED_SORT_FIELDS`, branch on `typeof req.query.page === "string"`, call `parsePaginationParams`.
 3. **Query action** — add `getPaginatedX(params: PaginationQueryParams)` to the resource's query file.
 4. **Server actions** — change `revalidatePath(path)` to `revalidatePath(path, "page")`.
