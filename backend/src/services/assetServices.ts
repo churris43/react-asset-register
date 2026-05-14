@@ -1,6 +1,12 @@
 import Asset from "../types/Asset";
-import { assetModel } from "../generated/prisma/models/asset";
+import { assetModel, assetGetPayload } from "../generated/prisma/models/asset";
 import { prisma } from "../lib/prisma";
+
+// Typed result for queries that include role and asset_type via Prisma's include.
+// assetGetPayload derives the exact shape from the query args, staying correct if the schema changes.
+type AssetWithRelations = assetGetPayload<{
+  include: { role: true; asset_type: true };
+}>;
 import { buildOrderBy, NestedOrderBy } from "../utils/buildOrderBy";
 
 // Direct fields (e.g. asset_name) fall back to { asset_name: "asc" } in buildOrderBy.
@@ -12,7 +18,7 @@ const NESTED_SORT_FIELDS: Record<string, NestedOrderBy> = {
   role_name: (order) => ({ role: { role_name: order } }),
 };
 
-export const getAssets = async (): Promise<assetModel[]> => {
+export const getAssets = async (): Promise<AssetWithRelations[]> => {
   return prisma.asset.findMany({
     include: {
       role: true,
@@ -29,7 +35,7 @@ export const getPaginatedAssets = async (
   limit: number,
   sortField: string,
   sortOrder: "asc" | "desc",
-): Promise<{ data: assetModel[]; total: number }> => {
+): Promise<{ data: AssetWithRelations[]; total: number }> => {
   const [data, total] = await Promise.all([
     prisma.asset.findMany({
       include: {
@@ -58,7 +64,7 @@ export const deleteAsset = async (id: number): Promise<assetModel> => {
   });
 };
 
-export const createAsset = async (asset: Asset): Promise<assetModel> => {
+export const createAsset = async (asset: Omit<Asset, 'id'>): Promise<assetModel> => {
   return prisma.asset.create({
     data: {
       asset_name: asset.asset_name,
@@ -70,7 +76,7 @@ export const createAsset = async (asset: Asset): Promise<assetModel> => {
 
 export const updateAsset = async (
   id: number,
-  asset: Asset,
+  asset: Omit<Asset, 'id'>,
 ): Promise<assetModel> => {
   return prisma.asset.update({
     where: { id },

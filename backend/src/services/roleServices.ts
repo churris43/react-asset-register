@@ -45,7 +45,7 @@ export const deleteRole = async (id: number): Promise<roleModel> => {
   });
 };
 
-export const createRole = async (role: Role): Promise<roleModel> => {
+export const createRole = async (role: Omit<Role, 'id'>): Promise<roleModel> => {
   return prisma.role.create({
     data: {
       role_name: role.role_name,
@@ -56,7 +56,7 @@ export const createRole = async (role: Role): Promise<roleModel> => {
 
 export const updateRole = async (
   id: number,
-  role: Role,
+  role: Omit<Role, 'id'>,
 ): Promise<roleModel | null> => {
   return prisma.role.update({
     where: {
