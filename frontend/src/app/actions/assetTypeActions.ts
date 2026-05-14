@@ -12,7 +12,7 @@ export async function deleteAssetType(id: number) {
       method: "DELETE",
     });
     if (!response.ok) throw new Error(response.statusText);
-    revalidatePath(path);
+    revalidatePath(path, "page");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete asset type" };
@@ -29,7 +29,7 @@ export async function editAssetType(id: number, data: AssetTypeInterface) {
     if (!response.ok) {
       throw new Error(response.statusText);
     }
-    revalidatePath(path);
+    revalidatePath(path, "page");
     return { success: true };
   } catch (error) {
     return {
@@ -49,7 +49,7 @@ export async function createAssetType(data: AssetTypeInterface) {
     if (!response.ok) {
       throw new Error(response.statusText);
     }
-    revalidatePath(path);
+    revalidatePath(path, "page");
     return { success: true };
   } catch (error) {
     return {

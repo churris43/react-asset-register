@@ -10,6 +10,24 @@ export const getAssetTypes = async (): Promise<asset_typeModel[]> => {
   });
 };
 
+export const getPaginatedAssetTypes = async (
+  page: number,
+  limit: number,
+  sortField: string,
+  sortOrder: "asc" | "desc",
+): Promise<{ data: asset_typeModel[]; total: number }> => {
+  const [data, total] = await Promise.all([
+    prisma.asset_type.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { [sortField]: sortOrder },
+    }),
+    prisma.asset_type.count(),
+  ]);
+
+  return { data, total };
+};
+
 export const getAssetTypesById = async (
   id: number,
 ): Promise<asset_typeModel | null> => {
