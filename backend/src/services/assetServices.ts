@@ -1,6 +1,16 @@
 import Asset from "../types/Asset";
 import { assetModel } from "../generated/prisma/models/asset";
 import { prisma } from "../lib/prisma";
+import { buildOrderBy, NestedOrderBy } from "../utils/buildOrderBy";
+
+// Direct fields (e.g. asset_name) fall back to { asset_name: "asc" } in buildOrderBy.
+// Relation fields need an entry here, e.g.:
+//   buildOrderBy("asset_type_name", "asc", NESTED_SORT_FIELDS)
+//   → { asset_type: { asset_type_name: "asc" } }
+const NESTED_SORT_FIELDS: Record<string, NestedOrderBy> = {
+  asset_type_name: (order) => ({ asset_type: { asset_type_name: order } }),
+  role_name: (order) => ({ role: { role_name: order } }),
+};
 
 export const getAssets = async (): Promise<assetModel[]> => {
   return prisma.asset.findMany({
@@ -28,10 +38,7 @@ export const getPaginatedAssets = async (
       },
       skip: (page - 1) * limit,
       take: limit,
-      orderBy:
-        sortField === "asset_type_name"
-          ? { asset_type: { asset_type_name: sortOrder } }
-          : { [sortField]: sortOrder },
+      orderBy: buildOrderBy(sortField, sortOrder, NESTED_SORT_FIELDS),
     }),
     prisma.asset.count(),
   ]);

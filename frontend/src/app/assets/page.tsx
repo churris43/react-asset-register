@@ -47,7 +47,7 @@ async function Assets({
     { label: "ID" },
     { label: "Asset Name", sortField: "asset_name" },
     { label: "Asset Type", sortField: "asset_type_name" },
-    { label: "Asset Owner" },
+    { label: "Asset Owner", sortField: "role_name" },
   ];
 
   const fields: Array<Field> = [
