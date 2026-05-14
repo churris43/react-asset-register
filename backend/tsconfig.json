@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "exclude": ["prisma.config.ts", "vitest.config.types"]
+  "exclude": ["prisma.config.ts", "vitest.config.ts"]
 }
