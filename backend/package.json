@@ -6,7 +6,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "seed": "ts-node src/prisma/seed.ts",
-    "seed:no-truncate": "ts-node src/prisma/seed.ts --no-truncate"
+    "seed:no-truncate": "ts-node src/prisma/seed.ts --no-truncate",
+    "test": "dotenv -e .env.test -- vitest run"
   },
   "prisma": {
     "schema": "src/prisma/schema.prisma"
@@ -31,9 +32,11 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.19.34",
     "@types/pg": "^8.20.0",
+    "dotenv-cli": "^11.0.0",
     "nodemon": "^3.0.3",
     "prisma": "^7.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^4.1.6"
   }
 }
