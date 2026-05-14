@@ -43,7 +43,7 @@ export const deleteAssetType = async (id: number): Promise<asset_typeModel> => {
 };
 
 export const createAssetType = async (
-  asset_type: AssetType,
+  asset_type: Omit<AssetType, 'id'>,
 ): Promise<asset_typeModel> => {
   return prisma.asset_type.create({
     data: {
@@ -54,7 +54,7 @@ export const createAssetType = async (
 
 export const updateAssetType = async (
   id: number,
-  asset_type: AssetType,
+  asset_type: Omit<AssetType, 'id'>,
 ): Promise<asset_typeModel> => {
   return prisma.asset_type.update({
     where: { id },

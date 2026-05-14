@@ -7,7 +7,8 @@
     "start": "node dist/index.js",
     "seed": "ts-node src/prisma/seed.ts",
     "seed:no-truncate": "ts-node src/prisma/seed.ts --no-truncate",
-    "test": "dotenv -e .env.test -- vitest run"
+    "test": "dotenv -e .env.test -- vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "prisma": {
     "schema": "src/prisma/schema.prisma"
