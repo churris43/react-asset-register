@@ -30,7 +30,7 @@ export const deleteAsset = async (
   }
 };
 
-const ALLOWED_SORT_FIELDS = ["asset_name"] as const;
+const ALLOWED_SORT_FIELDS = ["asset_name", "asset_type_name"] as const;
 
 export const getAssets = async (req: Request, res: Response) => {
   try {

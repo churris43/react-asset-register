@@ -8,6 +8,7 @@ import TableFooter from "@/src/components/ui/TableFooter";
 import { getPaginatedRoles } from "../actions/roleQueries";
 import PaginationNav from "@/src/components/ui/PaginationNav";
 import { PaginationSearchParams } from "@/src/interfaces/paginationSearchParams";
+import Heading from "@/src/interfaces/heading";
 
 async function Roles({
   searchParams,
@@ -30,7 +31,11 @@ async function Roles({
   });
   const totalPages = Math.ceil(total / LIMIT);
 
-  const headings = ["ID", "Role", "Staff Name"];
+  const headings: Heading[] = [
+    { label: "ID" },
+    { label: "Role", sortField: "role_name" },
+    { label: "Staff Name", sortField: "staff_name" },
+  ];
 
   const fields: Array<Field> = [
     {
@@ -59,7 +64,12 @@ async function Roles({
         />
       </h1>
       <div className="w-full bg-white rounded-lg shadow-md overflow-hidden">
-        <TableHeading headings={headings} />
+        <TableHeading
+          headings={headings}
+          currentSortField={sortField}
+          currentSortOrder={sortOrder}
+          searchParams={params}
+        />
         {roles.map((role: RoleInterface) => (
           <TableRow
             recordName="roles"

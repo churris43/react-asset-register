@@ -8,7 +8,7 @@ export function buildHref(
   const qs = new URLSearchParams();
 
   // Convert searchParams to [key, value] pairs and copy only single string values into qs.
-  // Arrays and undefined are skipped — pagination and sort params are always single strings.
+  // Arrays and undefined are skipped
   Object.entries(searchParams).forEach(([k, v]) => {
     if (typeof v === "string") qs.set(k, v);
   });

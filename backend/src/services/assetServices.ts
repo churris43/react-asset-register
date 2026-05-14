@@ -28,7 +28,10 @@ export const getPaginatedAssets = async (
       },
       skip: (page - 1) * limit,
       take: limit,
-      orderBy: { [sortField]: sortOrder },
+      orderBy:
+        sortField === "asset_type_name"
+          ? { asset_type: { asset_type_name: sortOrder } }
+          : { [sortField]: sortOrder },
     }),
     prisma.asset.count(),
   ]);

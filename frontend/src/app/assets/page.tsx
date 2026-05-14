@@ -43,7 +43,12 @@ async function Assets({
     label: assetType.asset_type_name,
   }));
 
-  const headings = ["ID", "Asset Name", "Asset Type", "Asset Owner"];
+  const headings = [
+    { label: "ID" },
+    { label: "Asset Name", sortField: "asset_name" },
+    { label: "Asset Type", sortField: "asset_type_name" },
+    { label: "Asset Owner" },
+  ];
 
   const fields: Array<Field> = [
     {
@@ -94,7 +99,12 @@ async function Assets({
         </div>
       )}
       <div className="w-full bg-gray rounded-lg shadow-md overflow-hidden">
-        <TableHeading headings={headings} />
+        <TableHeading
+          headings={headings}
+          currentSortField={sortField}
+          currentSortOrder={sortOrder}
+          searchParams={params}
+        />
         {assets.length > 0 &&
           assets.map((asset: AssetInterface) => (
             <TableRow
