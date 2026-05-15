@@ -56,7 +56,12 @@ If `JWT_SECRET` is ever compromised, replace it in all three locations immediate
 
 Rate limiting restricts how many requests a single IP address can make to an endpoint within a time window. Without it, an attacker can automate thousands of login attempts per second to guess passwords (a brute force attack).
 
-In this project, `express-rate-limit` is applied only to the auth endpoints — 10 requests per 5-minute window per IP. A legitimate user would rarely need more than 2–3 login attempts in that window. After 10 failed attempts the middleware returns a `429 Too Many Requests` response and the request never reaches the controller.
+In this project, `express-rate-limit` is applied to two groups of endpoints with different limits:
+
+- **Auth endpoints** (`/login`, `/register`) — 10 requests per 5-minute window per IP. These are susceptible to brute force password guessing, so the limit is tight. A legitimate user would rarely need more than 2–3 attempts in that window.
+- **Authenticated API endpoints** (`/assets`, `/roles`, `/assettypes`) — 100 requests per 5-minute window per IP. These require a valid token so brute force is not a concern; the limit exists to protect against DoS from a stolen token or a runaway client.
+
+After the limit is exceeded the middleware returns a `429 Too Many Requests` response and the request never reaches the controller.
 
 ---
 
@@ -109,7 +114,9 @@ Express runs in a standard Node.js environment so `jsonwebtoken` works there wit
 
 Both libraries use the same `JWT_SECRET`, so tokens issued by Express are verifiable by the Next.js middleware and vice versa.
 
-### Rate limiting is applied only to auth endpoints
+### Rate limiting is applied to auth and authenticated API endpoints
+
+Auth endpoints use a tight limiter to block brute force attacks:
 
 ```ts
 const authLimiter = rateLimit({
@@ -121,7 +128,18 @@ router.post('/register', authLimiter, authController.register)
 router.post('/login',    authLimiter, authController.login)
 ```
 
-Only `/auth/login` and `/auth/register` are rate limited. These are the only endpoints susceptible to brute force attacks. The asset, role, and asset type endpoints are protected by the `authenticate` middleware instead — a valid token is required, so there is nothing to brute force.
+Authenticated API endpoints use a more lenient limiter. Since a valid token is required there is nothing to brute force, but rate limiting still protects against DoS from a stolen token or runaway client:
+
+```ts
+const apiLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 100                  // 100 requests per IP per window
+})
+
+router.use('/roles',      authenticate, apiLimiter, roleRoutes)
+router.use('/assettypes', authenticate, apiLimiter, assetTypeRoutes)
+router.use('/assets',     authenticate, apiLimiter, assetRoutes)
+```
 
 `express-rate-limit` stores request counts in memory. This is sufficient for a single server instance. If the application is scaled to multiple instances in the future, counts should be moved to a shared store such as Redis (e.g. via Upstash).
 
@@ -144,14 +162,23 @@ Only `/auth/login` and `/auth/register` are rate limited. These are the only end
 ### Authenticated request
 ```
 1. Browser triggers a server action (e.g. getAssets)
-2. Server action reads the access_token cookie via Next.js cookies() API
-3. Server action calls Express with Cookie: access_token=<token> header
-4. authenticate middleware extracts the token from req.cookies.access_token
-5. jwt.verify() checks the signature and expiry
-6. If valid, req.user is set and the route handler runs
-7. If expired, fetchWithAuth catches the 401, calls POST /auth/refresh,
+2. Next.js middleware runs first:
+   a. If access_token cookie is present and valid → request proceeds
+   b. If access_token cookie is missing (browser deleted it after maxAge)
+      or the JWT fails verification → middleware checks for refresh_token
+   c. If refresh_token exists → request proceeds (fetchWithAuth will refresh lazily)
+   d. If no refresh_token → redirect to /login
+   Note: middleware only catches known jose JWT errors (JWTExpired, JWTInvalid,
+   JWTClaimValidationFailed). Any unexpected error (e.g. missing JWT_SECRET)
+   fails closed — redirect to /login rather than letting the request through.
+3. Server action reads the access_token cookie via Next.js cookies() API
+4. Server action calls Express with Cookie: access_token=<token> header
+5. authenticate middleware extracts the token from req.cookies.access_token
+6. jwt.verify() checks the signature and expiry
+7. If valid, req.user is set and the route handler runs
+8. If expired, fetchWithAuth catches the 401, calls POST /auth/refresh,
    gets a new access token, updates the cookie, and retries the request
-8. If the refresh token is also expired, the user is redirected to /login
+9. If the refresh token is also expired, the user is redirected to /login
 ```
 
 ### Token validation (no database involved)
@@ -171,7 +198,9 @@ Only `/auth/login` and `/auth/register` are rate limited. These are the only end
 - No session table in the database — the server is stateless
 - Tokens are protected from JavaScript access (httpOnly)
 - Short-lived access tokens limit the damage if a token is intercepted
-- Rate limiting prevents automated brute force attacks on login
+- Rate limiting prevents brute force attacks on login and DoS on API routes
+- Sessions survive access token expiry silently as long as the refresh token is valid
+- Unexpected JWT errors (e.g. missing secret) fail closed to login rather than through
 
 **What this approach does not give you:**
 - Immediate token revocation — a valid access token cannot be invalidated before its 15-minute expiry. Logging out deletes the cookie client-side but the token remains technically valid until it expires. This is acceptable for most applications given the short window.
