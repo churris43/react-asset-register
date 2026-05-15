@@ -8,7 +8,9 @@
     "seed": "ts-node src/prisma/seed.ts",
     "seed:no-truncate": "ts-node src/prisma/seed.ts --no-truncate",
     "test": "dotenv -e .env.test -- vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed:railway": "DATABASE_URL=$DATABASE_PUBLIC_URL ts-node src/prisma/seed.ts",
+    "seed:railway:no-truncate": "DATABASE_URL=$DATABASE_PUBLIC_URL ts-node src/prisma/seed.ts --no-truncate"
   },
   "prisma": {
     "schema": "src/prisma/schema.prisma"
