@@ -140,6 +140,16 @@ async function seedAssets() {
       asset_type_id: 6,
       role_id: 4,
     },
+    { id: 21, asset_name: "Server Rack Unit", asset_type_id: 1, role_id: 5 },
+    { id: 22, asset_name: "USB Security Key", asset_type_id: 1, role_id: 1 },
+    { id: 23, asset_name: "Splunk SIEM", asset_type_id: 2, role_id: 1 },
+    { id: 24, asset_name: "Microsoft Defender for Endpoint", asset_type_id: 2, role_id: 3 },
+    { id: 25, asset_name: "AWS S3", asset_type_id: 3, role_id: 5 },
+    { id: 26, asset_name: "Cloudflare WAF", asset_type_id: 3, role_id: 1 },
+    { id: 27, asset_name: "PostgreSQL Production Database", asset_type_id: 4, role_id: 5 },
+    { id: 28, asset_name: "Employee HR Database", asset_type_id: 4, role_id: 4 },
+    { id: 29, asset_name: "Fortinet FortiGate Firewall", asset_type_id: 5, role_id: 5 },
+    { id: 30, asset_name: "Employee Medical Records", asset_type_id: 6, role_id: 4 },
   ];
 
   await Promise.all(
