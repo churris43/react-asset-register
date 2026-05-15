@@ -12,6 +12,7 @@ import AssetTypeInterface from "@/src/interfaces/assetType";
 import TableRow from "@/src/components/ui/TableRow";
 import PaginationNav from "@/src/components/ui/PaginationNav";
 import { PaginationSearchParams } from "@/src/interfaces/paginationSearchParams";
+import SearchBar from "@/src/components/features/SearchBar";
 
 async function Assets({
   searchParams,
@@ -25,9 +26,16 @@ async function Assets({
   const page = Math.max(1, parseInt(params.page ?? "1") || 1);
   const sortField = params.sortField ?? "asset_name";
   const sortOrder = params.sortOrder === "desc" ? "desc" : "asc";
+  const search = params.search ?? "";
 
   const [{ data: assets, total }, roles, assetTypes] = await Promise.all([
-    getPaginatedAssets({ page, limit: LIMIT, sortField, sortOrder }),
+    getPaginatedAssets({
+      page,
+      limit: LIMIT,
+      sortField,
+      sortOrder,
+      search,
+    }),
     getRoles(),
     getAssetTypes(),
   ]);
@@ -98,6 +106,9 @@ async function Assets({
           <span>To add assets you must have roles and asset types</span>
         </div>
       )}
+
+      <SearchBar />
+
       <div className="w-full bg-gray rounded-lg shadow-md overflow-hidden">
         <TableHeading
           headings={headings}

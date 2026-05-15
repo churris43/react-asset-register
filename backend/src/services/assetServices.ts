@@ -35,6 +35,7 @@ export const getPaginatedAssets = async (
   limit: number,
   sortField: string,
   sortOrder: "asc" | "desc",
+  search?: string,
 ): Promise<{ data: AssetWithRelations[]; total: number }> => {
   const [data, total] = await Promise.all([
     prisma.asset.findMany({
@@ -42,11 +43,41 @@ export const getPaginatedAssets = async (
         role: true,
         asset_type: true,
       },
+      where: {
+        OR: [
+          {
+            asset_name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            asset_type: {
+              asset_type_name: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          },
+          {
+            role: {
+              role_name: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          },
+        ],
+      },
       skip: (page - 1) * limit,
       take: limit,
       orderBy: buildOrderBy(sortField, sortOrder, NESTED_SORT_FIELDS),
     }),
-    prisma.asset.count(),
+    prisma.asset.count({
+      where: {
+        asset_name: { contains: search, mode: "insensitive" },
+      },
+    }),
   ]);
 
   return { data, total };
@@ -64,7 +95,9 @@ export const deleteAsset = async (id: number): Promise<assetModel> => {
   });
 };
 
-export const createAsset = async (asset: Omit<Asset, 'id'>): Promise<assetModel> => {
+export const createAsset = async (
+  asset: Omit<Asset, "id">,
+): Promise<assetModel> => {
   return prisma.asset.create({
     data: {
       asset_name: asset.asset_name,
@@ -76,7 +109,7 @@ export const createAsset = async (asset: Omit<Asset, 'id'>): Promise<assetModel>
 
 export const updateAsset = async (
   id: number,
-  asset: Omit<Asset, 'id'>,
+  asset: Omit<Asset, "id">,
 ): Promise<assetModel> => {
   return prisma.asset.update({
     where: { id },

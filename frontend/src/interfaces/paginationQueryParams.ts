@@ -3,4 +3,5 @@ export interface PaginationQueryParams {
   limit?: number;
   sortOrder?: string;
   sortField?: string;
+  search?: string;
 }

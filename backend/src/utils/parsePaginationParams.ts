@@ -6,12 +6,22 @@ export function parsePaginationParams(
   query: ParsedQs,
   allowedSortFields: readonly string[],
   defaultSortField: string,
-): { page: number; limit: number; sortField: string; sortOrder: "asc" | "desc" } {
+): {
+  page: number;
+  limit: number;
+  sortField: string;
+  sortOrder: "asc" | "desc";
+  search?: string;
+} {
   const page = Math.max(1, parseInt(query.page as string) || 1);
-  const limit = Math.max(1, Math.min(100, parseInt(query.limit as string) || 20));
+  const limit = Math.max(
+    1,
+    Math.min(100, parseInt(query.limit as string) || 20),
+  );
   const sortField = allowedSortFields.includes(query.sortField as string)
     ? (query.sortField as string)
     : defaultSortField;
   const sortOrder = query.sortOrder === "desc" ? "desc" : "asc";
-  return { page, limit, sortField, sortOrder };
+  const search = typeof query.search === "string" ? query.search : undefined;
+  return { page, limit, sortField, sortOrder, search };
 }

@@ -67,4 +67,28 @@ describe("parsePaginationParams", () => {
     );
     expect(sortOrder).toBe("asc");
   });
+
+  it("returns undefined search when search param is absent", () => {
+    const { search } = parsePaginationParams({}, ALLOWED, "asset_name");
+    expect(search).toBeUndefined();
+  });
+
+  it("returns search string when search param is a plain string", () => {
+    const { search } = parsePaginationParams(
+      { search: "laptop" },
+      ALLOWED,
+      "asset_name",
+    );
+    expect(search).toBe("laptop");
+  });
+
+  it("returns undefined search when search param is a non-string query value", () => {
+    // Express parses repeated keys (e.g. ?search[]=foo) as objects or arrays — both invalid here.
+    const { search } = parsePaginationParams(
+      { search: { nested: "value" } },
+      ALLOWED,
+      "asset_name",
+    );
+    expect(search).toBeUndefined();
+  });
 });

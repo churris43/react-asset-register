@@ -93,5 +93,44 @@ describe('assetServices', () => {
       expect(data[0].asset_type?.asset_type_name).toBe('Hardware')
       expect(data[1].asset_type?.asset_type_name).toBe('Software')
     })
+
+    it('filters assets by search term', async () => {
+      await prisma.asset.createMany({
+        data: [{ asset_name: 'Laptop' }, { asset_name: 'Monitor' }, { asset_name: 'Laptop Stand' }],
+      })
+      const { data } = await getPaginatedAssets(1, 10, 'asset_name', 'asc', 'Laptop')
+      expect(data).toHaveLength(2)
+      expect(data.every(a => a.asset_name.includes('Laptop'))).toBe(true)
+    })
+
+    it('search filter is case-insensitive', async () => {
+      await prisma.asset.create({ data: { asset_name: 'Laptop' } })
+      const { data } = await getPaginatedAssets(1, 10, 'asset_name', 'asc', 'laptop')
+      expect(data).toHaveLength(1)
+      expect(data[0].asset_name).toBe('Laptop')
+    })
+
+    it('total reflects filtered count not the full table count', async () => {
+      await prisma.asset.createMany({
+        data: [{ asset_name: 'Laptop' }, { asset_name: 'Monitor' }, { asset_name: 'Laptop Stand' }],
+      })
+      const { total } = await getPaginatedAssets(1, 10, 'asset_name', 'asc', 'Laptop')
+      expect(total).toBe(2)
+    })
+
+    it('returns all assets when search is undefined', async () => {
+      await prisma.asset.createMany({
+        data: [{ asset_name: 'Laptop' }, { asset_name: 'Monitor' }],
+      })
+      const { total } = await getPaginatedAssets(1, 10, 'asset_name', 'asc', undefined)
+      expect(total).toBe(2)
+    })
+
+    it('returns empty results when search matches nothing', async () => {
+      await prisma.asset.create({ data: { asset_name: 'Laptop' } })
+      const { data, total } = await getPaginatedAssets(1, 10, 'asset_name', 'asc', 'zzznomatch')
+      expect(data).toHaveLength(0)
+      expect(total).toBe(0)
+    })
   })
 })
