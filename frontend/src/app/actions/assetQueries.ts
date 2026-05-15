@@ -23,6 +23,7 @@ export async function getPaginatedAssets(
     limit = 20,
     sortField = "asset_name",
     sortOrder = "asc",
+    search = "",
   } = params;
   const qs = new URLSearchParams({
     page: String(page),
@@ -30,6 +31,7 @@ export async function getPaginatedAssets(
     sortField,
     sortOrder,
   });
+  if (search) qs.set("search", search);
 
   try {
     const response = await fetchWithAuth(`/assets?${qs}`);

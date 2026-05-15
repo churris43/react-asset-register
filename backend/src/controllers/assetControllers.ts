@@ -30,21 +30,23 @@ export const deleteAsset = async (
   }
 };
 
-const ALLOWED_SORT_FIELDS = ["asset_name", "asset_type_name", "role_name"] as const;
+const ALLOWED_SORT_FIELDS = [
+  "asset_name",
+  "asset_type_name",
+  "role_name",
+] as const;
 
 export const getAssets = async (req: Request, res: Response) => {
   try {
     if (typeof req.query.page === "string") {
-      const { page, limit, sortField, sortOrder } = parsePaginationParams(
-        req.query,
-        ALLOWED_SORT_FIELDS,
-        "asset_name",
-      );
+      const { page, limit, sortField, sortOrder, search } =
+        parsePaginationParams(req.query, ALLOWED_SORT_FIELDS, "asset_name");
       const assets = await AssetServices.getPaginatedAssets(
         page,
         limit,
         sortField,
         sortOrder,
+        search,
       );
       return res.status(200).json(assets);
     } else {
