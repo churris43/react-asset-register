@@ -50,7 +50,7 @@ npm run seed:no-truncate
 
 ### Railway (production/staging)
 
-Use the Railway CLI to open an interactive shell inside the running backend container. The container already has the correct `DATABASE_URL` environment variable injected by Railway.
+The Railway CLI (`railway shell` and `railway run`) runs commands **locally** with Railway's environment variables injected — it does not exec into the deployed container. Because of this, the default `DATABASE_URL` uses the private `postgres.railway.internal` hostname which is unreachable from your machine. You must use the public connection URL instead.
 
 **1. Install the Railway CLI (one-time):**
 
@@ -65,20 +65,24 @@ railway login
 railway link   # select your project and environment when prompted
 ```
 
-**3. Open a shell inside the backend container:**
+**3. Add `DATABASE_PUBLIC_URL` to the Railway backend service (one-time):**
 
-```bash
-railway shell --service <your-backend-service-name>
-```
+In the Railway dashboard, open the **backend** service → **Variables** tab and add:
 
-**4. Run the seeder from inside the shell:**
+| Name | Value |
+|------|-------|
+| `DATABASE_PUBLIC_URL` | `${{Postgres.DATABASE_PUBLIC_URL}}` |
+
+Replace `Postgres` with the exact name of your PostgreSQL service if it differs. Make sure there is no leading space in the value.
+
+**4. Run the seeder via the Railway CLI:**
 
 ```bash
 # Reset and repopulate (default)
-npm run seed
+railway run --service <your-backend-service-name> npm run seed:railway
 
 # Add missing records without truncating
-npm run seed:no-truncate
+railway run --service <your-backend-service-name> npm run seed:railway:no-truncate
 ```
 
-> `railway shell` runs commands inside the deployed Railway container, which is the only environment that can reach the private `postgres.railway.internal` hostname. Running the seeder locally with `railway run` will not work because the internal hostname is not reachable from outside Railway's network.
+> Never commit the public connection string to source control. It contains your database credentials and is reachable from the internet.
