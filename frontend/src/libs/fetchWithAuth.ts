@@ -26,8 +26,11 @@ export async function fetchWithAuth(
   if (res.status !== 401) return res;
 
   // --- Token refresh ---
-  // The access token is expired or invalid. Attempt to get a new one using
-  // the refresh token before retrying the original request.
+  // Fallback for server actions (user-triggered mutations). Page loads are
+  // handled proactively by the middleware, but if the access token expires
+  // while the user is on the page and they trigger a mutation, the middleware
+  // does not re-run — so the refresh is handled here instead.
+  // cookies().set() is valid in this context because server actions support it.
   const refreshToken = cookieStore.get("refresh_token")?.value;
   if (!refreshToken) throw new Error("UNAUTHORIZED");
 

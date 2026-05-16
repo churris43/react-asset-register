@@ -21,7 +21,7 @@ This is the reason the frontend is split into two distinct layers: middleware fo
 
 ## How middleware.ts protects pages
 
-`middleware.ts` runs on the Edge Runtime before every page request. It is the first line of defence — it decides whether to let the request through or redirect to `/login`.
+`middleware.ts` runs on the Edge Runtime before every page request. It is the first line of defence — it decides whether to let the request through, silently refresh the session, or redirect to `/login`.
 
 ```
 Browser requests /roles
@@ -34,23 +34,30 @@ Is the path in PUBLIC_PATHS (/login)?
           ↓
         Token present and valid?
           Yes → NextResponse.next()
-          No  → Token expired but refresh_token exists?
-                  Yes → NextResponse.next()  (fetchWithAuth will refresh later)
+          No  → refresh_token exists?
                   No  → NextResponse.redirect(/login)
+                  Yes → POST /auth/refresh (server-to-server to Express)
+                            ↓
+                        Refresh succeeded?
+                          No  → NextResponse.redirect(/login)
+                          Yes → set new access_token on response cookie
+                                update request Cookie header
+                                NextResponse.next()
 ```
 
-### Why expired tokens are let through
+### Why middleware handles the refresh rather than fetchWithAuth
 
-When the access token is expired, middleware does not attempt the refresh itself. Instead it checks for the presence of a `refresh_token` and lets the request through if one exists. The actual refresh is handled lazily by `fetchWithAuth` when a server action makes its first API call and receives a 401 from Express.
+Query functions (`getAssets`, `getRoles`, etc.) are called directly from Server Components during page rendering. In Next.js, `cookies().set()` is not allowed during Server Component rendering — it can only be called from Server Actions or Route Handlers. If the refresh were handled lazily inside `fetchWithAuth`, the attempt to write the new access token cookie would throw, causing every query to return empty data silently.
 
-This keeps middleware fast and simple — it avoids making an outbound HTTP call to Express on every page load. The refresh happens exactly once per expired session, triggered by the first data fetch.
+By handling the refresh in middleware, the new token is available before any Server Component renders. Middleware sets it in two places:
+- **Response `Set-Cookie` header** — so the browser stores the new token for future requests
+- **Request `Cookie` header** — so server components in the same request see the new token immediately, without a second round-trip
 
 ### What middleware does NOT do
 
-Middleware only checks whether a token cookie exists and whether it is valid. It does not:
+Middleware only handles authentication, not authorisation. It does not:
 - Verify the user exists in the database
 - Check roles or permissions
-- Handle the token refresh itself
 
 ---
 
@@ -74,27 +81,34 @@ Express authenticate middleware reads req.cookies.access_token
 jwt.verify() validates the token → route handler runs
 ```
 
-**2. Transparent token refresh on 401**
+**2. Token refresh fallback for server actions**
 
-If Express returns a 401 (token expired or invalid), `fetchWithAuth` automatically attempts a refresh before failing:
+Page loads are handled proactively by middleware (see above). However, if the access token expires while the user is already on a page and they trigger a mutation (create, edit, delete), the middleware does not re-run. In that case `fetchWithAuth` handles the refresh itself:
 
 ```
-fetchWithAuth receives 401 from Express
+User triggers a mutation → server action calls fetchWithAuth
         ↓
-Read refresh_token from Next.js cookie store
+fetchWithAuth forwards the (now expired) access_token to Express
         ↓
-POST /auth/refresh with Cookie: refresh_token=...
+Express authenticate middleware → jwt.verify() throws → returns 401
         ↓
-Express validates refresh token → returns new accessToken
+fetchWithAuth catches 401:
+  Read refresh_token from Next.js cookie store
         ↓
-setAccessTokenCookie() writes new access_token to browser cookie
+  POST /auth/refresh with Cookie: refresh_token=...
         ↓
-Retry original request with new access_token
+  Express validates refresh token → returns new accessToken
+        ↓
+  setAccessTokenCookie() writes new access_token to browser cookie
+        ↓
+  Retry original request with new access_token
         ↓
 Return response to server action (transparent to the caller)
 ```
 
-If the refresh also fails (refresh token expired), `fetchWithAuth` throws `UNAUTHORIZED` — the server action catches this and returns an empty result, and the user will be redirected to `/login` on their next page navigation.
+`cookies().set()` works correctly here because server actions (user-triggered mutations) are a valid context for writing cookies — unlike Server Component rendering, which is read-only.
+
+If the refresh also fails (refresh token expired), `fetchWithAuth` throws `UNAUTHORIZED` — the server action catches this and returns an empty result, and the user will be redirected to `/login` on their next navigation.
 
 **3. Setting common headers**
 
@@ -122,25 +136,23 @@ This is the most complex case — the user has a valid session but their 15-minu
 ```
 1.  Browser navigates to /roles
 2.  middleware.ts runs:
-      - access_token exists but jwtVerify throws (expired)
-      - refresh_token exists → NextResponse.next()
-3.  /roles page renders (Server Component)
-4.  Page calls getRoles() server action
-5.  getRoles() calls fetchWithAuth('/roles')
-6.  fetchWithAuth reads the expired access_token and forwards it to Express
-7.  Express authenticate middleware calls jwt.verify() → throws TokenExpiredError
-8.  Express returns 401
-9.  fetchWithAuth catches 401:
-      - reads refresh_token from cookie store
-      - calls POST /auth/refresh on Express
+      - access_token is missing or jwtVerify throws (expired)
+      - refresh_token exists → calls POST /auth/refresh on Express (server-to-server)
       - Express validates refresh token → returns new accessToken
-      - fetchWithAuth calls setAccessTokenCookie(newAccessToken)
-      - retries GET /roles with new access_token
-10. Express returns roles data
-11. getRoles() returns data to the page — user sees their roles
+      - middleware sets new access_token on the response (Set-Cookie for browser)
+      - middleware updates the request Cookie header with the new access_token
+      - NextResponse.next() with updated request headers
+3.  /roles page renders (Server Component)
+      - cookies() reads the updated request Cookie header → sees the new access_token
+4.  Page calls getRoles()
+5.  getRoles() calls fetchWithAuth('/roles')
+6.  fetchWithAuth reads the new access_token and forwards it to Express
+7.  Express authenticate middleware calls jwt.verify() → valid
+8.  Express returns roles data
+9.  getRoles() returns data to the page — user sees their roles
 ```
 
-The user sees no login redirect and no error. The entire refresh cycle is invisible.
+The user sees no login redirect and no error. The refresh happens before the page renders and is completely invisible.
 
 ---
 
@@ -163,7 +175,9 @@ The user sees no login redirect and no error. The entire refresh cycle is invisi
 - Token refresh is completely transparent to the user and to server action code
 - Browser JavaScript has zero access to tokens (httpOnly cookies)
 - Cookie options are defined in one place
+- Server components always receive a valid token — middleware refreshes it before rendering begins
 
 **What this does not give you:**
 - Granular per-route permissions — middleware only checks authenticated vs. guest. Role-based access control would require additional middleware logic.
-- Immediate feedback on session expiry for long-running pages — if the refresh token expires while the user is on a page (without navigating), they will only be redirected when they next trigger a server action.
+- Immediate feedback on session expiry for long-running pages — if the refresh token expires while the user is on a page (without navigating), they will only be redirected when they next trigger a navigation or server action.
+- Refresh token rotation — the refresh token has a fixed lifetime from login and is never renewed. A user who is actively using the application will still be logged out when the refresh token expires.
