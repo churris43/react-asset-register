@@ -161,24 +161,26 @@ router.use('/assets',     authenticate, apiLimiter, assetRoutes)
 
 ### Authenticated request
 ```
-1. Browser triggers a server action (e.g. getAssets)
+1. Browser navigates to a page
 2. Next.js middleware runs first:
    a. If access_token cookie is present and valid → request proceeds
-   b. If access_token cookie is missing (browser deleted it after maxAge)
-      or the JWT fails verification → middleware checks for refresh_token
-   c. If refresh_token exists → request proceeds (fetchWithAuth will refresh lazily)
-   d. If no refresh_token → redirect to /login
+   b. If access_token is missing or expired → middleware calls POST /auth/refresh
+      on Express using the refresh_token cookie (server-to-server)
+   c. If refresh succeeds → middleware sets the new access_token on the response
+      (so the browser stores it) and updates the request Cookie header (so server
+      components in this same request see the new token without a second round-trip)
+   d. If refresh fails or no refresh_token exists → redirect to /login
    Note: middleware only catches known jose JWT errors (JWTExpired, JWTInvalid,
    JWTClaimValidationFailed). Any unexpected error (e.g. missing JWT_SECRET)
    fails closed — redirect to /login rather than letting the request through.
-3. Server action reads the access_token cookie via Next.js cookies() API
-4. Server action calls Express with Cookie: access_token=<token> header
+3. Page renders — server components read the access_token cookie and call fetchWithAuth
+4. fetchWithAuth forwards the access_token to Express as a Cookie header
 5. authenticate middleware extracts the token from req.cookies.access_token
-6. jwt.verify() checks the signature and expiry
-7. If valid, req.user is set and the route handler runs
-8. If expired, fetchWithAuth catches the 401, calls POST /auth/refresh,
-   gets a new access token, updates the cookie, and retries the request
-9. If the refresh token is also expired, the user is redirected to /login
+6. jwt.verify() checks the signature and expiry → route handler runs
+7. If the access token expires while the user is on the same page and they trigger
+   a mutation (server action), fetchWithAuth catches the resulting 401, calls
+   POST /auth/refresh, updates the cookie, and retries the request transparently
+8. If the refresh token is also expired, the user is redirected to /login on next navigation
 ```
 
 ### Token validation (no database involved)

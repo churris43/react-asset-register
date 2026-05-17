@@ -11,6 +11,6 @@ export const setAccessTokenCookie = async (token: string) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 15 * 60,
+    maxAge: 1 * 60,
   });
 };

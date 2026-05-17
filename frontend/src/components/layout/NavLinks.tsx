@@ -14,6 +14,12 @@ const links = [
 function NavLinks() {
   const pathname = usePathname();
 
+  // The root layout is served from the Next.js client-side router cache on
+  // redirects, so the server-side JWT check in Navbar may not re-run.
+  // Checking the pathname here (client-side, always current) ensures nav links
+  // are never rendered on public pages regardless of the cached layout state.
+  if (pathname === "/login") return null;
+
   const handleLogout = () => {
     logout();
   };

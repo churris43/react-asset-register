@@ -34,17 +34,54 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Reaching here means either: no access token cookie (it expired and the browser
-  // deleted it), or the token failed verification. Both cases are treated the same:
-  // if a refresh token exists, let the request through — fetchWithAuth handles the
-  // silent refresh lazily when the Express API returns a 401 (calls POST /auth/refresh,
-  // stores the new access token, and retries the original request transparently).
-  // If there is no refresh token either, the session is fully expired — redirect to login.
+  // Reaching here means the access token is missing or expired.
+  // Attempt a proactive silent refresh before the page renders.
+  // This must happen in middleware rather than in fetchWithAuth because query
+  // functions run during Server Component rendering — a context where
+  // cookies().set() is not allowed — so a lazy refresh in fetchWithAuth would
+  // throw and cause pages to return empty data.
   const refreshToken = request.cookies.get("refresh_token")?.value;
   if (!refreshToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-  return NextResponse.next();
+
+  let newAccessToken: string;
+  try {
+    const refreshRes = await fetch(`${process.env.API_URL}/auth/refresh`, {
+      method: "POST",
+      headers: { Cookie: `refresh_token=${refreshToken}` },
+    });
+    if (!refreshRes.ok) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    const data = await refreshRes.json();
+    newAccessToken = data.accessToken;
+  } catch {
+    // Network error or unexpected response — fail closed
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Update the request Cookie header so server components in this same request
+  // see the new access token — without this they would still read the expired
+  // cookie and fetchWithAuth would get a 401 with no way to recover.
+  const requestHeaders = new Headers(request.headers);
+  const updatedCookies = (request.headers.get("cookie") ?? "")
+    .split("; ")
+    .filter((c) => !c.startsWith("access_token="))
+    .concat(`access_token=${newAccessToken}`)
+    .join("; ");
+  requestHeaders.set("cookie", updatedCookies);
+
+  // Pass the updated headers downstream and persist the new token in the
+  // browser so future requests arrive with a valid cookie.
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  response.cookies.set("access_token", newAccessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 1 * 60, // 15 minutes — must match expiresIn in authServices.ts
+  });
+  return response;
 }
 
 // Run middleware on all routes except Next.js internals and static assets
