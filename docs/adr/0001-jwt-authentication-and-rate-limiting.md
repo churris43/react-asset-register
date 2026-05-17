@@ -58,7 +58,7 @@ Rate limiting restricts how many requests a single IP address can make to an end
 
 In this project, `express-rate-limit` is applied to two groups of endpoints with different limits:
 
-- **Auth endpoints** (`/login`, `/register`) — 10 requests per 5-minute window per IP. These are susceptible to brute force password guessing, so the limit is tight. A legitimate user would rarely need more than 2–3 attempts in that window.
+- **Auth endpoints** (`/login`, `/register`, `/refresh`) — 10 requests per 5-minute window per IP. These are susceptible to brute force password guessing (login/register) or abuse of a stolen refresh token. A legitimate user would rarely need more than 2–3 attempts in that window.
 - **Authenticated API endpoints** (`/assets`, `/roles`, `/assettypes`) — 100 requests per 5-minute window per IP. These require a valid token so brute force is not a concern; the limit exists to protect against DoS from a stolen token or a runaway client.
 
 After the limit is exceeded the middleware returns a `429 Too Many Requests` response and the request never reaches the controller.
@@ -126,6 +126,7 @@ const authLimiter = rateLimit({
 
 router.post('/register', authLimiter, authController.register)
 router.post('/login',    authLimiter, authController.login)
+router.post('/refresh',  authLimiter, authController.refresh)
 ```
 
 Authenticated API endpoints use a more lenient limiter. Since a valid token is required there is nothing to brute force, but rate limiting still protects against DoS from a stolen token or runaway client:
@@ -153,7 +154,10 @@ router.use('/assets',     authenticate, apiLimiter, assetRoutes)
 2. Next.js server action calls POST /auth/login on Express (server-to-server)
 3. Express checks rate limit — rejects with 429 if exceeded
 4. Express looks up the user in the database by email
-5. bcrypt compares the submitted password against the stored hash
+5. bcrypt compares the submitted password against the stored hash —
+   if no user was found, the comparison runs against a constant dummy hash
+   so the response timing is identical for "user not found" vs "wrong password"
+   (prevents email enumeration via timing analysis)
 6. On success, Express signs an access token (15m) and refresh token (7d)
 7. Express returns both tokens in the response body
 8. Next.js server action sets both as httpOnly cookies in the browser
@@ -200,7 +204,8 @@ router.use('/assets',     authenticate, apiLimiter, assetRoutes)
 - No session table in the database — the server is stateless
 - Tokens are protected from JavaScript access (httpOnly)
 - Short-lived access tokens limit the damage if a token is intercepted
-- Rate limiting prevents brute force attacks on login and DoS on API routes
+- Rate limiting prevents brute force attacks on login/register/refresh and DoS on API routes
+- Constant-time login (via dummy bcrypt comparison) prevents email enumeration via response-time analysis
 - Sessions survive access token expiry silently as long as the refresh token is valid
 - Unexpected JWT errors (e.g. missing secret) fail closed to login rather than through
 

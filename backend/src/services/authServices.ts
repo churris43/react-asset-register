@@ -7,6 +7,12 @@ import { JwtPayload } from "../types/AuthTypes";
 const SALT_ROUNDS = 12;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
+// Pre-computed bcrypt hash used when the supplied email has no matching user.
+// Running bcrypt.compare against this keeps login timing identical for
+// "user not found" and "wrong password" cases — without it, an attacker could
+// enumerate valid emails by measuring response time.
+const DUMMY_PASSWORD_HASH = bcrypt.hashSync("never-matches", SALT_ROUNDS);
+
 export const registerUser = async (email: string, password: string) => {
   // Prevent duplicate accounts
   const existing = await prisma.user.findUnique({ where: { email } });
@@ -21,12 +27,12 @@ export const registerUser = async (email: string, password: string) => {
 export const loginUser = async (email: string, password: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
 
-  // Use the same error for missing user and wrong password
-  // so attackers can't tell which one failed (user enumeration)
-  if (!user) throw new Error("INVALID_CREDENTIALS");
-
-  const valid = await bcrypt.compare(password, user.password_hash);
-  if (!valid) throw new Error("INVALID_CREDENTIALS");
+  // Always run bcrypt.compare — even when the user is missing — so response
+  // timing does not reveal whether the email exists (prevents enumeration).
+  // The same generic error is returned for both failure modes.
+  const hashToCheck = user?.password_hash ?? DUMMY_PASSWORD_HASH;
+  const valid = await bcrypt.compare(password, hashToCheck);
+  if (!user || !valid) throw new Error("INVALID_CREDENTIALS");
 
   // type field is included so the middleware can reject a refresh token
   // presented to a protected endpoint — without it both tokens are identical
@@ -44,11 +50,11 @@ export const loginUser = async (email: string, password: string) => {
 
   // algorithm is explicit to prevent acceptance of the "none" algorithm
   const accessToken = jwt.sign(accessPayload, JWT_SECRET, {
-    expiresIn: "1m",
+    expiresIn: "15m",
     algorithm: "HS256",
   });
   const refreshToken = jwt.sign(refreshPayload, JWT_SECRET, {
-    expiresIn: "2m",
+    expiresIn: "7d",
     algorithm: "HS256",
   });
 

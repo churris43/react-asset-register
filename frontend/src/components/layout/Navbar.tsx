@@ -1,24 +1,12 @@
 import { cookies } from "next/headers";
-import { jwtVerify } from "jose";
 import NavLinks from "./NavLinks";
 
-// Verifies the JWT itself rather than checking cookie presence — a stale
-// access_token cookie with an expired JWT would otherwise make the nav visible.
-async function isTokenValid(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("access_token")?.value;
-  const secret = process.env.JWT_SECRET;
-  if (!token || !secret) return false;
-  try {
-    await jwtVerify(token, new TextEncoder().encode(secret));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 async function Navbar() {
-  const loggedIn = await isTokenValid();
+  // Middleware guarantees a valid (or just-refreshed) access_token cookie by
+  // the time a protected page renders, so presence is sufficient here. The
+  // cached-layout edge case is handled client-side in NavLinks.
+  const cookieStore = await cookies();
+  const loggedIn = !!cookieStore.get("access_token")?.value;
 
   return (
     <nav className="bg-white border-b border-gray-200">

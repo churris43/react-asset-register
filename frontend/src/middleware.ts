@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify, errors } from "jose";
+import { refreshAccessToken } from "@/src/libs/refreshAccessToken";
 
 // Routes that don't require authentication
 const PUBLIC_PATHS = ["/login"];
@@ -45,19 +46,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  let newAccessToken: string;
-  try {
-    const refreshRes = await fetch(`${process.env.API_URL}/auth/refresh`, {
-      method: "POST",
-      headers: { Cookie: `refresh_token=${refreshToken}` },
-    });
-    if (!refreshRes.ok) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    const data = await refreshRes.json();
-    newAccessToken = data.accessToken;
-  } catch {
-    // Network error or unexpected response — fail closed
+  const newAccessToken = await refreshAccessToken(refreshToken);
+  if (!newAccessToken) {
+    // Refresh failed, network error, or unexpected response — fail closed
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -79,7 +70,7 @@ export async function middleware(request: NextRequest) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 1 * 60, // 15 minutes — must match expiresIn in authServices.ts
+    maxAge: 15 * 60, // 15 minutes — must match expiresIn in authServices.ts
   });
   return response;
 }
