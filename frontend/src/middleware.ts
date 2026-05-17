@@ -79,7 +79,7 @@ export async function middleware(request: NextRequest) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 15 * 60, // 15 minutes — must match expiresIn in authServices.ts
+    maxAge: 1 * 60, // 15 minutes — must match expiresIn in authServices.ts
   });
   return response;
 }

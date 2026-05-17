@@ -44,11 +44,11 @@ export const loginUser = async (email: string, password: string) => {
 
   // algorithm is explicit to prevent acceptance of the "none" algorithm
   const accessToken = jwt.sign(accessPayload, JWT_SECRET, {
-    expiresIn: "15m",
+    expiresIn: "1m",
     algorithm: "HS256",
   });
   const refreshToken = jwt.sign(refreshPayload, JWT_SECRET, {
-    expiresIn: "7d",
+    expiresIn: "2m",
     algorithm: "HS256",
   });
 
