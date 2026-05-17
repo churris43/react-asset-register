@@ -37,25 +37,18 @@ export const getPaginatedAssets = async (
   sortOrder: "asc" | "desc",
   search?: string,
 ): Promise<{ data: AssetWithRelations[]; total: number }> => {
-  const [data, total] = await Promise.all([
-    prisma.asset.findMany({
-      include: {
-        role: true,
-        asset_type: true,
-      },
-      where: {
+  // Only apply the search filter when a search term is provided.
+  // Passing `contains: undefined` makes Prisma's findMany match nothing,
+  // which is why an absent search must produce an empty where clause.
+  const where = search
+    ? {
         OR: [
-          {
-            asset_name: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
+          { asset_name: { contains: search, mode: "insensitive" as const } },
           {
             asset_type: {
               asset_type_name: {
                 contains: search,
-                mode: "insensitive",
+                mode: "insensitive" as const,
               },
             },
           },
@@ -63,21 +56,23 @@ export const getPaginatedAssets = async (
             role: {
               role_name: {
                 contains: search,
-                mode: "insensitive",
+                mode: "insensitive" as const,
               },
             },
           },
         ],
-      },
+      }
+    : {};
+
+  const [data, total] = await Promise.all([
+    prisma.asset.findMany({
+      include: { role: true, asset_type: true },
+      where,
       skip: (page - 1) * limit,
       take: limit,
       orderBy: buildOrderBy(sortField, sortOrder, NESTED_SORT_FIELDS),
     }),
-    prisma.asset.count({
-      where: {
-        asset_name: { contains: search, mode: "insensitive" },
-      },
-    }),
+    prisma.asset.count({ where }),
   ]);
 
   return { data, total };
