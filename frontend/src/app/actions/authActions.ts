@@ -15,7 +15,21 @@ export async function login(email: string, password: string) {
     });
 
     if (!res.ok) {
-      return { success: false, message: "Invalid email or password" };
+      let message = "Login failed. Please try again.";
+
+      if (res.status === 401) {
+        message = "Invalid email or password";
+      } else if (res.status === 400) {
+        message = "Email and password are required";
+      } else if (res.status === 500) {
+        message = "Server error. Please try again later.";
+      } else if (res.status === 503) {
+        message = "Service unavailable. Please try again later.";
+      } else if (res.status === 404) {
+        message = "Login service not found. Please contact support.";
+      }
+
+      return { success: false, message };
     }
 
     const { accessToken, refreshToken } = await res.json();
