@@ -45,6 +45,8 @@ Is the path in PUBLIC_PATHS (/login)?
                                 NextResponse.next()
 ```
 
+The actual POST to `/auth/refresh` is delegated to `refreshAccessToken()` in `libs/refreshAccessToken.ts` — the same helper is used by `fetchWithAuth` so the network call has a single implementation.
+
 ### Why middleware handles the refresh rather than fetchWithAuth
 
 Query functions (`getAssets`, `getRoles`, etc.) are called directly from Server Components during page rendering. In Next.js, `cookies().set()` is not allowed during Server Component rendering — it can only be called from Server Actions or Route Handlers. If the refresh were handled lazily inside `fetchWithAuth`, the attempt to write the new access token cookie would throw, causing every query to return empty data silently.
@@ -61,24 +63,21 @@ Middleware only handles authentication, not authorisation. It does not:
 
 ---
 
-## How the Navbar verifies authentication
+## How the Navbar checks authentication
 
-The `Navbar` component (in `components/layout/Navbar.tsx`) is a Server Component that renders on every page load. Rather than checking whether the `access_token` cookie **exists**, it verifies the JWT is **valid**:
+The `Navbar` component (in `components/layout/Navbar.tsx`) is a Server Component that renders on every page load. It checks whether the `access_token` cookie is present:
 
 ```
 Navbar executes in server component context
   ↓
 Get access_token cookie value
   ↓
-JWT_SECRET defined?
-  Yes → jwtVerify(token, secret)
-    Valid   → isLoggedIn = true  → render NavLinks
-    Expired → isLoggedIn = false → hide NavLinks
-    Invalid → isLoggedIn = false → hide NavLinks
+Cookie present?
+  Yes → isLoggedIn = true  → render NavLinks
   No  → isLoggedIn = false → hide NavLinks
 ```
 
-Why verify the JWT instead of checking cookie presence? A browser cookie with an expired JWT inside can persist longer than the JWT's validity window (due to timing differences in `maxAge`). Simply checking `!!cookie` would show nav links on the login page with a stale, expired cookie.
+A cookie presence check is sufficient here because middleware runs before any protected page renders and guarantees the token is either valid or just-refreshed — an expired or missing token results in a redirect to `/login` (a public path) before Navbar ever sees it. The browser cookie's `maxAge` matches the JWT TTL, so a stale-cookie-with-expired-JWT scenario is extremely rare and is handled by the second layer below.
 
 ---
 
@@ -100,8 +99,8 @@ pathname === '/login'?
 
 `usePathname()` is always in sync with the actual current URL (never cached), so this check fires immediately and prevents any flash of nav links on public pages.
 
-**Why both layers (Navbar JWT + NavLinks pathname)?**
-- **Navbar JWT check** — handles the primary case: verifies tokens are actually valid before rendering
+**Why both layers (Navbar cookie + NavLinks pathname)?**
+- **Navbar cookie check** — handles the primary case: middleware has already validated the token, so cookie presence is a reliable proxy for "user is authenticated".
 - **NavLinks pathname check** — handles the edge case: the client-side router cache reusing layout segments. It's a defensive check that works regardless of the layout cache state.
 
 ---
@@ -150,6 +149,8 @@ fetchWithAuth catches 401:
         ↓
 Return response to server action (transparent to the caller)
 ```
+
+The POST to `/auth/refresh` is delegated to the shared `refreshAccessToken()` helper (the same one middleware uses) so both refresh paths share a single network-call implementation.
 
 `cookies().set()` works correctly here because server actions (user-triggered mutations) are a valid context for writing cookies — unlike Server Component rendering, which is read-only.
 
@@ -207,10 +208,11 @@ The user sees no login redirect and no error. The refresh happens before the pag
 |---|---|
 | `frontend/src/middleware.ts` | Edge middleware — protects all non-public routes, redirects to /login |
 | `frontend/src/libs/fetchWithAuth.ts` | Fetch wrapper — forwards auth cookie, handles transparent token refresh |
+| `frontend/src/libs/refreshAccessToken.ts` | Shared helper — single source for the POST /auth/refresh network call, used by middleware and fetchWithAuth |
 | `frontend/src/libs/authCookies.ts` | Shared access token cookie setter — single source of cookie options |
 | `frontend/src/app/actions/authActions.ts` | Server actions for login and logout |
 | `frontend/src/app/login/page.tsx` | Login form |
-| `frontend/src/components/layout/Navbar.tsx` | Server component — verifies JWT validity before rendering NavLinks |
+| `frontend/src/components/layout/Navbar.tsx` | Server component — checks access_token cookie presence before rendering NavLinks |
 | `frontend/src/components/layout/NavLinks.tsx` | Client component — renders nav links, checks pathname to prevent display on login page |
 
 ---
@@ -223,7 +225,7 @@ The user sees no login redirect and no error. The refresh happens before the pag
 - Browser JavaScript has zero access to tokens (httpOnly cookies)
 - Cookie options are defined in one place
 - Server components always receive a valid token — middleware refreshes it before rendering begins
-- Nav links are verified at two layers: server-side JWT validation + client-side pathname check. This handles both the primary case (valid token verification) and the edge case (Next.js client router cache reusing layout segments from when the user was logged in)
+- Nav links are guarded at two layers: server-side cookie presence check + client-side pathname check. This handles both the primary case (middleware-validated session) and the edge case (Next.js client router cache reusing layout segments from when the user was logged in)
 - No flash of nav links on the login page, even when the root layout is served from cache
 
 **What this does not give you:**

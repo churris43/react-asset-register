@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { setAccessTokenCookie } from "./authCookies";
+import { refreshAccessToken } from "./refreshAccessToken";
 
 const API_BASE = process.env.API_URL;
 
@@ -34,15 +35,10 @@ export async function fetchWithAuth(
   const refreshToken = cookieStore.get("refresh_token")?.value;
   if (!refreshToken) throw new Error("UNAUTHORIZED");
 
-  const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
-    method: "POST",
-    headers: { Cookie: `refresh_token=${refreshToken}` },
-  });
+  const newAccessToken = await refreshAccessToken(refreshToken);
 
   // Refresh token is also expired or invalid — session is fully expired
-  if (!refreshRes.ok) throw new Error("UNAUTHORIZED");
-
-  const { accessToken: newAccessToken } = await refreshRes.json();
+  if (!newAccessToken) throw new Error("UNAUTHORIZED");
 
   // Persist the new access token in the cookie store for subsequent requests
   await setAccessTokenCookie(newAccessToken);
