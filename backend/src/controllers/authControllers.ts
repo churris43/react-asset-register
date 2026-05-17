@@ -38,8 +38,17 @@ export const login = async (req: Request, res: Response) => {
       password,
     );
     return res.status(200).json({ accessToken, refreshToken });
-  } catch {
-    return res.status(401).json({ message: "Invalid credentials" });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+
+    // Auth service throws specific error messages for invalid credentials
+    if (message === "INVALID_CREDENTIALS") {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    // Any other error is a server issue (e.g., missing JWT_SECRET)
+    console.error("Login error:", message);
+    return res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
 
