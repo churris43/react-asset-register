@@ -54,14 +54,13 @@ function Login() {
             required
             className="border rounded px-3 py-2"
           />
-          {!loading && (
-            <button
-              type="submit"
-              className="bg-black text-white rounded px-3 py-2 disabled:opacity-50"
-            >
-              {loading ? "Signing in..." : "Sign in"}
-            </button>
-          )}
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-black text-white rounded px-3 py-2 disabled:opacity-50"
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </button>
         </form>
       </div>
     </>
