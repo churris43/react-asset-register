@@ -36,21 +36,25 @@ export const deleteUser = async (id: number): Promise<userModel> => {
 
 export const updateUser = async (
   id: number,
-  user: Omit<User, "id">,
+  user: Omit<User, "id"> & { password_hash?: string },
 ): Promise<userModel | null> => {
-  // Higher value = more secure but slower — 12 is the recommended production default
-  const SALT_ROUNDS = 12; // todo: This can be moved as it's also used in authServices
-  // Never store plain text passwords — bcrypt hashes and salts in one step
-  const password_hash = await bcrypt.hash(user.password_hash, SALT_ROUNDS);
+  const SALT_ROUNDS = 12; // Higher value = more secure but slower — 12 is the recommended production default
+  const data: any = {
+    email: user.email,
+    name: user.name,
+    isAdmin: user.isAdmin,
+  };
+
+  // Password is optional on updates — only hash and update if provided
+  // This allows users to edit their profile without changing their password
+  if (user.password_hash?.trim()) {
+    data.password_hash = await bcrypt.hash(user.password_hash, SALT_ROUNDS);
+  }
+
   return prisma.user.update({
     where: {
       id: id,
     },
-    data: {
-      email: user.email,
-      password_hash: password_hash,
-      name: user.name,
-      isAdmin: user.isAdmin,
-    },
+    data,
   });
 };
