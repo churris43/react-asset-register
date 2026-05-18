@@ -1,5 +1,6 @@
 {
+  "_comment": "Required to enable debugging of the backend when running from a Docker container. The --inspect=0.0.0.0:9229 flag exposes the Node.js debugger on port 9229, allowing IDE debuggers to connect remotely.",
   "watch": ["src"],
   "ext": "ts",
-  "exec": "ts-node src/index.ts"
+  "exec": "node --inspect=0.0.0.0:9229 -r ts-node/register src/index.ts"
 }
