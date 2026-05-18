@@ -46,7 +46,7 @@ function ModalForm({
     <>
       <form onSubmit={mode == "add" ? handleAdd : handleEdit}>
         {fields.map((field) => (
-          <div className="mb-4" key={field.name}>
+          <div className="mb-4" key={field.label}>
             <label
               htmlFor={field.name}
               className="block text-sm font-medium mb-2"

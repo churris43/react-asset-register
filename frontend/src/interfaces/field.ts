@@ -9,6 +9,7 @@ interface Field {
   htmlElementType: string;
   options?: { value: string | number; label: string }[];
   childField?: string;
+  hide?: boolean;
 }
 
 export default Field;

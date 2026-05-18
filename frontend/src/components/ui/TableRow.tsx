@@ -4,6 +4,7 @@ import AssetTypeInterface from "@/src/interfaces/assetType";
 import RoleInterface from "@/src/interfaces/role";
 import AssetInterface from "@/src/interfaces/asset";
 import { getNestedValue } from "@/src/utils/json";
+import UserInterface from "@/src/interfaces/user";
 
 interface TableRowProps {
   id: number;
@@ -14,7 +15,7 @@ interface TableRowProps {
     id: number,
     data: any,
   ) => Promise<{ success: boolean; error?: string }>;
-  record: AssetTypeInterface | RoleInterface | AssetInterface;
+  record: AssetTypeInterface | RoleInterface | AssetInterface | UserInterface;
 }
 
 function TableRow({
@@ -25,8 +26,10 @@ function TableRow({
   editAction,
   record,
 }: TableRowProps) {
+  const visibleFields = fields.filter((field) => !field.hide);
+
   // An extra 1fr is added as the "Id" column is not included in the fields list
-  const cols = ` 80px ${fields.map(() => "1fr").join(" ")} 1fr auto`;
+  const cols = ` 80px ${visibleFields.map(() => "1fr").join(" ")} 1fr auto`;
 
   return (
     <div
@@ -35,11 +38,14 @@ function TableRow({
       style={{ gridTemplateColumns: cols }}
     >
       <span className="px-3 py-4">{record.id} </span>
-      {fields.map((field: Field) => (
-        <span key={field.name} className="text-sm px-3 py-4">
-          {getNestedValue(record, field.childField ?? field.name)}
-        </span>
-      ))}
+      {fields.map(
+        (field: Field) =>
+          !field.hide && (
+            <span key={field.name} className="text-sm px-3 py-4">
+              {getNestedValue(record, field.childField ?? field.name)}
+            </span>
+          ),
+      )}
       <RowActionButtons
         recordName={recordName}
         id={id}

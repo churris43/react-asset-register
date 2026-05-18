@@ -2,23 +2,23 @@ import { Request, Response } from "express";
 import * as AuthService from "../services/authServices";
 
 export const register = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { email, password_hash } = req.body;
 
-  if (!email || !password)
+  if (!email || !password_hash)
     return res.status(400).json({ message: "Email and password are required" });
 
-  if (password.length < 8)
+  if (password_hash.length < 8)
     return res
       .status(400)
       .json({ message: "Password must be at least 8 characters" });
 
-  if (password.length > 128)
+  if (password_hash.length > 128)
     return res
       .status(400)
       .json({ message: "Password must be 128 characters or fewer" });
 
   try {
-    const user = await AuthService.registerUser(email, password);
+    const user = await AuthService.registerUser(email, password_hash);
     return res.status(201).json({ message: "User registered", user });
   } catch (error) {
     if (error instanceof Error && error.message === "EMAIL_TAKEN")
@@ -48,7 +48,9 @@ export const login = async (req: Request, res: Response) => {
 
     // Any other error is a server issue (e.g., missing JWT_SECRET)
     console.error("Login error:", message);
-    return res.status(500).json({ message: "Server error. Please try again later." });
+    return res
+      .status(500)
+      .json({ message: "Server error. Please try again later." });
   }
 };
 

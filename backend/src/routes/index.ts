@@ -4,6 +4,7 @@ import roleRoutes from "./roleRoutes";
 import assetTypeRoutes from "./assetTypeRoutes";
 import assetRoutes from "./assetRoutes";
 import authRoutes from "./authRoutes";
+import userRoutes from "./userRoutes";
 import { authenticate } from "../middleware/authenticate";
 
 const router = Router();
@@ -18,5 +19,6 @@ router.use("/auth", authRoutes);
 router.use("/roles", authenticate, apiLimiter, roleRoutes);
 router.use("/assettypes", authenticate, apiLimiter, assetTypeRoutes);
 router.use("/assets", authenticate, apiLimiter, assetRoutes);
+router.use("/users", authenticate, apiLimiter, userRoutes);
 
 export default router;
