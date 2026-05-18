@@ -49,6 +49,8 @@ export const updateUser = async (
     data: {
       email: user.email,
       password_hash: password_hash,
+      name: user.name,
+      isAdmin: user.isAdmin,
     },
   });
 };

@@ -1,6 +1,7 @@
 import AddButton from "@/src/components/features/AddButton";
 import TableHeading from "@/src/components/ui/TableHeading";
 import Field from "../../interfaces/field";
+import FieldConfig from "../../interfaces/fieldConfig";
 import TableRow from "@/src/components/ui/TableRow";
 import TableFooter from "@/src/components/ui/TableFooter";
 import PaginationNav from "@/src/components/ui/PaginationNav";
@@ -33,10 +34,19 @@ async function Users({
 
   const headings: Heading[] = [
     { label: "ID" },
+    { label: "Name", sortField: "name" },
     { label: "Email", sortField: "email" },
+    { label: "Is Admin", sortField: "isAdmin" },
   ];
 
   const fields: Array<Field> = [
+    {
+      name: "name",
+      label: "Name",
+      required: true,
+      type: "text",
+      htmlElementType: "input",
+    },
     {
       name: "email",
       label: "Email",
@@ -52,7 +62,20 @@ async function Users({
       htmlElementType: "input",
       hide: true,
     },
+    {
+      name: "isAdmin",
+      label: "Is Admin",
+      required: false,
+      type: "checkbox",
+      htmlElementType: "input",
+    },
   ];
+
+  const fieldConfig: FieldConfig = {
+    password_hash: {
+      requiredInMode: "add",
+    },
+  };
 
   return (
     <>
@@ -61,6 +84,7 @@ async function Users({
         <AddButton
           recordName="User"
           fields={fields}
+          fieldConfig={fieldConfig}
           createAction={createUser}
         />
       </h1>
@@ -80,6 +104,7 @@ async function Users({
             deleteAction={deleteUser.bind(null, user.id)}
             editAction={editUser}
             fields={fields}
+            fieldConfig={fieldConfig}
           />
         ))}
         <TableFooter

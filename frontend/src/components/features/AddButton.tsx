@@ -3,13 +3,15 @@
 import { useState } from "react";
 import GenericModal from "../ui/GenericModal";
 import Field from "../../interfaces/field";
+import FieldConfig from "../../interfaces/fieldConfig";
 
 interface AddButtonProps {
   recordName: string;
   fields: Field[];
   createAction: (data: any) => Promise<{ success: boolean; error?: string }>;
+  fieldConfig?: FieldConfig;
 }
-function AddButton({ recordName, fields, createAction }: AddButtonProps) {
+function AddButton({ recordName, fields, createAction, fieldConfig }: AddButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
@@ -26,6 +28,7 @@ function AddButton({ recordName, fields, createAction }: AddButtonProps) {
         mode="add"
         id={0}
         fields={fields}
+        fieldConfig={fieldConfig}
         createAction={createAction}
       />
     </>

@@ -1,5 +1,6 @@
 import EditButton from "../features/EditButton";
 import Field from "../../interfaces/field";
+import FieldConfig from "../../interfaces/fieldConfig";
 import { DeleteRecordButton } from "../features/DeleteButton";
 
 interface RowActionButtonsProps {
@@ -7,6 +8,7 @@ interface RowActionButtonsProps {
   recordName: string;
   deleteAction: () => Promise<{ success: boolean; error?: string }>;
   fields: Field[];
+  fieldConfig?: FieldConfig;
   initialData: Record<string, any>;
   editAction?: (
     id: number,
@@ -19,6 +21,7 @@ function RowActionButtons({
   recordName,
   deleteAction,
   fields,
+  fieldConfig,
   initialData,
   editAction,
 }: RowActionButtonsProps) {
@@ -27,6 +30,7 @@ function RowActionButtons({
       <EditButton
         id={id}
         fields={fields}
+        fieldConfig={fieldConfig}
         initialData={initialData}
         editAction={editAction}
       />

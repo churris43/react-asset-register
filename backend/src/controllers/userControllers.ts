@@ -3,7 +3,7 @@ import * as userServices from "../services/userServices";
 import { parsePaginationParams } from "../utils/parsePaginationParams";
 import User from "../types/User";
 
-const ALLOWED_SORT_FIELDS = ["role_name", "staff_name"] as const;
+const ALLOWED_SORT_FIELDS = ["email", "name", "isAdmin"] as const;
 
 export const getUsers = async (req: Request, res: Response) => {
   try {

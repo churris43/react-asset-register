@@ -6,7 +6,7 @@ import Field from "@/src/interfaces/field";
 interface InputHTMLProps {
   field: Field;
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  formData: Record<string, string | number>;
+  formData: Record<string, string | number | boolean>;
 }
 
 function InputHTML({ field, handleChange, formData }: InputHTMLProps) {
@@ -14,7 +14,7 @@ function InputHTML({ field, handleChange, formData }: InputHTMLProps) {
     <input
       id={field.name}
       type={field.type}
-      value={formData[field.name] || ""}
+      value={String(formData[field.name] || "")}
       onChange={handleChange}
       name={field.name}
       className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"

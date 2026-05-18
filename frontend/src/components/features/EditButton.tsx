@@ -4,6 +4,7 @@ import { MdEdit } from "react-icons/md";
 import GenericModal from "../ui/GenericModal";
 import { useState } from "react";
 import Field from "../../interfaces/field";
+import FieldConfig from "../../interfaces/fieldConfig";
 
 interface EditProps {
   id: number;
@@ -13,9 +14,10 @@ interface EditProps {
     id: number,
     data: any,
   ) => Promise<{ success: boolean; error?: string }>;
+  fieldConfig?: FieldConfig;
 }
 
-function EditButton({ id, fields, initialData, editAction }: EditProps) {
+function EditButton({ id, fields, initialData, editAction, fieldConfig }: EditProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -29,6 +31,7 @@ function EditButton({ id, fields, initialData, editAction }: EditProps) {
         id={id}
         mode="edit"
         fields={fields}
+        fieldConfig={fieldConfig}
         initialData={initialData}
         editAction={editAction}
       />

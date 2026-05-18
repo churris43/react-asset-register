@@ -7,6 +7,7 @@ import {
 } from "react";
 import { toast } from "react-toastify";
 import Field from "../interfaces/field";
+import FieldConfig from "../interfaces/fieldConfig";
 
 interface UseEditProps {
   id: number;
@@ -14,6 +15,7 @@ interface UseEditProps {
   isModalOpen: boolean;
   mode: string;
   fields: Field[];
+  fieldConfig?: FieldConfig;
   editAction?: (
     id: number,
     data: any,
@@ -28,23 +30,35 @@ function useModalForm({
   isModalOpen,
   mode,
   fields,
+  fieldConfig,
   editAction,
   createAction,
   onClose,
 }: UseEditProps) {
-  const defaultValues = (fields: Field[]): Record<string, string | number> => {
+  // Apply fieldConfig to adjust field properties based on mode
+  const adjustedFields = fields.map((field) => {
+    const config = fieldConfig?.[field.name];
+    if (!config || config.requiredInMode === mode) return field;
+    return { ...field, required: false };
+  });
+
+  const defaultValues = (fields: Field[]): Record<string, string | number | boolean> => {
     return Object.fromEntries(
       fields.map(({ name, defaultValue }) => [name, defaultValue || ""]),
     );
   };
 
   const [isPending, startTransition] = useTransition();
-  const [formData, setFormData] = useState(defaultValues(fields));
+  const [formData, setFormData] = useState(defaultValues(adjustedFields));
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
+    const { name } = e.target;
+    // Cast to HTMLInputElement to access type, checked, and value properties
+    const target = e.target as HTMLInputElement;
+    // Checkboxes use checked property (boolean), other inputs use value property (string)
+    const value = target.type === "checkbox" ? target.checked : target.value;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -90,17 +104,17 @@ function useModalForm({
   useEffect(() => {
     if (!isModalOpen || mode === "add" || !initialData) return;
 
-    const extracted: Record<string, string | number> = {};
-    fields.forEach((field) => {
+    const extracted: Record<string, string | number | boolean> = {};
+    adjustedFields.forEach((field) => {
       extracted[field.name] =
-        initialData[field.name] ?? defaultValues(fields)[field.name];
+        initialData[field.name] ?? defaultValues(adjustedFields)[field.name];
     });
     setFormData(extracted);
-  }, [isModalOpen, mode, initialData, fields]);
+  }, [isModalOpen, mode, initialData, fields, fieldConfig]);
 
   // todo: This is not right, this shoule be elsewhere, maybe a hook on its own
   const resetForm = () => {
-    setFormData(defaultValues(fields));
+    setFormData(defaultValues(adjustedFields));
     // setError(null);
   };
 
@@ -112,6 +126,7 @@ function useModalForm({
     handleEdit,
     handleAdd,
     isPending,
+    adjustedFields,
   };
 }
 

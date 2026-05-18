@@ -1,6 +1,7 @@
 "use client";
 
 import Field from "../../interfaces/field";
+import FieldConfig from "../../interfaces/fieldConfig";
 import CloseButton from "./CloseButton";
 import ModalForm from "../features/ModalForm";
 
@@ -10,6 +11,7 @@ interface AddModalProps {
   id: number;
   mode: string;
   fields: Field[];
+  fieldConfig?: FieldConfig;
   initialData?: Record<string, any>;
   editAction?: (
     id: number,
@@ -24,6 +26,7 @@ function GenericModal({
   id,
   mode,
   fields,
+  fieldConfig,
   initialData,
   editAction,
   createAction,
@@ -49,6 +52,7 @@ function GenericModal({
             id={id}
             mode={mode}
             fields={fields}
+            fieldConfig={fieldConfig}
             initialData={initialData}
             editAction={editAction}
             createAction={createAction}
