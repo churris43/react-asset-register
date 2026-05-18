@@ -36,5 +36,7 @@ model user {
   id            Int      @id @default(autoincrement())
   email         String   @unique
   password_hash String
+  name          String   @default("Unknown")
+  isAdmin       Boolean? @default(false)
   created_at    DateTime @default(now())
 }
