@@ -1,7 +1,7 @@
 import { userModel } from "../generated/prisma/models/user";
 
 import { prisma } from "../lib/prisma";
-import User from "../types/User";
+import User, { UserPublic } from "../types/User";
 import bcrypt from "bcrypt";
 
 export const getPaginatedUsers = async (
@@ -9,13 +9,16 @@ export const getPaginatedUsers = async (
   limit: number,
   sortField: string,
   sortOrder: "asc" | "desc",
-): Promise<{ data: userModel[]; total: number }> => {
+): Promise<{ data: UserPublic[]; total: number }> => {
   const [data, total] = await Promise.all([
     // todo: evaluate if password needs to be passed here, idealy not
     prisma.user.findMany({
       skip: (page - 1) * limit,
       take: limit,
       orderBy: { [sortField]: sortOrder },
+      omit: {
+        password_hash: true,
+      },
     }),
     prisma.user.count(),
   ]);

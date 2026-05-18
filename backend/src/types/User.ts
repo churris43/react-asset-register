@@ -5,4 +5,7 @@ interface User {
   created_at: Date;
 }
 
+type UserPublic = Omit<User, "password_hash">;
+
 export default User;
+export { UserPublic };
