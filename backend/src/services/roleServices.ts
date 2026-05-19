@@ -45,18 +45,19 @@ export const deleteRole = async (id: number): Promise<roleModel> => {
   });
 };
 
-export const createRole = async (role: Omit<Role, 'id'>): Promise<roleModel> => {
+export const createRole = async (
+  role: Omit<Role, "id">,
+): Promise<roleModel> => {
   return prisma.role.create({
     data: {
       role_name: role.role_name,
-      staff_name: role.staff_name,
     },
   });
 };
 
 export const updateRole = async (
   id: number,
-  role: Omit<Role, 'id'>,
+  role: Omit<Role, "id">,
 ): Promise<roleModel | null> => {
   return prisma.role.update({
     where: {
@@ -64,7 +65,6 @@ export const updateRole = async (
     },
     data: {
       role_name: role.role_name,
-      staff_name: role.staff_name,
     },
   });
 };

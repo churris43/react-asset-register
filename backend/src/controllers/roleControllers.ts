@@ -30,7 +30,7 @@ export const deleteRole = async (
   }
 };
 
-const ALLOWED_SORT_FIELDS = ["role_name", "staff_name"] as const;
+const ALLOWED_SORT_FIELDS = ["role_name"] as const;
 
 export const getRoles = async (req: Request, res: Response) => {
   try {

@@ -10,15 +10,9 @@ import {
 
 describe('roleServices', () => {
   describe('createRole', () => {
-    it('creates a role with staff_name', async () => {
-      const result = await createRole({ role_name: 'Engineer', staff_name: 'Alice' })
+    it('creates a role', async () => {
+      const result = await createRole({ role_name: 'Engineer' })
       expect(result.role_name).toBe('Engineer')
-      expect(result.staff_name).toBe('Alice')
-    })
-
-    it('creates a role without staff_name', async () => {
-      const result = await createRole({ role_name: 'Engineer', staff_name: null })
-      expect(result.staff_name).toBeNull()
     })
   })
 
@@ -35,10 +29,9 @@ describe('roleServices', () => {
 
   describe('updateRole', () => {
     it('updates role fields', async () => {
-      const created = await prisma.role.create({ data: { role_name: 'Old', staff_name: 'Alice' } })
-      const result = await updateRole(created.id, { role_name: 'New', staff_name: 'Bob' })
+      const created = await prisma.role.create({ data: { role_name: 'Old' } })
+      const result = await updateRole(created.id, { role_name: 'New' })
       expect(result?.role_name).toBe('New')
-      expect(result?.staff_name).toBe('Bob')
     })
   })
 

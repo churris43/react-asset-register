@@ -28,7 +28,6 @@ model asset_type {
 model role {
   id         Int     @id @default(autoincrement())
   role_name  String
-  staff_name String?
   asset      asset[]
   users      user[]
 }

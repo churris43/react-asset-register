@@ -7,13 +7,12 @@ async function seedRoles() {
     {
       id: 1,
       role_name: "Chief Information Security Officer",
-      staff_name: "Sarah Mitchell",
     },
-    { id: 2, role_name: "Risk Manager", staff_name: "James Thornton" },
-    { id: 3, role_name: "IT Asset Manager", staff_name: "Laura Chen" },
-    { id: 4, role_name: "Data Protection Officer", staff_name: "Marcus Reid" },
-    { id: 5, role_name: "Infrastructure Lead", staff_name: "Olivia Barnes" },
-    { id: 6, role_name: "Compliance Analyst", staff_name: "Daniel Foster" },
+    { id: 2, role_name: "Risk Manager" },
+    { id: 3, role_name: "IT Asset Manager" },
+    { id: 4, role_name: "Data Protection Officer" },
+    { id: 5, role_name: "Infrastructure Lead" },
+    { id: 6, role_name: "Compliance Analyst" },
   ];
 
   await Promise.all(
@@ -24,7 +23,6 @@ async function seedRoles() {
         create: {
           id: record.id,
           role_name: record.role_name,
-          staff_name: record.staff_name,
         },
       }),
     ),

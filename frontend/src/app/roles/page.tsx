@@ -34,7 +34,6 @@ async function Roles({
   const headings: Heading[] = [
     { label: "ID" },
     { label: "Role", sortField: "role_name" },
-    { label: "Staff Name", sortField: "staff_name" },
   ];
 
   const fields: Array<Field> = [
@@ -42,12 +41,6 @@ async function Roles({
       name: "role_name",
       label: "Role",
       required: true,
-      type: "text",
-      htmlElementType: "input",
-    },
-    {
-      name: "staff_name",
-      label: "Staff Name",
       type: "text",
       htmlElementType: "input",
     },
