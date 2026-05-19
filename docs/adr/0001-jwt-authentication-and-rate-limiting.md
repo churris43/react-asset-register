@@ -58,8 +58,8 @@ Rate limiting restricts how many requests a single IP address can make to an end
 
 In this project, `express-rate-limit` is applied to two groups of endpoints with different limits:
 
-- **Auth endpoints** (`/login`, `/register`, `/refresh`) — 10 requests per 5-minute window per IP. These are susceptible to brute force password guessing (login/register) or abuse of a stolen refresh token. A legitimate user would rarely need more than 2–3 attempts in that window.
-- **Authenticated API endpoints** (`/assets`, `/roles`, `/assettypes`) — 100 requests per 5-minute window per IP. These require a valid token so brute force is not a concern; the limit exists to protect against DoS from a stolen token or a runaway client.
+- **Auth endpoints** (`/login`, `/refresh`) — 10 requests per 5-minute window per IP. These are susceptible to brute force password guessing or abuse of a stolen refresh token. A legitimate user would rarely need more than 2–3 attempts in that window.
+- **Authenticated API endpoints** (`/assets`, `/roles`, `/assettypes`, `/users`) — 100 requests per 5-minute window per IP. These require a valid token so brute force is not a concern; the limit exists to protect against DoS from a stolen token or a runaway client.
 
 After the limit is exceeded the middleware returns a `429 Too Many Requests` response and the request never reaches the controller.
 
@@ -124,9 +124,8 @@ const authLimiter = rateLimit({
   max: 10                   // 10 requests per IP per window
 })
 
-router.post('/register', authLimiter, authController.register)
-router.post('/login',    authLimiter, authController.login)
-router.post('/refresh',  authLimiter, authController.refresh)
+router.post('/login',   authLimiter, authController.login)
+router.post('/refresh', authLimiter, authController.refresh)
 ```
 
 Authenticated API endpoints use a more lenient limiter. Since a valid token is required there is nothing to brute force, but rate limiting still protects against DoS from a stolen token or runaway client:
@@ -140,6 +139,7 @@ const apiLimiter = rateLimit({
 router.use('/roles',      authenticate, apiLimiter, roleRoutes)
 router.use('/assettypes', authenticate, apiLimiter, assetTypeRoutes)
 router.use('/assets',     authenticate, apiLimiter, assetRoutes)
+router.use('/users',      authenticate, apiLimiter, userRoutes)
 ```
 
 `express-rate-limit` stores request counts in memory. This is sufficient for a single server instance. If the application is scaled to multiple instances in the future, counts should be moved to a shared store such as Redis (e.g. via Upstash).
@@ -221,11 +221,11 @@ router.use('/assets',     authenticate, apiLimiter, assetRoutes)
 | File | Purpose |
 |---|---|
 | `backend/src/types/AuthTypes.ts` | TypeScript interfaces for auth request bodies and JWT payload |
-| `backend/src/services/authService.ts` | Business logic — register, login, refresh token |
+| `backend/src/services/authService.ts` | Business logic — login, refresh token |
 | `backend/src/controllers/authController.ts` | HTTP handlers — validate input, call service, return response |
 | `backend/src/routes/authRoutes.ts` | Route definitions with rate limiter applied |
 | `backend/src/middleware/authenticate.ts` | JWT verification middleware for protected routes |
-| `frontend/src/app/actions/authActions.ts` | Next.js server actions for login, logout, register |
+| `frontend/src/app/actions/authActions.ts` | Next.js server actions for login and logout |
 | `frontend/src/lib/fetchWithAuth.ts` | Fetch wrapper that forwards auth cookie and handles token refresh |
 | `frontend/src/middleware.ts` | Next.js edge middleware that redirects unauthenticated users to /login |
 | `frontend/src/app/login/page.tsx` | Login form |

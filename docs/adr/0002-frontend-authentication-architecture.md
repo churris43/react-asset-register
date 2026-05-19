@@ -211,6 +211,7 @@ The user sees no login redirect and no error. The refresh happens before the pag
 | `frontend/src/libs/refreshAccessToken.ts` | Shared helper — single source for the POST /auth/refresh network call, used by middleware and fetchWithAuth |
 | `frontend/src/libs/authCookies.ts` | Shared access token cookie setter — single source of cookie options |
 | `frontend/src/app/actions/authActions.ts` | Server actions for login and logout |
+| `frontend/src/app/actions/userActions.ts` | Server actions for user management (create, edit, delete) |
 | `frontend/src/app/login/page.tsx` | Login form |
 | `frontend/src/components/layout/Navbar.tsx` | Server component — checks access_token cookie presence before rendering NavLinks |
 | `frontend/src/components/layout/NavLinks.tsx` | Client component — renders nav links, checks pathname to prevent display on login page |
