@@ -30,6 +30,7 @@ model role {
   role_name  String
   staff_name String?
   asset      asset[]
+  users      user[]
 }
 
 model user {
@@ -37,6 +38,10 @@ model user {
   email         String   @unique
   password_hash String
   name          String   @default("Unknown")
+  role_id       Int?
   isAdmin       Boolean? @default(false)
   created_at    DateTime @default(now())
+  role          role?    @relation(fields: [role_id], references: [id], map: "fk_asset_role")
+
+  @@index([role_id], map: "idx_user_role_id")
 }

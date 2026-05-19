@@ -1,13 +1,19 @@
+import { userGetPayload } from "../generated/prisma/models";
+
 interface User {
   id: number;
   email: string;
   password_hash: string;
   name: string;
   isAdmin: boolean | null;
-  created_at: Date;
+  role_id?: number;
+  created_at?: Date;
 }
 
-type UserPublic = Omit<User, "password_hash">;
+export type UserWithRelations = userGetPayload<{
+  include: { role: true };
+}>;
+
+export type UserWithRelationsPublic = Omit<UserWithRelations, "password_hash">;
 
 export default User;
-export { UserPublic };

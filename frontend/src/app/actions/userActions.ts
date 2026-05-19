@@ -8,7 +8,7 @@ const path: string = "/users";
 
 export async function createUser(data: UserInterface) {
   try {
-    const res = await fetchWithAuth(`/auth/register/`, {
+    const res = await fetchWithAuth(`${path}`, {
       method: "POST",
       body: JSON.stringify(data),
     });

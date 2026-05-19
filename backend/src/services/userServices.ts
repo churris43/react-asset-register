@@ -1,24 +1,64 @@
 import { userModel } from "../generated/prisma/models/user";
 
 import { prisma } from "../lib/prisma";
-import User, { UserPublic } from "../types/User";
+import User, { UserWithRelationsPublic } from "../types/User";
 import bcrypt from "bcrypt";
+import { buildOrderBy, NestedOrderBy } from "../utils/buildOrderBy";
+
+const SALT_ROUNDS = 12;
+
+const NESTED_SORT_FIELDS: Record<string, NestedOrderBy> = {
+  role_name: (order) => ({ role: { role_name: order } }),
+};
+
+export const getUsers = async () => {
+  return prisma.user.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
+};
+
+export const createUser = async (
+  user: Omit<User, "id">,
+): Promise<userModel> => {
+  const existing = await prisma.user.findUnique({
+    where: { email: user.email },
+  });
+  // Never store plain text passwords — bcrypt hashes and salts in one step
+  const password_hash = await bcrypt.hash(user.password_hash, SALT_ROUNDS);
+
+  if (existing) throw new Error("EMAIL_TAKEN");
+
+  const data = {
+    name: user.name,
+    email: user.email,
+    password_hash: password_hash,
+    isAdmin: user.isAdmin,
+    role_id: user.role_id ? Number(user.role_id) : null,
+  };
+
+  return prisma.user.create({
+    data: data,
+  });
+};
 
 export const getPaginatedUsers = async (
   page: number,
   limit: number,
   sortField: string,
   sortOrder: "asc" | "desc",
-): Promise<{ data: UserPublic[]; total: number }> => {
+): Promise<{ data: UserWithRelationsPublic[]; total: number }> => {
   const [data, total] = await Promise.all([
     // todo: evaluate if password needs to be passed here, idealy not
     prisma.user.findMany({
       skip: (page - 1) * limit,
       take: limit,
-      orderBy: { [sortField]: sortOrder },
+      orderBy: buildOrderBy(sortField, sortOrder, NESTED_SORT_FIELDS),
       omit: {
         password_hash: true,
       },
+      include: { role: true },
     }),
     prisma.user.count(),
   ]);
@@ -43,6 +83,7 @@ export const updateUser = async (
     email: user.email,
     name: user.name,
     isAdmin: user.isAdmin,
+    role_id: user.role_id ? Number(user.role_id) : null,
   };
 
   // Password is optional on updates — only hash and update if provided

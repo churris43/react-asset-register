@@ -13,17 +13,6 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 // enumerate valid emails by measuring response time.
 const DUMMY_PASSWORD_HASH = bcrypt.hashSync("never-matches", SALT_ROUNDS);
 
-export const registerUser = async (email: string, password: string) => {
-  // Prevent duplicate accounts
-  const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) throw new Error("EMAIL_TAKEN");
-
-  // Never store plain text passwords — bcrypt hashes and salts in one step
-  const password_hash = await bcrypt.hash(password, SALT_ROUNDS);
-  const user = await prisma.user.create({ data: { email, password_hash } });
-  return { id: user.id, email: user.email };
-};
-
 export const loginUser = async (email: string, password: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
 

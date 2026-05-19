@@ -10,6 +10,8 @@ import Heading from "@/src/interfaces/heading";
 import { getPaginatedUsers } from "../actions/userQueries";
 import { createUser, deleteUser, editUser } from "../actions/userActions";
 import UserInterface from "@/src/interfaces/user";
+import RoleInterface from "@/src/interfaces/role";
+import { getRoles } from "../actions/roleQueries";
 
 async function Users({
   searchParams,
@@ -24,18 +26,27 @@ async function Users({
   const sortField = params.sortField ?? "email";
   const sortOrder = params.sortOrder === "desc" ? "desc" : "asc";
 
-  const { data: users, total } = await getPaginatedUsers({
-    page,
-    limit: LIMIT,
-    sortField,
-    sortOrder,
-  });
+  const [{ data: users, total }, roles] = await Promise.all([
+    getPaginatedUsers({
+      page,
+      limit: LIMIT,
+      sortField,
+      sortOrder,
+    }),
+    getRoles(),
+  ]);
   const totalPages = Math.ceil(total / LIMIT);
+
+  const roleOptions = roles.map((role: RoleInterface) => ({
+    value: role.id,
+    label: role.role_name,
+  }));
 
   const headings: Heading[] = [
     { label: "ID" },
     { label: "Name", sortField: "name" },
     { label: "Email", sortField: "email" },
+    { label: "Role", sortField: "role_name" },
     { label: "Is Admin", sortField: "isAdmin" },
   ];
 
@@ -61,6 +72,14 @@ async function Users({
       type: "password",
       htmlElementType: "input",
       hide: true,
+    },
+    {
+      name: "role_id",
+      label: "Role",
+      type: "text",
+      htmlElementType: "select_single",
+      childField: "role.role_name",
+      options: roleOptions,
     },
     {
       name: "isAdmin",
