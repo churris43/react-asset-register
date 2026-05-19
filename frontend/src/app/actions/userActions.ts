@@ -13,6 +13,12 @@ export async function createUser(data: UserInterface) {
       body: JSON.stringify(data),
     });
 
+    // Validation error
+    if (res.status === 422) {
+      const body = await res.json();
+      return { success: false, fieldErrors: body.fieldErrors };
+    }
+
     if (!res.ok) {
       throw new Error("Failed to create user");
     }
@@ -49,6 +55,12 @@ export async function editUser(id: number, data: UserInterface) {
       method: "PUT",
       body: JSON.stringify(data),
     });
+
+    // Validation error
+    if (res.status === 422) {
+      const body = await res.json();
+      return { success: false, fieldErrors: body.fieldErrors };
+    }
 
     if (!res.ok) {
       throw new Error("Failed to edit the user");

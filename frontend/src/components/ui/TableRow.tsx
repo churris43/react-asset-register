@@ -6,6 +6,7 @@ import RoleInterface from "@/src/interfaces/role";
 import AssetInterface from "@/src/interfaces/asset";
 import { getNestedValue } from "@/src/utils/json";
 import UserInterface from "@/src/interfaces/user";
+import { SchemaDomain } from "@/src/schemas/schemasRegistry";
 
 interface TableRowProps {
   id: number;
@@ -13,6 +14,7 @@ interface TableRowProps {
   deleteAction: () => Promise<{ success: boolean; error?: string }>;
   fields: Field[];
   fieldConfig?: FieldConfig;
+  domain?: SchemaDomain;
   editAction?: (
     id: number,
     data: any,
@@ -26,6 +28,7 @@ function TableRow({
   deleteAction,
   fields,
   fieldConfig,
+  domain,
   editAction,
   record,
 }: TableRowProps) {
@@ -61,6 +64,7 @@ function TableRow({
         editAction={editAction}
         fields={fields}
         fieldConfig={fieldConfig}
+        domain={domain}
       />
     </div>
   );

@@ -12,7 +12,6 @@ import { createUser, deleteUser, editUser } from "../actions/userActions";
 import UserInterface from "@/src/interfaces/user";
 import RoleInterface from "@/src/interfaces/role";
 import { getRoles } from "../actions/roleQueries";
-
 async function Users({
   searchParams,
 }: {
@@ -104,6 +103,7 @@ async function Users({
           recordName="User"
           fields={fields}
           fieldConfig={fieldConfig}
+          domain="user"
           createAction={createUser}
         />
       </h1>
@@ -124,6 +124,7 @@ async function Users({
             editAction={editUser}
             fields={fields}
             fieldConfig={fieldConfig}
+            domain="user"
           />
         ))}
         <TableFooter

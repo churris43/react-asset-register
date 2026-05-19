@@ -5,6 +5,7 @@ import GenericModal from "../ui/GenericModal";
 import { useState } from "react";
 import Field from "../../interfaces/field";
 import FieldConfig from "../../interfaces/fieldConfig";
+import { SchemaDomain } from "@/src/schemas/schemasRegistry";
 
 interface EditProps {
   id: number;
@@ -15,9 +16,10 @@ interface EditProps {
     data: any,
   ) => Promise<{ success: boolean; error?: string }>;
   fieldConfig?: FieldConfig;
+  domain?: SchemaDomain;
 }
 
-function EditButton({ id, fields, initialData, editAction, fieldConfig }: EditProps) {
+function EditButton({ id, fields, initialData, editAction, fieldConfig, domain }: EditProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -32,6 +34,7 @@ function EditButton({ id, fields, initialData, editAction, fieldConfig }: EditPr
         mode="edit"
         fields={fields}
         fieldConfig={fieldConfig}
+        domain={domain}
         initialData={initialData}
         editAction={editAction}
       />

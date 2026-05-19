@@ -4,6 +4,7 @@ import Field from "../../interfaces/field";
 import FieldConfig from "../../interfaces/fieldConfig";
 import CloseButton from "./CloseButton";
 import ModalForm from "../features/ModalForm";
+import { SchemaDomain } from "@/src/schemas/schemasRegistry";
 
 interface AddModalProps {
   isModalOpen: boolean;
@@ -12,6 +13,7 @@ interface AddModalProps {
   mode: string;
   fields: Field[];
   fieldConfig?: FieldConfig;
+  domain?: SchemaDomain;
   initialData?: Record<string, any>;
   editAction?: (
     id: number,
@@ -27,6 +29,7 @@ function GenericModal({
   mode,
   fields,
   fieldConfig,
+  domain,
   initialData,
   editAction,
   createAction,
@@ -53,6 +56,7 @@ function GenericModal({
             mode={mode}
             fields={fields}
             fieldConfig={fieldConfig}
+            domain={domain}
             initialData={initialData}
             editAction={editAction}
             createAction={createAction}

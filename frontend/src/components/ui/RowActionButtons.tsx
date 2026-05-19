@@ -2,6 +2,7 @@ import EditButton from "../features/EditButton";
 import Field from "../../interfaces/field";
 import FieldConfig from "../../interfaces/fieldConfig";
 import { DeleteRecordButton } from "../features/DeleteButton";
+import { SchemaDomain } from "@/src/schemas/schemasRegistry";
 
 interface RowActionButtonsProps {
   id: number;
@@ -9,6 +10,7 @@ interface RowActionButtonsProps {
   deleteAction: () => Promise<{ success: boolean; error?: string }>;
   fields: Field[];
   fieldConfig?: FieldConfig;
+  domain?: SchemaDomain;
   initialData: Record<string, any>;
   editAction?: (
     id: number,
@@ -22,6 +24,7 @@ function RowActionButtons({
   deleteAction,
   fields,
   fieldConfig,
+  domain,
   initialData,
   editAction,
 }: RowActionButtonsProps) {
@@ -31,6 +34,7 @@ function RowActionButtons({
         id={id}
         fields={fields}
         fieldConfig={fieldConfig}
+        domain={domain}
         initialData={initialData}
         editAction={editAction}
       />
