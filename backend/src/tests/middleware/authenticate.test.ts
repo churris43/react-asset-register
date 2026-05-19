@@ -1,20 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import jwt from "jsonwebtoken";
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction } from "express";
 import { authenticate } from "../../middleware/authenticate";
+import { buildReq, buildRes } from "../testUtils";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
-
-// Builds a minimal Express Request with a cookies bag
-const buildReq = (cookies: Record<string, string> = {}) =>
-  ({ cookies }) as unknown as Request;
-
-const buildRes = () => {
-  const res = {} as Response;
-  res.status = vi.fn().mockReturnValue(res);
-  res.json = vi.fn().mockReturnValue(res);
-  return res;
-};
 
 describe("authenticate middleware", () => {
   let next: NextFunction;
@@ -32,7 +22,7 @@ describe("authenticate middleware", () => {
   });
 
   it("returns 401 for a malformed token", () => {
-    const req = buildReq({ access_token: "not-a-jwt" });
+    const req = buildReq({ cookies: { access_token: "not-a-jwt" } });
     const res = buildRes();
     authenticate(req, res, next);
     expect(res.status).toHaveBeenCalledWith(401);
@@ -45,7 +35,7 @@ describe("authenticate middleware", () => {
       "different-secret",
       { algorithm: "HS256" },
     );
-    const req = buildReq({ access_token: token });
+    const req = buildReq({ cookies: { access_token: token } });
     const res = buildRes();
     authenticate(req, res, next);
     expect(res.status).toHaveBeenCalledWith(401);
@@ -58,7 +48,7 @@ describe("authenticate middleware", () => {
       JWT_SECRET,
       { algorithm: "HS256", expiresIn: "-1s" },
     );
-    const req = buildReq({ access_token: token });
+    const req = buildReq({ cookies: { access_token: token } });
     const res = buildRes();
     authenticate(req, res, next);
     expect(res.status).toHaveBeenCalledWith(401);
@@ -71,7 +61,7 @@ describe("authenticate middleware", () => {
       JWT_SECRET,
       { algorithm: "HS256" },
     );
-    const req = buildReq({ access_token: refreshToken });
+    const req = buildReq({ cookies: { access_token: refreshToken } });
     const res = buildRes();
     authenticate(req, res, next);
     expect(res.status).toHaveBeenCalledWith(401);
@@ -87,7 +77,7 @@ describe("authenticate middleware", () => {
       "",
       { algorithm: "none" },
     );
-    const req = buildReq({ access_token: token });
+    const req = buildReq({ cookies: { access_token: token } });
     const res = buildRes();
     authenticate(req, res, next);
     expect(res.status).toHaveBeenCalledWith(401);
@@ -100,7 +90,7 @@ describe("authenticate middleware", () => {
       JWT_SECRET,
       { algorithm: "HS256" },
     );
-    const req = buildReq({ access_token: token });
+    const req = buildReq({ cookies: { access_token: token } });
     const res = buildRes();
     authenticate(req, res, next);
     expect(next).toHaveBeenCalled();
