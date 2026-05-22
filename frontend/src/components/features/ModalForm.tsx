@@ -7,7 +7,7 @@ import useModalForm from "@/src/hooks/useModalForm";
 import SaveOrAddButton from "../ui/SaveOrAddButton";
 import InputHTML from "../ui/InputHTML";
 import Checkbox from "../ui/Checkbox";
-import FieldError from "../ui/FieldError";
+import FieldMessage from "../ui/FieldMessage";
 import { schemasRegistry, SchemaDomain } from "@/src/schemas/schemasRegistry";
 
 interface ModalFormProps {
@@ -21,8 +21,16 @@ interface ModalFormProps {
   editAction?: (
     id: number,
     data: unknown,
-  ) => Promise<{ success: boolean; error?: string; fieldErrors?: Record<string, string> }>;
-  createAction?: (data: unknown) => Promise<{ success: boolean; error?: string; fieldErrors?: Record<string, string> }>;
+  ) => Promise<{
+    success: boolean;
+    error?: string;
+    fieldErrors?: Record<string, string>;
+  }>;
+  createAction?: (data: unknown) => Promise<{
+    success: boolean;
+    error?: string;
+    fieldErrors?: Record<string, string>;
+  }>;
   onClose: () => void;
 }
 
@@ -77,7 +85,10 @@ function ModalForm({
                   handleChange={handleChange}
                   formData={formData}
                 />
-                <FieldError message={fieldErrors[field.name]} />
+                <FieldMessage
+                  errorMessage={fieldErrors[field.name]}
+                  helperText={field.helperText}
+                />
               </>
             )}
             {field.htmlElementType == "input" && field.type === "checkbox" && (
@@ -87,7 +98,10 @@ function ModalForm({
                   handleChange={handleChange}
                   formData={formData}
                 />
-                <FieldError message={fieldErrors[field.name]} />
+                <FieldMessage
+                  errorMessage={fieldErrors[field.name]}
+                  helperText={field.helperText}
+                />
               </>
             )}
             {field.htmlElementType == "select_single" && (
@@ -105,7 +119,10 @@ function ModalForm({
                     </option>
                   ))}
                 </select>
-                <FieldError message={fieldErrors[field.name]} />
+                <FieldMessage
+                  errorMessage={fieldErrors[field.name]}
+                  helperText={field.helperText}
+                />
               </>
             )}
           </div>

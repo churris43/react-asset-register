@@ -71,6 +71,7 @@ async function Users({
       type: "password",
       htmlElementType: "input",
       hide: true,
+      helperText: "The password must be at least 8 characters",
     },
     {
       name: "role_id",

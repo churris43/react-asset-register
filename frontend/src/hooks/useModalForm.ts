@@ -74,14 +74,23 @@ function useModalForm({
       // Get the validation schema for this field in the current mode (add/edit)
       const fieldSchemas = schemas?.[field.name];
       const schema = fieldSchemas?.[mode as "add" | "edit"] as unknown;
-      if (!schema || typeof schema !== 'object' || !('safeParse' in schema)) return;
+      if (!schema || typeof schema !== "object" || !("safeParse" in schema))
+        return;
 
       // Run validation against the current field value
-      const result = (schema as { safeParse: (val: unknown) => { success: boolean; error?: { issues: { message: string }[] } } }).safeParse(formData[field.name]);
+      const result = (
+        schema as {
+          safeParse: (val: unknown) => {
+            success: boolean;
+            error?: { issues: { message: string }[] };
+          };
+        }
+      ).safeParse(formData[field.name]);
 
       // If validation failed, store the first error message for this field
       if (!result.success) {
-        errors[field.name] = result.error?.issues[0]?.message || 'Validation failed';
+        errors[field.name] =
+          result.error?.issues[0]?.message || "Validation failed";
       }
     });
 
@@ -101,13 +110,6 @@ function useModalForm({
       ...prev,
       [name]: value,
     }));
-
-    // Clears the error message if there is one
-    setFieldErrors((prev) => {
-      const next = { ...prev };
-      delete next[name];
-      return next;
-    });
   };
 
   const handleEdit = async (e: FormEvent<HTMLFormElement>) =>

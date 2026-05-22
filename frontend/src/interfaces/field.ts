@@ -10,6 +10,7 @@ interface Field {
   options?: { value: string | number; label: string }[];
   childField?: string;
   hide?: boolean;
+  helperText?: string;
 }
 
 export default Field;
