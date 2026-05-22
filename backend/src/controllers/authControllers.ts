@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as AuthService from "../services/authServices";
+import * as userServices from "../services/userServices";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -41,5 +42,15 @@ export const refresh = (req: Request, res: Response) => {
     return res
       .status(401)
       .json({ message: "Invalid or expired refresh token" });
+  }
+};
+
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const user = await userServices.getUserById(req.user!.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    return res.json(user);
+  } catch (error) {
+    return res.status(500).json({ message: "Unable to get user" });
   }
 };

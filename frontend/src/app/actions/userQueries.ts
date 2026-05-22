@@ -26,3 +26,13 @@ export async function getPaginatedUsers(
     return { data: [], total: 0 };
   }
 }
+
+export async function getCurrentUser(): Promise<UserInterface | null> {
+  try {
+    const response = await fetchWithAuth("/auth/me");
+    if (!response.ok) return null;
+    return response.json();
+  } catch {
+    return null;
+  }
+}

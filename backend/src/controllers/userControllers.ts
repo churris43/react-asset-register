@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import * as userServices from "../services/userServices";
 import { parsePaginationParams } from "../utils/parsePaginationParams";
-import User from "../types/User";
 
 const ALLOWED_SORT_FIELDS = ["email", "name", "isAdmin", "role_name"] as const;
 

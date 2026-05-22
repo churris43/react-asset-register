@@ -3,16 +3,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logout } from "@/src/app/actions/authActions";
+import UserInterface from "@/src/interfaces/user";
 
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/assets", label: "Assets" },
-  { href: "/assetTypes", label: "Asset Types" },
-  { href: "/roles", label: "Roles" },
-  { href: "/users", label: "Users" },
-];
+interface NavLinkProps {
+  user: UserInterface | null;
+}
 
-function NavLinks() {
+function NavLinks({ user }: NavLinkProps) {
+  const links = [
+    { href: "/", label: "Home" },
+    { href: "/assets", label: "Assets" },
+    { href: "/assetTypes", label: "Asset Types" },
+  ];
+
+  if (user?.isAdmin) {
+    links.push({ href: "/roles", label: "Roles" });
+    links.push({ href: "/users", label: "Users" });
+  }
+
   const pathname = usePathname();
 
   // The root layout is served from the Next.js client-side router cache on

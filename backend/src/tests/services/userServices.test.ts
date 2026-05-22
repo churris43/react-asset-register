@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createUser, updateUser } from "../../services/userServices";
+import { createUser, updateUser, getUserById } from "../../services/userServices";
 
 describe("userServices", () => {
   describe("createUser", () => {
@@ -52,6 +52,29 @@ describe("userServices", () => {
         isAdmin: false,
       });
       expect(result.role_id).toBeNull();
+    });
+  });
+
+  describe("getUserById", () => {
+    it("returns the user without password_hash when found", async () => {
+      const created = await createUser({
+        email: "judy@example.com",
+        password_hash: "password123",
+        name: "Judy",
+        isAdmin: false,
+      });
+
+      const result = await getUserById(created.id);
+
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe(created.id);
+      expect(result?.email).toBe("judy@example.com");
+      expect(result).not.toHaveProperty("password_hash");
+    });
+
+    it("returns null for a non-existent id", async () => {
+      const result = await getUserById(999999);
+      expect(result).toBeNull();
     });
   });
 
